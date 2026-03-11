@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V9 Live — 0DTE Short Puts</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#08090d;--card:#0f1117;--border:#1e2230;--green:#00c896;--red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;--text:#e2e8f0;--muted:#64748b}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding:20px}
+.c{max-width:720px;margin:0 auto}
+
+/* Header row */
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.hdr .date{font-size:18px;font-weight:600;color:#fff}
+.hdr .sub{font-size:11px;color:var(--muted);margin-top:2px}
+.clock{font-size:24px;font-weight:300;color:var(--green);font-variant-numeric:tabular-nums}
+.mkt-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;margin-top:3px;display:inline-block}
+
+/* Big signal hero */
+.signal-hero{text-align:center;padding:32px 20px;border-radius:14px;margin-bottom:24px;border:2px solid}
+.signal-hero.go{background:#031a0a;border-color:var(--green)}
+.signal-hero.no{background:#12121e;border-color:var(--border)}
+.signal-hero .icon{font-size:48px;margin-bottom:8px}
+.signal-hero .headline{font-size:28px;font-weight:800;letter-spacing:-0.5px}
+.signal-hero.go .headline{color:var(--green)}
+.signal-hero.no .headline{color:var(--muted)}
+.signal-hero .detail{font-size:13px;color:var(--muted);margin-top:6px}
+.signal-hero .detail strong{color:#fff}
+.signal-hero .locs{display:flex;justify-content:center;gap:24px;margin-top:14px;font-size:12px}
+.signal-hero .locs .loc{display:flex;align-items:center;gap:6px}
+.signal-hero .locs .loc-val{font-weight:700;font-size:14px}
+.signal-hero .locs .loc-val.hot{color:var(--red)}
+.signal-hero .locs .loc-val.cold{color:var(--muted)}
+.loc-bar{width:80px;height:5px;background:#1e2230;border-radius:3px;position:relative;overflow:hidden}
+.loc-bar .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#ef4444)}
+.loc-bar .thresh{position:absolute;top:0;bottom:0;width:1.5px;background:#ffffff40;left:75%}
+
+/* Phase bar */
+.phase{text-align:center;padding:10px 16px;border-radius:8px;margin-bottom:20px;font-weight:700;font-size:13px;border:1px solid}
+
+/* Trade cards */
+.trades{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+@media(max-width:600px){.trades{grid-template-columns:1fr}}
+.trade{background:var(--card);border-radius:10px;padding:16px;border:1px solid var(--border)}
+.trade.active{border-color:var(--green)}
+.trade .t-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.trade .t-name{font-size:16px;font-weight:700;color:#fff}
+.trade .t-badge{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.trade .t-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid #ffffff08}
+.trade .t-row:last-child{border:none}
+.trade .t-label{color:var(--muted)}
+.trade .t-val{font-weight:600;color:#fff}
+.trade .t-val.green{color:var(--green)}
+.trade .t-val.amber{color:var(--amber)}
+.trade .t-val.red{color:var(--red)}
+.trade .t-val.blue{color:var(--blue)}
+.trade .t-contract{font-size:9px;color:var(--muted);margin-top:8px;word-break:break-all}
+
+/* Action alert */
+.action{text-align:center;padding:16px;border-radius:10px;margin-bottom:20px;font-weight:700;font-size:15px;border:2px solid;display:none}
+.action .sub{font-size:12px;font-weight:400;margin-top:4px}
+.action.entry{background:#031a0a;border-color:var(--green);color:var(--green);display:none}
+.action.exit-pt{background:#031a0a;border-color:var(--green);color:var(--green);display:none}
+.action.exit-time{background:#1a1208;border-color:var(--amber);color:var(--amber);display:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.blink{animation:pulse 1.2s infinite}
+
+/* P&L */
+.pnl{background:var(--card);border-radius:10px;padding:16px;margin-bottom:20px;border:1px solid var(--border);display:none}
+.pnl .pnl-hdr{font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.pnl .inputs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.pnl .inputs label{font-size:11px;color:var(--muted)}
+.pnl .inputs input{background:#16213e;border:1px solid #2d3561;border-radius:5px;color:#fff;padding:5px 8px;font-size:13px;width:90px;outline:none}
+.pnl .total{font-size:28px;font-weight:700;text-align:center;margin:8px 0}
+.pnl .breakdown{display:flex;justify-content:center;gap:16px;font-size:11px;color:var(--muted)}
+
+/* Rules (collapsed) */
+.rules-toggle{font-size:11px;color:var(--muted);cursor:pointer;text-align:center;margin-bottom:16px;user-select:none}
+.rules-toggle:hover{color:#fff}
+.rules{display:none;background:var(--card);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#999;border:1px solid var(--border)}
+.rules.show{display:block}
+.rules strong{color:#ccc}
+
+/* Footer */
+.foot{text-align:center;color:var(--muted);font-size:9px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="c">
+
+  <div class="hdr">
+    <div>
+      <div class="date" id="hdr-date">Loading...</div>
+      <div class="sub">V9 · 0DTE Short Puts · +65% or 9:50</div>
+    </div>
+    <div style="text-align:right">
+      <div class="clock" id="live-clock">--:--:--</div>
+      <div class="mkt-badge" id="mkt-badge" style="background:#1e2230;color:var(--muted)">--</div>
+    </div>
+  </div>
+
+  <!-- BIG signal indicator -->
+  <div class="signal-hero no" id="signal-hero">
+    <div class="icon" id="sig-icon">⏳</div>
+    <div class="headline" id="sig-headline">Checking signal...</div>
+    <div class="detail" id="sig-detail">Loading prior day data</div>
+    <div class="locs">
+      <div class="loc">
+        <span style="color:var(--muted)">QQQ</span>
+        <div class="loc-bar"><div class="fill" id="qqq-fill" style="width:0%"></div><div class="thresh"></div></div>
+        <span class="loc-val cold" id="qqq-loc-val">--</span>
+      </div>
+      <div class="loc">
+        <span style="color:var(--muted)">SPY</span>
+        <div class="loc-bar"><div class="fill" id="spy-fill" style="width:0%"></div><div class="thresh"></div></div>
+        <span class="loc-val cold" id="spy-loc-val">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase bar -->
+  <div class="phase" id="phase-bar" style="background:#12121e;border-color:var(--border);color:var(--muted)">--</div>
+
+  <!-- Action alerts -->
+  <div class="action entry blink" id="alert-entry">🚨 ENTER NOW — Place limit orders at mid price<div class="sub">9:31 AM · Buy puts at the prices shown below</div></div>
+  <div class="action exit-pt" id="alert-pt">✅ +65% PT HIT — TRADE COMPLETE<div class="sub" id="alert-pt-detail">Limit order filled</div></div>
+  <div class="action exit-time" id="alert-time">⏰ 9:50 — EXIT ALL AT MARKET<div class="sub">No PT hit · Close 100% now</div></div>
+
+  <!-- Trade cards (only shown when signal active) -->
+  <div class="trades" id="trade-cards" style="display:none">
+    <div class="trade" id="qqq-card">
+      <div class="t-hdr">
+        <span class="t-name">QQQ</span>
+        <span class="t-badge" id="qqq-badge" style="background:#1a1a2e;color:var(--muted)">--</span>
+      </div>
+      <div class="t-row"><span class="t-label">Strike</span><span class="t-val" id="qqq-strike">--</span></div>
+      <div class="t-row"><span class="t-label">Delta</span><span class="t-val" id="qqq-delta">δ0.55 target</span></div>
+      <div class="t-row"><span class="t-label">Bid / Ask</span><span class="t-val" id="qqq-ba">--</span></div>
+      <div class="t-row"><span class="t-label">Limit (mid)</span><span class="t-val amber" id="qqq-limit">--</span></div>
+      <div class="t-row"><span class="t-label">Contracts</span><span class="t-val" id="qqq-cts">--</span></div>
+      <div class="t-row"><span class="t-label">PT (+65%)</span><span class="t-val green" id="qqq-pt">--</span></div>
+      <div class="t-row"><span class="t-label">Budget</span><span class="t-val" id="qqq-budget">--</span></div>
+      <div class="t-row"><span class="t-label">Gap</span><span class="t-val" id="qqq-gap">--</span></div>
+      <div class="t-contract" id="qqq-ticker">--</div>
+    </div>
+
+    <div class="trade" id="spy-card">
+      <div class="t-hdr">
+        <span class="t-name">SPY</span>
+        <span class="t-badge" id="spy-badge" style="background:#1a1a2e;color:var(--muted)">--</span>
+      </div>
+      <div class="t-row"><span class="t-label">Strike</span><span class="t-val" id="spy-strike">--</span></div>
+      <div class="t-row"><span class="t-label">Delta</span><span class="t-val" id="spy-delta">δ0.60 target</span></div>
+      <div class="t-row"><span class="t-label">Bid / Ask</span><span class="t-val" id="spy-ba">--</span></div>
+      <div class="t-row"><span class="t-label">Limit (mid)</span><span class="t-val amber" id="spy-limit">--</span></div>
+      <div class="t-row"><span class="t-label">Contracts</span><span class="t-val" id="spy-cts">--</span></div>
+      <div class="t-row"><span class="t-label">PT (+65%)</span><span class="t-val green" id="spy-pt">--</span></div>
+      <div class="t-row"><span class="t-label">Budget</span><span class="t-val" id="spy-budget">--</span></div>
+      <div class="t-row"><span class="t-label">Gap</span><span class="t-val" id="spy-gap">--</span></div>
+      <div class="t-contract" id="spy-ticker">--</div>
+    </div>
+  </div>
+
+  <!-- P&L tracker -->
+  <div class="pnl" id="pnl-section">
+    <div class="pnl-hdr">Live P&L</div>
+    <div class="inputs">
+      <label>QQQ entry:</label><input type="number" id="qqq-entry" placeholder="0.00" step="0.01" oninput="calcPnL()">
+      <label>SPY entry:</label><input type="number" id="spy-entry" placeholder="0.00" step="0.01" oninput="calcPnL()">
+    </div>
+    <div class="total" id="pnl-total">--</div>
+    <div class="breakdown">
+      <span>QQQ: <span id="pnl-qqq">--</span></span>
+      <span>SPY: <span id="pnl-spy">--</span></span>
+    </div>
+  </div>
+
+  <!-- Collapsible rules -->
+  <div class="rules-toggle" id="rules-toggle" onclick="toggleRules()">▸ Strategy rules</div>
+  <div class="rules" id="rules-box">
+    <strong>Entry:</strong> 9:31 AM · Buy 0DTE put at mid (QQQ δ0.55, SPY δ0.60) · Gap down → 1.5× budget, Gap up → 0.75×<br><br>
+    <strong>Exit A — PT +65%:</strong> Limit sell at entry × 1.65. Fills automatically if touched.<br>
+    <strong>Exit B — 9:50 close:</strong> If no PT fill by 9:50, exit all at market.<br><br>
+    <strong>Signal:</strong> Prior day close location > 75% of day's range.
+  </div>
+
+  <div class="foot" id="footer">V9 · auto-refreshes 30s</div>
+</div>
+
+<script>
+const CFG = {
+  today: new Date().toISOString().slice(0,10),
+  key: "cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF",
+  pt: 1.65, gapDn: 1.5, gapUp: 0.75, threshold: 0.75, comm: 1.10,
+  tickers: {
+    QQQ: { delta:0.55, budget:104000 },
+    SPY: { delta:0.60, budget:99000 }
+  }
+};
+const POLY = 'https://api.polygon.io';
+const fmt$ = n => n==null||isNaN(n) ? '--' : '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtK = n => n==null||isNaN(n) ? '--' : (n>=0?'+$':'-$')+Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0});
+const el = id => document.getElementById(id);
+const set = (id,v) => { const e=el(id); if(e) e.textContent=v; };
+
+async function poly(path) {
+  try {
+    const sep = path.includes('?') ? '&' : '?';
+    return await (await fetch(POLY+path+sep+'apiKey='+CFG.key)).json();
+  } catch(e) { return {}; }
+}
+
+const getET = () => new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}));
+const isWkday = () => { const d=new Date().getDay(); return d>=1&&d<=5; };
+function phase(et) {
+  const m = et.getHours()*60+et.getMinutes();
+  if (m < 9*60+30) return 'pre';
+  if (m < 9*60+32) return 'entry';
+  if (m < 9*60+50) return 'active';
+  if (m < 9*60+51) return 'time_exit';
+  if (m < 16*60) return 'post';
+  return 'closed';
+}
+
+const S = {};
+for (const tk of ['QQQ','SPY']) {
+  S[tk] = { signal:false, loc:0, priorC:null, priorH:null, priorL:null,
+    open:null, live:null, gapUp:null, budget:null,
+    strike:null, locked:false, optTicker:null,
+    bid:null, ask:null, mid:null, cts:null, delta:null,
+    ptHit:false };
+}
+
+// ── Signal check ──
+async function fetchSignals() {
+  const start = new Date(new Date(CFG.today) - 10*86400000).toISOString().slice(0,10);
+  for (const tk of ['QQQ','SPY']) {
+    const d = await poly(`/v2/aggs/ticker/${tk}/range/1/day/${start}/${CFG.today}?adjusted=true&sort=asc&limit=15`);
+    const bars = d.results || [];
+    const prior = bars.filter(b => new Date(b.t).toISOString().slice(0,10) < CFG.today).slice(-1)[0];
+    if (!prior) continue;
+    const rng = prior.h - prior.l;
+    S[tk].loc = rng > 0 ? (prior.c - prior.l) / rng : 0.5;
+    S[tk].priorC = prior.c; S[tk].priorH = prior.h; S[tk].priorL = prior.l;
+    S[tk].signal = S[tk].loc > CFG.threshold;
+  }
+  renderSignalHero();
+}
+
+function renderSignalHero() {
+  const hero = el('signal-hero');
+  const qSig = S.QQQ.signal, sSig = S.SPY.signal;
+  const count = (qSig?1:0) + (sSig?1:0);
+  const names = [qSig&&'QQQ', sSig&&'SPY'].filter(Boolean).join(' + ');
+
+  // Loc bars
+  for (const tk of ['QQQ','SPY']) {
+    const t = tk.toLowerCase();
+    el(t+'-fill').style.width = Math.min(S[tk].loc*100,100)+'%';
+    const v = el(t+'-loc-val');
+    v.textContent = S[tk].loc ? (S[tk].loc*100).toFixed(1)+'%' : '--';
+    v.className = 'loc-val '+(S[tk].signal ? 'hot' : 'cold');
+  }
+
+  if (count > 0) {
+    hero.className = 'signal-hero go';
+    el('sig-icon').textContent = '🟢';
+    el('sig-headline').textContent = count === 2 ? 'BOTH SIGNALS ACTIVE' : names+' SIGNAL ACTIVE';
+    el('sig-detail').innerHTML = 'Prior close in <strong>upper 25%</strong> of range → short put at 9:31';
+    el('trade-cards').style.display = 'grid';
+    // Show only active cards
+    el('qqq-card').style.display = qSig ? 'block' : 'none';
+    el('spy-card').style.display = sSig ? 'block' : 'none';
+    if (count === 1) el('trade-cards').style.gridTemplateColumns = '1fr';
+    else el('trade-cards').style.gridTemplateColumns = '1fr 1fr';
+  } else {
+    hero.className = 'signal-hero no';
+    el('sig-icon').textContent = '⭕';
+    el('sig-headline').textContent = 'NO SIGNAL TODAY';
+    el('sig-detail').textContent = 'Prior close not in upper 25% of range — no trade';
+    el('trade-cards').style.display = 'none';
+  }
+
+  // Update badges on trade cards
+  for (const tk of ['QQQ','SPY']) {
+    const t = tk.toLowerCase();
+    const badge = el(t+'-badge');
+    if (S[tk].signal) {
+      badge.textContent = 'ACTIVE';
+      badge.style.background = '#052e16'; badge.style.color = 'var(--green)'; badge.style.border = '1px solid var(--green)';
+      el(t+'-card').classList.add('active');
+    } else {
+      badge.textContent = 'OFF';
+      badge.style.background = '#1a1a2e'; badge.style.color = 'var(--muted)';
+    }
+  }
+}
+
+// ── Prices ──
+async function fetchPrices() {
+  for (const tk of ['QQQ','SPY']) {
+    const d = await poly(`/v2/snapshot/locale/us/markets/stocks/tickers/${tk}`);
+    const snap = d.ticker;
+    if (!snap) continue;
+    S[tk].live = snap.lastTrade?.p || snap.day?.c;
+    const open = snap.day?.o;
+    if (open) S[tk].open = open;
+    const eff = open || S[tk].live;
+    if (eff && S[tk].priorC) {
+      S[tk].gapUp = eff > S[tk].priorC;
+      const mult = S[tk].gapUp ? CFG.gapUp : CFG.gapDn;
+      S[tk].budget = Math.round(CFG.tickers[tk].budget * mult / 1000) * 1000;
+    }
+  }
+}
+
+// ── Options ──
+async function fetchOptions() {
+  const today = CFG.today;
+  const p = phase(getET());
+  const lock = ['entry','active','time_exit','post'].includes(p);
+
+  for (const tk of ['QQQ','SPY']) {
+    if (!S[tk].signal) continue;
+    const stk = S[tk];
+    const tgt = CFG.tickers[tk].delta;
+    const ul = stk.live || stk.open;
+    if (!ul) continue;
+
+    const is0DTE = o => o.details?.expiration_date === today;
+    const priceOK = (b,a) => (b==null||a==null) ? true : (b+a)/2 < 30;
+
+    if (stk.locked && stk.strike) {
+      const d = await poly(`/v3/snapshot/options/${tk}?expiration_date=${today}&option_type=put&strike_price_gte=${stk.strike}&strike_price_lte=${stk.strike}&limit=10`);
+      const best = (d.results||[]).filter(is0DTE)[0];
+      if (best) {
+        const b=best.last_quote?.bid??null, a=best.last_quote?.ask??null;
+        if (priceOK(b,a)) { stk.bid=b; stk.ask=a; stk.mid=(b!=null&&a!=null)?(b+a)/2:(best.day?.close??stk.mid); }
+        stk.delta = best.greeks?.delta ? Math.abs(best.greeks.delta) : stk.delta;
+        stk.optTicker = best.details?.ticker||null;
+      }
+    } else {
+      const d = await poly(`/v3/snapshot/options/${tk}?expiration_date=${today}&option_type=put&strike_price_gte=${Math.floor(ul*0.95)}&strike_price_lte=${Math.ceil(ul*1.12)}&limit=250&order=desc`);
+      const results = (d.results||[]).filter(o => {
+        if (!o.greeks?.delta || !is0DTE(o)) return false;
+        const b=o.last_quote?.bid, a=o.last_quote?.ask;
+        return !(b!=null && a!=null && (b+a)/2 > 30);
+      });
+      let best=null, bestD=99;
+      for (const o of results) { const dd=Math.abs(Math.abs(o.greeks.delta)-tgt); if(dd<bestD){bestD=dd;best=o;} }
+      if (best) {
+        stk.strike = best.details?.strike_price;
+        stk.delta = Math.abs(best.greeks.delta);
+        stk.bid = best.last_quote?.bid??null; stk.ask = best.last_quote?.ask??null;
+        stk.mid = (stk.bid!=null&&stk.ask!=null)?(stk.bid+stk.ask)/2:(best.day?.close??null);
+        stk.optTicker = best.details?.ticker||null;
+      }
+      if (lock && stk.strike) stk.locked = true;
+    }
+    if (stk.mid && stk.budget) stk.cts = Math.floor(stk.budget / (stk.mid * 100));
+    renderCard(tk);
+    checkAlerts(tk);
+  }
+  calcPnL();
+}
+
+function renderCard(tk) {
+  const s = S[tk], t = tk.toLowerCase(), tgt = CFG.tickers[tk].delta;
+  set(t+'-strike', s.strike ? '$'+s.strike : '--');
+  if (s.delta) {
+    const off = Math.abs(s.delta - tgt);
+    const dEl = el(t+'-delta');
+    dEl.textContent = 'δ'+s.delta.toFixed(3) + (s.locked?' 🔒':'');
+    dEl.style.color = off > 0.12 ? 'var(--red)' : off > 0.06 ? 'var(--amber)' : 'var(--green)';
+  }
+  set(t+'-ba', (s.bid!=null&&s.ask!=null) ? fmt$(s.bid)+' / '+fmt$(s.ask) : '--');
+  set(t+'-limit', s.mid ? fmt$(s.mid) : '--');
+  set(t+'-cts', s.cts || '--');
+  set(t+'-pt', s.mid ? fmt$(s.mid * CFG.pt) : '--');
+  set(t+'-budget', s.budget ? '$'+s.budget.toLocaleString() : '--');
+  if (s.open && s.priorC) {
+    const gp = ((s.open - s.priorC)/s.priorC*100);
+    const gEl = el(t+'-gap');
+    gEl.textContent = (gp>=0?'+':'')+gp.toFixed(2)+'% '+(s.gapUp?'(↑ 0.75×)':'(↓ 1.5×)');
+    gEl.className = 't-val '+(s.gapUp?'red':'green');
+  }
+  set(t+'-ticker', s.optTicker || '--');
+}
+
+function checkAlerts(tk) {
+  const s = S[tk];
+  const entry = parseFloat(el(tk.toLowerCase()+'-entry')?.value);
+  if (!s.ptHit && !isNaN(entry) && s.mid && s.mid >= entry * CFG.pt) s.ptHit = true;
+  if (s.ptHit) {
+    el('alert-pt').style.display = 'block';
+    set('alert-pt-detail', tk+': filled at '+fmt$(entry*CFG.pt)+' · entry '+fmt$(entry));
+  }
+}
+
+function calcPnL() {
+  let total=0, any=false;
+  for (const tk of ['QQQ','SPY']) {
+    const s=S[tk], t=tk.toLowerCase();
+    const entry=parseFloat(el(t+'-entry')?.value);
+    if (!isNaN(entry) && s.mid && s.cts) {
+      const pnl = (s.mid - entry)*s.cts*100 - s.cts*CFG.comm;
+      const pEl = el('pnl-'+t);
+      pEl.textContent = fmtK(pnl);
+      pEl.style.color = pnl>=0?'var(--green)':'var(--red)';
+      total += pnl; any = true;
+    }
+  }
+  if (any) {
+    const tEl = el('pnl-total');
+    tEl.textContent = fmtK(total);
+    tEl.style.color = total>=0?'var(--green)':'var(--red)';
+  }
+}
+
+// ── Clock & phase ──
+function updateClock() {
+  const et = getET();
+  set('live-clock', et.toLocaleTimeString('en-US',{hour12:false}));
+  const dow = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][et.getDay()];
+  const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][et.getMonth()];
+  set('hdr-date', dow+', '+mon+' '+et.getDate()+', '+et.getFullYear());
+
+  const p = phase(et);
+  const bar = el('phase-bar'), mb = el('mkt-badge');
+  const anySignal = S.QQQ.signal || S.SPY.signal;
+
+  if (!isWkday()) {
+    bar.textContent='MARKET CLOSED'; bar.style.background='#12121e'; bar.style.borderColor='#333'; bar.style.color='#555';
+    mb.textContent='CLOSED'; mb.style.background='#1a0a0a'; mb.style.color='#666'; return;
+  }
+
+  const phases = {
+    pre:       ['PRE-MARKET · Opens 9:30 ET','#08122a','#1e3a5f','#60a5fa','PRE-MKT'],
+    entry:     ['🚨 ENTRY WINDOW · 9:31 AM','#031a0a','var(--green)','var(--green)','ENTER'],
+    active:    ['IN TRADE · Watching for +65% PT','#1a1208','#d97706','var(--amber)','ACTIVE'],
+    time_exit: ['⏰ 9:50 · EXIT ALL NOW','#1a1208','#d97706','var(--amber)','EXIT'],
+    post:      ['TRADE WINDOW CLOSED','#12121e','#333','#888','DONE'],
+    closed:    ['MARKET CLOSED','#12121e','#333','#555','CLOSED'],
+  };
+  const [txt,bg,bc,tc,badge] = phases[p]||phases.closed;
+  bar.textContent = txt; bar.style.background=bg; bar.style.borderColor=bc; bar.style.color=tc;
+  mb.textContent = badge; mb.style.background=bg; mb.style.color=tc;
+
+  el('alert-entry').style.display = (p==='entry' && anySignal) ? 'block' : 'none';
+  const anyPT = S.QQQ.ptHit || S.SPY.ptHit;
+  el('alert-time').style.display = (p==='time_exit' && !anyPT && anySignal) ? 'block' : 'none';
+  el('pnl-section').style.display = ['entry','active','time_exit','post'].includes(p) && anySignal ? 'block' : 'none';
+  calcPnL();
+}
+
+function toggleRules() {
+  const box = el('rules-box');
+  box.classList.toggle('show');
+  el('rules-toggle').textContent = box.classList.contains('show') ? '▾ Strategy rules' : '▸ Strategy rules';
+}
+
+// ── Main loop ──
+async function tick() {
+  await fetchPrices();
+  if (isWkday()) await fetchOptions();
+  set('footer','V9 · Updated '+new Date().toLocaleTimeString()+' · refreshes 30s');
+}
+
+fetchSignals().then(tick);
+setInterval(updateClock, 1000);
+setInterval(tick, 30000);
+updateClock();
+</script>
+</body>
+</html>
