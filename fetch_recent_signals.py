@@ -143,7 +143,7 @@ def main():
             prior = None
             today_bar = None
             for i, b in enumerate(bars):
-                bdate = datetime.fromtimestamp(b['t']/1000, tz=ET).strftime("%Y-%m-%d")
+                bdate = datetime.fromtimestamp(b['t']/1000, tz=timezone.utc).strftime("%Y-%m-%d")
                 if bdate == ds:
                     today_bar = b
                     if i > 0:
