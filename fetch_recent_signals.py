@@ -8,11 +8,11 @@ Output: output/recent_trades.json
 """
 import json, time, os, math
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 import urllib.request
 
-# Eastern Time offset (UTC-5 for EST, UTC-4 for EDT)
-# Use fixed ET offset; for dates near DST boundary, ±1hr doesn't affect date or bar labels
-ET = timezone(timedelta(hours=-5))
+# Proper Eastern timezone (handles EST/EDT transitions automatically)
+ET = ZoneInfo('America/New_York')
 
 API = os.environ.get("POLYGON_KEY", "cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF")
 POLY = "https://api.polygon.io"
