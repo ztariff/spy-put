@@ -7,8 +7,12 @@ Run locally: python3 fetch_recent_signals.py
 Output: output/recent_trades.json
 """
 import json, time, os, math
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import urllib.request
+
+# Eastern Time offset (UTC-5 for EST, UTC-4 for EDT)
+# Use fixed ET offset; for dates near DST boundary, ±1hr doesn't affect date or bar labels
+ET = timezone(timedelta(hours=-5))
 
 API = os.environ.get("POLYGON_KEY", "cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF")
 POLY = "https://api.polygon.io"
@@ -59,7 +63,7 @@ def get_1min_bars(option_ticker, date):
     bars = d.get('results', [])
     result = {}
     for b in bars:
-        t = datetime.fromtimestamp(b['t']/1000)
+        t = datetime.fromtimestamp(b['t']/1000, tz=ET)
         label = t.strftime("%H:%M")
         result[label] = {'o': b.get('o',0), 'h': b.get('h',0), 'l': b.get('l',0), 'c': b.get('c',0), 'v': b.get('v',0)}
     return result
@@ -70,7 +74,7 @@ def get_5min_bars(option_ticker, date):
     bars = d.get('results', [])
     result = {}
     for b in bars:
-        t = datetime.fromtimestamp(b['t']/1000)
+        t = datetime.fromtimestamp(b['t']/1000, tz=ET)
         label = t.strftime("%H:%M")
         result[label] = {'o': b.get('o',0), 'h': b.get('h',0), 'l': b.get('l',0), 'c': b.get('c',0), 'v': b.get('v',0)}
     return result
@@ -139,7 +143,7 @@ def main():
             prior = None
             today_bar = None
             for i, b in enumerate(bars):
-                bdate = datetime.fromtimestamp(b['t']/1000).strftime("%Y-%m-%d")
+                bdate = datetime.fromtimestamp(b['t']/1000, tz=ET).strftime("%Y-%m-%d")
                 if bdate == ds:
                     today_bar = b
                     if i > 0:
