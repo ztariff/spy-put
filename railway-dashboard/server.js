@@ -102,9 +102,9 @@ function getPhase() {
   if (dow === 0 || dow === 6) return 'closed';
   const m = et.getHours() * 60 + et.getMinutes();
   if (m < 9 * 60 + 30) return 'pre';
-  if (m < 9 * 60 + 32) return 'entry';
-  if (m < 9 * 60 + 50) return 'active';
-  if (m < 9 * 60 + 51) return 'time_exit';
+  if (m < 9 * 60 + 34) return 'entry';    // V10: entry window 9:30-9:33 (lock at 9:33)
+  if (m < 9 * 60 + 55) return 'active';   // V10: active until 9:55
+  if (m < 9 * 60 + 56) return 'time_exit'; // V10: time exit at 9:55
   if (m < 16 * 60) return 'post';
   return 'closed';
 }
@@ -179,9 +179,12 @@ async function fetchOptions() {
   const p = getPhase();
   const lock = ['entry', 'active', 'time_exit', 'post'].includes(p);
 
+  // V10: Both-ticker filter — only trade when both QQQ and SPY signal
+  const bothSignal = STATE.tickers.QQQ.signal && STATE.tickers.SPY.signal;
+
   for (const tk of ['QQQ', 'SPY']) {
     const stk = STATE.tickers[tk];
-    if (!stk.signal) continue;
+    if (!stk.signal || !bothSignal) continue;
     const tgt = CFG.tickers[tk].delta;
     const ul = stk.live || stk.open;
     if (!ul) continue;
@@ -254,11 +257,11 @@ async function fetchOptions() {
       }
     }
 
-    // Check time exit at 9:50
+    // V10: Check time exit at 9:55
     if (stk.locked && stk.entryPx && !stk.ptHit && !stk.exitReason && p === 'time_exit') {
       stk.exitPx = stk.mid;
       stk.exitTime = etTimeString();
-      stk.exitReason = 'time_exit_950';
+      stk.exitReason = 'time_exit_955';
       console.log(`TIME EXIT ${tk}: exit=${stk.exitPx?.toFixed(4)} @ ${stk.exitTime}`);
     }
   }
@@ -277,6 +280,7 @@ function broadcast() {
     time: etTimeString(),
     today: getToday(),
     cfg: CFG,
+    bothSignal: STATE.tickers.QQQ.signal && STATE.tickers.SPY.signal,
   });
   const msg = `data: ${payload}\n\n`;
   for (const res of clients) {
@@ -337,6 +341,7 @@ app.get('/events', (req, res) => {
     time: etTimeString(),
     today: getToday(),
     cfg: CFG,
+    bothSignal: STATE.tickers.QQQ.signal && STATE.tickers.SPY.signal,
   });
   res.write(`data: ${payload}\n\n`);
 
@@ -351,6 +356,7 @@ app.get('/state', (req, res) => {
     time: etTimeString(),
     today: getToday(),
     cfg: CFG,
+    bothSignal: STATE.tickers.QQQ.signal && STATE.tickers.SPY.signal,
   });
 });
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>V9 Live — 0DTE Short Puts</title>
+<title>V10 Live — 0DTE Short Puts</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#08090d;--card:#0f1117;--border:#1e2230;--green:#00c896;--red:#ef4444;--amber:#f59e0b;--blue:#60a5fa;--purple:#a78bfa;--text:#e2e8f0;--muted:#64748b}
@@ -87,7 +87,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <div class="hdr">
     <div>
       <div class="date" id="hdr-date">Loading...</div>
-      <div class="sub">V9 · 0DTE Short Puts · +65% or 9:50</div>
+      <div class="sub">V10 · 0DTE Short Puts · +65% or 9:55 · Both-ticker filter</div>
     </div>
     <div style="text-align:right">
       <div class="clock" id="live-clock">--:--:--</div>
@@ -115,9 +115,9 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
   <div class="phase" id="phase-bar" style="background:#12121e;border-color:var(--border);color:var(--muted)">--</div>
 
-  <div class="action entry blink" id="alert-entry">🚨 ENTER NOW — Buy puts at mid price<div class="sub">9:31 AM · Limit orders at the prices shown below</div></div>
+  <div class="action entry blink" id="alert-entry">🚨 ENTER NOW — Buy puts at mid price<div class="sub">9:33 AM · Limit orders at the prices shown below</div></div>
   <div class="action exit-pt" id="alert-pt">✅ +65% PT HIT — TRADE COMPLETE<div class="sub" id="alert-pt-detail">Limit order filled</div></div>
-  <div class="action exit-time" id="alert-time">⏰ 9:50 — EXIT ALL AT MARKET<div class="sub">No PT hit · Close 100% now</div></div>
+  <div class="action exit-time" id="alert-time">⏰ 9:55 — EXIT ALL AT MARKET<div class="sub">No PT hit · Close 100% now</div></div>
 
   <div class="trades" id="trade-cards" style="display:none">
     <div class="trade" id="qqq-card">
@@ -168,14 +168,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
   <div class="rules-toggle" id="rules-toggle" onclick="toggleRules()">▸ Strategy rules</div>
   <div class="rules" id="rules-box">
-    <strong>Entry:</strong> 9:31 AM · Buy 0DTE put at mid (QQQ δ0.55, SPY δ0.60) · Gap down → 1.5× budget, Gap up → 0.75×<br><br>
+    <strong>Entry:</strong> 9:33 AM · Buy 0DTE put at mid (QQQ δ0.55, SPY δ0.60) · Gap down → 1.5× budget, Gap up → 0.75×<br><br>
     <strong>Exit A — PT +65%:</strong> Limit sell at entry × 1.65. Fills automatically if touched.<br>
-    <strong>Exit B — 9:50 close:</strong> If no PT fill by 9:50, exit all at market.<br><br>
-    <strong>Signal:</strong> Prior day close location > 75% of day's range.
+    <strong>Exit B — 9:55 close:</strong> If no PT fill by 9:55, exit all at market.<br><br>
+    <strong>Signal:</strong> Prior day close location > 75% of day's range · <strong>Both QQQ and SPY must signal</strong> (both-ticker filter).
   </div>
 
-  <div style="text-align:center;margin:16px 0 8px"><a href="/calendar" style="color:var(--blue);font-size:13px;text-decoration:none;border:1px solid var(--border);padding:6px 16px;border-radius:6px;display:inline-block">📅 V9 Backtest Calendar</a></div>
-  <div class="foot" id="footer">V9 · Connecting...</div>
+  <div style="text-align:center;margin:16px 0 8px"><a href="/calendar" style="color:var(--blue);font-size:13px;text-decoration:none;border:1px solid var(--border);padding:6px 16px;border-radius:6px;display:inline-block">📅 V10 Backtest Calendar</a></div>
+  <div class="foot" id="footer">V10 · Connecting...</div>
 </div>
 
 <script>
@@ -243,15 +243,23 @@ function render(data) {
     v.className = 'loc-val '+(tks[tk].signal ? 'hot' : 'cold');
   }
 
-  if (count > 0) {
+  const bothSignal = data.bothSignal;
+
+  if (count === 2 && bothSignal) {
     hero.className = 'signal-hero go';
     el('sig-icon').textContent = '🟢';
-    el('sig-headline').textContent = count === 2 ? 'BOTH SIGNALS ACTIVE' : names+' SIGNAL ACTIVE';
-    el('sig-detail').innerHTML = 'Prior close in <strong>upper 25%</strong> of range → buy put at 9:31';
+    el('sig-headline').textContent = 'BOTH SIGNALS ACTIVE';
+    el('sig-detail').innerHTML = 'Prior close in <strong>upper 25%</strong> of range → buy puts at 9:33';
     el('trade-cards').style.display = 'grid';
-    el('qqq-card').style.display = qSig ? 'block' : 'none';
-    el('spy-card').style.display = sSig ? 'block' : 'none';
-    el('trade-cards').style.gridTemplateColumns = count === 1 ? '1fr' : '1fr 1fr';
+    el('qqq-card').style.display = 'block';
+    el('spy-card').style.display = 'block';
+    el('trade-cards').style.gridTemplateColumns = '1fr 1fr';
+  } else if (count > 0 && !bothSignal) {
+    hero.className = 'signal-hero no';
+    el('sig-icon').textContent = '🚫';
+    el('sig-headline').textContent = 'NO TRADE — FILTER';
+    el('sig-detail').innerHTML = names+' signal active but <strong>both QQQ + SPY must signal</strong> to trade';
+    el('trade-cards').style.display = 'none';
   } else {
     hero.className = 'signal-hero no';
     el('sig-icon').textContent = '⭕';
@@ -311,9 +319,9 @@ function render(data) {
   const bar = el('phase-bar'), mb = el('mkt-badge');
   const phases = {
     pre:       ['PRE-MARKET · Opens 9:30 ET','#08122a','#1e3a5f','#60a5fa','PRE-MKT'],
-    entry:     ['🚨 ENTRY WINDOW · 9:31 AM','#031a0a','var(--green)','var(--green)','ENTER'],
+    entry:     ['🚨 ENTRY WINDOW · 9:33 AM','#031a0a','var(--green)','var(--green)','ENTER'],
     active:    ['IN TRADE · Watching for +65% PT','#1a1208','#d97706','var(--amber)','ACTIVE'],
-    time_exit: ['⏰ 9:50 · EXIT ALL NOW','#1a1208','#d97706','var(--amber)','EXIT'],
+    time_exit: ['⏰ 9:55 · EXIT ALL NOW','#1a1208','#d97706','var(--amber)','EXIT'],
     post:      ['TRADE WINDOW CLOSED','#12121e','#333','#888','DONE'],
     closed:    ['MARKET CLOSED','#12121e','#333','#555','CLOSED'],
   };
@@ -321,11 +329,11 @@ function render(data) {
   bar.textContent = txt; bar.style.background=bg; bar.style.borderColor=bc; bar.style.color=tc;
   mb.textContent = badgeTxt; mb.style.background=bg; mb.style.color=tc;
 
-  // Alerts
+  // Alerts — only show when both-ticker filter passes
   const anyPT = tks.QQQ.ptHit || tks.SPY.ptHit;
   const anyExit = tks.QQQ.exitReason || tks.SPY.exitReason;
-  el('alert-entry').style.display = (phase==='entry' && anySignal && !anyExit) ? 'block' : 'none';
-  el('alert-time').style.display = (phase==='time_exit' && !anyPT && anySignal) ? 'block' : 'none';
+  el('alert-entry').style.display = (phase==='entry' && bothSignal && !anyExit) ? 'block' : 'none';
+  el('alert-time').style.display = (phase==='time_exit' && !anyPT && bothSignal) ? 'block' : 'none';
 
   if (anyPT) {
     el('alert-pt').style.display = 'block';
@@ -339,7 +347,7 @@ function render(data) {
   }
 
   // P&L
-  const showPnl = ['entry','active','time_exit','post'].includes(phase) && anySignal;
+  const showPnl = ['entry','active','time_exit','post'].includes(phase) && bothSignal;
   el('pnl-section').style.display = showPnl ? 'block' : 'none';
   if (showPnl) {
     let total = 0;
@@ -362,7 +370,7 @@ function render(data) {
   }
 
   // Footer
-  set('footer', 'V9 · Server-synced · '+state.lastUpdate?.slice(11,19)+' UTC · '+new Set(['QQQ','SPY'].filter(t=>tks[t].signal)).size+' signals');
+  set('footer', 'V10 · Server-synced · '+state.lastUpdate?.slice(11,19)+' UTC · '+new Set(['QQQ','SPY'].filter(t=>tks[t].signal)).size+' signals');
 }
 
 function toggleRules() {
