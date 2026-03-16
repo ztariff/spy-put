@@ -1,0 +1,12 @@
+{
+  "name": "0dte-dashboard",
+  "version": "1.0.0",
+  "description": "V9 0DTE Short Put Live Signal Dashboard",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
