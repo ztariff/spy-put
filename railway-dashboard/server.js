@@ -370,7 +370,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 loadState();
 
 // Start listening FIRST so Railway health check passes, THEN start polling
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Dashboard server running on port ${PORT}`);
   console.log(`State date: ${STATE.date}, phase: ${getPhase()}`);
 });
