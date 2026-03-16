@@ -362,6 +362,9 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+app.get('/calendar', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'calendar.html'));
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ═══════════════════════════════════════════════════════
