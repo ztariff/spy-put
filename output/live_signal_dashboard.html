@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>0DTE Live Signal Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:20px;max-width:960px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:20px}
+.hdr .sub{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px}
+.hdr h1{font-size:26px;font-weight:700;color:#fff;margin:4px 0}
+.status-pill{display:inline-block;padding:6px 20px;border-radius:20px;font-size:14px;font-weight:700;margin-top:8px;transition:all .3s}
+.premium-line{color:#888;font-size:13px;margin-top:8px}
+.premium-line b{color:#fff}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:20px}
+.kpi .k{background:#12121e;border-radius:8px;padding:10px;text-align:center;transition:all .3s}
+.kpi .k .lab{font-size:9px;color:#555;text-transform:uppercase}
+.kpi .k .val{font-size:18px;font-weight:700;color:#fff}
+.kpi .k .sub{font-size:10px;color:#888}
+.ticker-bar{background:#12121e;border-radius:8px;padding:10px 16px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.ticker-bar .tick{text-align:center}
+.ticker-bar .tick .sym{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.5px}
+.ticker-bar .tick .price{font-size:20px;font-weight:700;color:#fff}
+.ticker-bar .tick .chg{font-size:12px;font-weight:600}
+.or-box{background:#12121e;border:1px solid #1e1e35;border-radius:10px;padding:14px 18px;margin-bottom:20px}
+.or-box h3{font-size:12px;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px}
+.or-row{display:flex;gap:16px;flex-wrap:wrap}
+.or-item{flex:1;min-width:120px}
+.or-item .ol{font-size:9px;color:#555;text-transform:uppercase}
+.or-item .ov{font-size:15px;font-weight:700;color:#fff}
+.or-item .os{font-size:10px}
+.strats-label{font-size:14px;font-weight:600;color:#fff;margin-bottom:12px}
+.card{border-radius:10px;padding:16px;margin-bottom:10px;transition:all .4s}
+.card.inactive{background:#12121e;border:1px solid #333;opacity:0.5}
+.card.blocked{border:1px solid #f59e0b;background:#f59e0b10}
+.card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card .card-name{font-size:16px;font-weight:700;color:#fff}
+.badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;margin-left:6px}
+.badge.long{background:#064e3b;color:#34d399}
+.badge.short{background:#4c1d1d;color:#f87171}
+.badge.delta{background:#1e1b4b;color:#a5b4fc}
+.card .desc{color:#999;font-size:12px;margin-bottom:6px}
+.card .signal-reason{color:#aaa;font-size:11px;margin-bottom:6px}
+.card .details{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #ffffff10}
+.card .details .dl{font-size:9px;color:#555;text-transform:uppercase}
+.card .details .dv{font-size:13px;font-weight:600;color:#fff}
+.active-badge{background:#ef4444;color:#fff;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:700}
+.blocked-badge{background:#78350f;color:#fbbf24;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:600}
+.inactive-badge{color:#555;font-size:11px}
+.trigger-row{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px}
+.trigger-row.waiting{background:#fbbf2415;border:1px solid #fbbf24;color:#fbbf24}
+.trigger-row.triggered{background:#4ade8015;border:1px solid #4ade80;color:#4ade80}
+.trigger-row.missed{background:#f8717115;border:1px solid #f87171;color:#f87171}
+.trigger-row.exited{background:#60a5fa15;border:1px solid #60a5fa;color:#60a5fa}
+.trigger-row .dot{width:8px;height:8px;border-radius:50%;animation:pulse 1.5s infinite}
+.trigger-row.waiting .dot{background:#fbbf24}
+.trigger-row.triggered .dot{background:#4ade80}
+.trigger-row.missed .dot{background:#f87171}
+.trigger-row.exited .dot{background:#60a5fa;animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.alert{display:none;position:fixed;top:0;left:0;right:0;padding:14px;text-align:center;font-size:16px;font-weight:700;z-index:100;animation:slideDown .3s}
+.alert.show{display:block}
+.alert.entry{background:#4ade80;color:#000}
+.alert.caution{background:#fbbf24;color:#000}
+.alert.exit{background:#60a5fa;color:#000}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+/* Event log */
+.log-box{background:#12121e;border:1px solid #1e1e35;border-radius:10px;padding:14px 18px;margin-bottom:20px}
+.log-box h3{font-size:12px;color:#888;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;display:flex;justify-content:space-between;align-items:center}
+.log-box h3 .count{font-size:10px;color:#555;font-weight:400}
+.log-entry{padding:6px 0;border-bottom:1px solid #1a1a2e;font-size:12px;display:flex;gap:10px;align-items:flex-start}
+.log-entry:last-child{border-bottom:none}
+.log-entry .log-time{color:#666;font-family:monospace;font-size:11px;min-width:85px;flex-shrink:0}
+.log-entry .log-icon{font-size:11px;min-width:36px;text-align:center;flex-shrink:0;font-family:monospace;font-weight:700}
+.log-entry .log-msg{color:#ccc;flex:1}
+.log-entry .log-price{color:#888;font-family:monospace;font-size:11px;flex-shrink:0}
+.log-entry.trigger .log-msg{color:#4ade80;font-weight:600}
+.log-entry.alert-entry .log-msg{color:#fbbf24;font-weight:600}
+.log-entry.exit-log .log-msg{color:#60a5fa;font-weight:600}
+.log-entry.missed-log .log-msg{color:#f87171;font-weight:600}
+.log-entry.or-log .log-msg{color:#a78bfa}
+.log-entry.price-log .log-msg{color:#888}
+.log-entry.opt-log .log-msg{color:#c084fc}
+/* Position box */
+.pos-box{margin-top:10px;background:#0d0d18;border:1px solid #2a2a4a;border-radius:8px;padding:12px 14px}
+.pos-box .pos-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pos-box .pos-title{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.pos-box .pos-contract{font-size:13px;font-weight:700;color:#c084fc}
+.pos-box .pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pos-box .pos-grid .pg{text-align:center}
+.pos-box .pos-grid .pg .pl{font-size:9px;color:#555;text-transform:uppercase}
+.pos-box .pos-grid .pg .pv{font-size:14px;font-weight:700;color:#fff}
+.pos-box .pos-pnl{margin-top:10px;padding:8px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.pos-box .pos-pnl.profit{background:#4ade8018;border:1px solid #4ade80;color:#4ade80}
+.pos-box .pos-pnl.loss{background:#f8717118;border:1px solid #f87171;color:#f87171}
+.pos-box .pos-pnl.flat{background:#88888818;border:1px solid #888;color:#888}
+.pos-box .pos-pnl .pnl-label{font-size:11px}
+.pos-box .pos-pnl .pnl-value{font-size:18px}
+.pos-box .pos-pnl .pnl-pct{font-size:13px;opacity:0.8}
+.pos-box .pos-pt{margin-top:6px;padding:6px 10px;border-radius:4px;background:#fbbf2420;border:1px solid #fbbf24;color:#fbbf24;font-size:11px;font-weight:700;text-align:center}
+.pos-box .pos-exit-final{margin-top:8px;padding:8px 12px;border-radius:6px;background:#60a5fa18;border:1px solid #60a5fa;text-align:center}
+.pos-box .pos-exit-final .ef-label{font-size:10px;color:#60a5fa;text-transform:uppercase;margin-bottom:2px}
+.pos-box .pos-exit-final .ef-value{font-size:20px;font-weight:700}
+.footer{text-align:center;margin-top:20px;color:#444;font-size:10px}
+.footer .live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4ade80;margin-right:4px;animation:pulse 1.5s infinite}
+.sound-toggle{position:fixed;top:12px;right:12px;background:#1a1a2e;border:1px solid #333;color:#ccc;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;z-index:50}
+.sound-toggle:hover{background:#252545}
+</style>
+</head><body>
+
+<button class="sound-toggle" onclick="toggleSound()" id="soundBtn">Sound ON</button>
+
+<div id="alertBanner" class="alert"></div>
+
+<div class="hdr">
+  <div class="sub">0DTE Options · Live Signal Dashboard</div>
+  <h1 id="dateLabel"></h1>
+  <div class="status-pill" id="statusPill"></div>
+  <div class="premium-line" id="premiumLine"></div>
+</div>
+
+<div class="ticker-bar">
+  <div class="tick"><div class="sym">SPY</div><div class="price" id="spyPrice">--</div><div class="chg" id="spyChg"></div></div>
+  <div class="tick"><div class="sym">QQQ</div><div class="price" id="qqqPrice">--</div><div class="chg" id="qqqChg"></div></div>
+  <div class="tick"><div class="sym">Last Update</div><div class="price" id="lastUpdate" style="font-size:14px">--</div><div class="chg" id="pollStatus" style="color:#888">Connecting...</div></div>
+  <div class="tick"><div class="sym">Market</div><div class="price" id="marketStatus" style="font-size:14px">--</div></div>
+</div>
+
+<div class="kpi" id="kpiStrip"></div>
+
+<div class="or-box" id="orBox" style="display:none">
+  <h3>Opening Range Monitor (first 5 min: 9:30-9:35)</h3>
+  <div class="or-row" id="orRow"></div>
+</div>
+
+<!-- Event Log -->
+<div class="log-box">
+  <h3>Event Log <span class="count" id="logCount"></span></h3>
+  <div id="eventLog"><div class="log-entry"><span class="log-time">--</span><span class="log-icon">--</span><span class="log-msg" style="color:#555">Waiting for data...</span></div></div>
+</div>
+
+<div class="strats-label">Strategies</div>
+<div id="stratCards"></div>
+
+<div class="footer">
+  <span class="live-dot"></span>
+  <span id="footerText">Polling Polygon every 10s · Prior day data loads on start</span>
+</div>
+
+<script>
+const API_KEY = 'cBE5Kbq9yllt0Yj29mDQjBcIKfAYQlHF';
+const BASE = 'https://api.polygon.io';
+const POLL_MS = 10000;
+
+// 9:30 ET = 14:30 UTC in EST (Feb = EST, not EDT)
+const RTH_OPEN_UTC_H = 14, RTH_OPEN_UTC_M = 30;
+
+const BUDGETS = {
+  'GapLarge':32000,'HighVolWR':35000,'QQQ Short':104000,'SPY Short':99000,
+  'QQQ Weak':26000,'SPY Weak':29000,'50Hi Weak':48000,
+};
+
+const STRATEGIES = [
+  {id:'GapLarge',name:'GapLarge',ticker:'SPY',dir:'LONG',delta:0.50,entry:'9:31 AM',exit:'2:50 PM',exitMin:320,desc:'Large gap up (1-2%) fade -- buy the dip after gap exhaustion',color:'#8b5cf6',regime:false},
+  {id:'HighVolWR',name:'HighVolWR',ticker:'SPY',dir:'LONG',delta:0.10,entry:'9:31 AM',exit:'2:45 PM',exitMin:315,desc:'High vol wide range day follow-through -- needs wide opening range',color:'#f59e0b',regime:false},
+  {id:'QQQ Short',name:'QQQ Short',ticker:'QQQ',dir:'SHORT',delta:0.70,entry:'9:31-9:56 AM',exit:'10:00 AM',exitMin:30,entryCloseMin:26,desc:'Prior day strong + above OR midpoint -- fade the strength',color:'#ef4444',regime:false},
+  {id:'SPY Short',name:'SPY Short',ticker:'SPY',dir:'SHORT',delta:0.70,entry:'9:31-9:56 AM',exit:'10:10 AM',exitMin:40,entryCloseMin:26,desc:'Prior day strong + above OR midpoint -- fade the strength',color:'#f87171',regime:false},
+  {id:'QQQ Weak',name:'QQQ Weak',ticker:'QQQ',dir:'LONG',delta:0.50,entry:'9:31 AM',exit:'3:20 PM',exitMin:350,desc:'Prior day weak (close near low) -- mean reversion long',color:'#22d3ee',regime:true},
+  {id:'SPY Weak',name:'SPY Weak',ticker:'SPY',dir:'LONG',delta:0.50,entry:'9:31 AM',exit:'3:05 PM',exitMin:335,desc:'Prior day weak + high RVOL bar -- mean reversion long',color:'#34d399',regime:true},
+  {id:'50Hi Weak',name:'50Hi Weak',ticker:'SPY',dir:'LONG',delta:0.50,entry:'Intraday (50-bar high)',exit:'3:05 PM',exitMin:335,desc:'Prior day weak + new 50-bar high + high RVOL -- breakout long',color:'#a3e635',regime:true},
+];
+
+const HIST = {
+  'GapLarge':{trades:44,wr:75.0,avg:6446,roi:20.1},
+  'HighVolWR':{trades:34,wr:61.8,avg:1758,roi:5.0},
+  'QQQ Short':{trades:470,wr:54.5,avg:6616,roi:6.4},
+  'SPY Short':{trades:464,wr:52.8,avg:5511,roi:5.6},
+  'QQQ Weak':{trades:161,wr:65.2,avg:805,roi:3.1},
+  'SPY Weak':{trades:76,wr:75.0,avg:3898,roi:13.4},
+  '50Hi Weak':{trades:79,wr:60.8,avg:3536,roi:7.4},
+};
+
+// -- State --
+let state = {
+  priorLoaded:false,
+  spyPrior:null,qqqPrior:null,
+  spySMA20:0,spyBelowSMA20:false,
+  spyCloseLoc:0,qqqCloseLoc:0,
+  spyVolRatio:0,spyRangeRatio:0,
+  spyLast:null,qqqLast:null,
+  spyOpen:null,qqqOpen:null,
+  spyPrevClose:null,qqqPrevClose:null,
+  spyORHigh:null,spyORLow:null,spyORMid:null,spyORSet:false,
+  qqqORHigh:null,qqqORLow:null,qqqORMid:null,qqqORSet:false,
+  spy5mBars:[],qqq5mBars:[],
+  signals:{},
+  spyShortTriggered:false,qqqShortTriggered:false,
+  spyShortTriggerTime:null,qqqShortTriggerTime:null,
+  triggerAlertShown:{},exitAlertShown:{},
+  soundOn:true,
+  marketOpen:false,
+  // Option positions: {ticker, strike, entryPrice, currentPrice, contracts, pnl, pnlPct, ptHit, ptTime, exitPrice, exitPnl, exitTime, delta, lookupDone}
+  positions:{},
+  atOpenEntered:{}, // track which at-open strategies have been entered
+};
+
+// -- Event Log --
+let eventLog = [];
+
+function addLog(icon, msg, cls='', priceInfo='') {
+  const now = nowET();
+  const ts = now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
+  if (eventLog.length > 0 && eventLog[eventLog.length-1].msg === msg) return;
+  eventLog.push({ts, icon, msg, cls, priceInfo});
+  renderLog();
+}
+
+function renderLog() {
+  const el = document.getElementById('eventLog');
+  const countEl = document.getElementById('logCount');
+  const entries = eventLog.slice(-50).reverse();
+  countEl.textContent = `${eventLog.length} events`;
+  el.innerHTML = entries.map(e =>
+    `<div class="log-entry ${e.cls}"><span class="log-time">${e.ts}</span><span class="log-icon">${e.icon}</span><span class="log-msg">${e.msg}</span>${e.priceInfo ? `<span class="log-price">${e.priceInfo}</span>` : ''}</div>`
+  ).join('');
+}
+
+// -- Helpers --
+function fmt(v){return v>=0?'+$'+Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0}):'-$'+Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:0})}
+function fmtP(v){return '$'+v.toFixed(2)}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function nowET(){return new Date(new Date().toLocaleString('en-US',{timeZone:'America/New_York'}))}
+function timeStr(d){return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true,timeZone:'America/New_York'})}
+function isMarketHours(){const n=nowET(),h=n.getHours(),m=n.getMinutes();return(h===9&&m>=30)||(h>=10&&h<16)}
+function isPreMarket(){const n=nowET(),h=n.getHours(),m=n.getMinutes();return h<9||(h===9&&m<30)}
+function minutesSinceOpen(){const n=nowET();return(n.getHours()-9)*60+(n.getMinutes()-30)}
+
+function isRTHBar(bar) {
+  const t = new Date(bar.time);
+  const utcH = t.getUTCHours(), utcM = t.getUTCMinutes();
+  return (utcH > RTH_OPEN_UTC_H || (utcH === RTH_OPEN_UTC_H && utcM >= RTH_OPEN_UTC_M));
+}
+
+// -- Audio --
+function beep(freq=880,dur=300,times=3){
+  if(!state.soundOn)return;
+  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();for(let i=0;i<times;i++){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=freq;o.type='sine';g.gain.value=0.3;o.start(ctx.currentTime+i*0.4);o.stop(ctx.currentTime+i*0.4+dur/1000)}}catch(e){}
+}
+function toggleSound(){state.soundOn=!state.soundOn;document.getElementById('soundBtn').textContent=state.soundOn?'Sound ON':'Sound OFF'}
+
+function showAlert(msg,type='entry'){
+  const el=document.getElementById('alertBanner');
+  el.textContent=msg;el.className='alert show '+type;
+  setTimeout(()=>el.classList.remove('show'),8000);
+}
+
+// -- Polygon API --
+async function fetchJSON(url){const sep=url.includes('?')?'&':'?';const r=await fetch(url+sep+'apiKey='+API_KEY);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+
+async function fetchDailyBars(ticker,days=30){
+  const end=new Date(),start=new Date(end-(days+10)*86400000);
+  const url=`${BASE}/v2/aggs/ticker/${ticker}/range/1/day/${start.toISOString().slice(0,10)}/${end.toISOString().slice(0,10)}?adjusted=true&sort=asc&limit=5000`;
+  const data=await fetchJSON(url);
+  return(data.results||[]).map(r=>({date:new Date(r.t).toISOString().slice(0,10),open:r.o,high:r.h,low:r.l,close:r.c,volume:r.v}));
+}
+
+async function fetchSnapshot(ticker){const data=await fetchJSON(`${BASE}/v2/snapshot/locale/us/markets/stocks/tickers/${ticker}`);return data.ticker||null}
+
+async function fetch5minBars(ticker){
+  const today=todayStr();
+  const data=await fetchJSON(`${BASE}/v2/aggs/ticker/${ticker}/range/5/minute/${today}/${today}?adjusted=true&sort=asc&limit=5000`);
+  return(data.results||[]).map(r=>({time:new Date(r.t),open:r.o,high:r.h,low:r.l,close:r.c,volume:r.v}));
+}
+
+// -- Options API --
+async function fetchOptionsChain(underlying, expDate, contractType, limit=250) {
+  const url = `${BASE}/v3/snapshot/options/${underlying}?expiration_date=${expDate}&contract_type=${contractType}&limit=${limit}`;
+  const data = await fetchJSON(url);
+  return data.results || [];
+}
+
+async function fetchOptionSnapshot(underlying, optionTicker) {
+  const url = `${BASE}/v3/snapshot/options/${underlying}/${optionTicker}`;
+  const data = await fetchJSON(url);
+  return data.results || null;
+}
+
+// -- Find and enter option position --
+async function findAndEnterOption(underlying, stratId) {
+  if (state.positions[stratId]) return; // already have position
+  const budget = BUDGETS[stratId] || 0;
+  const strat = STRATEGIES.find(s => s.id === stratId);
+  if (!strat) return;
+
+  const contractType = strat.dir === 'SHORT' ? 'put' : 'call';
+  const targetDelta = strat.dir === 'SHORT' ? -strat.delta : strat.delta;
+  const today = todayStr();
+
+  addLog('[OPT]', `Searching ${underlying} 0DTE ${contractType}s near D${strat.delta.toFixed(2)}...`, 'opt-log');
+
+  try {
+    const chain = await fetchOptionsChain(underlying, today, contractType);
+
+    if (chain.length === 0) {
+      addLog('[ERR]', `No ${contractType} options found for ${underlying} exp ${today}`, 'missed-log');
+      state.positions[stratId] = { lookupDone: true, error: 'No options found' };
+      return;
+    }
+
+    // Find contract with delta closest to target
+    let best = null, bestDiff = Infinity;
+    for (const opt of chain) {
+      if (!opt.greeks || opt.greeks.delta === undefined || opt.greeks.delta === null) continue;
+      const diff = Math.abs(opt.greeks.delta - targetDelta);
+      if (diff < bestDiff) { bestDiff = diff; best = opt; }
+    }
+
+    // Fallback if no greeks: approximate by strike
+    if (!best) {
+      const currentPrice = underlying === 'SPY' ? state.spyLast : state.qqqLast;
+      // D0.70 put ~ slightly ITM, strike ~ current + 2-3 pts
+      const approxStrike = contractType === 'put' ? currentPrice + 3 : currentPrice - 3;
+      bestDiff = Infinity;
+      for (const opt of chain) {
+        if (!opt.details) continue;
+        const diff = Math.abs(opt.details.strike_price - approxStrike);
+        if (diff < bestDiff) { bestDiff = diff; best = opt; }
+      }
+      if (best) addLog('[OPT]', `No greeks available, approximated strike by price`, 'opt-log');
+    }
+
+    if (!best || !best.details) {
+      addLog('[ERR]', `Could not find suitable ${underlying} ${contractType}`, 'missed-log');
+      state.positions[stratId] = { lookupDone: true, error: 'No suitable contract' };
+      return;
+    }
+
+    // Get entry price: prefer midpoint, then last trade, then day close
+    const entryPrice = best.last_quote?.midpoint || best.last_trade?.price || best.day?.close || 0;
+    if (entryPrice <= 0) {
+      addLog('[ERR]', `No valid price for ${best.details.ticker}`, 'missed-log');
+      state.positions[stratId] = { lookupDone: true, error: 'No price data' };
+      return;
+    }
+
+    const contracts = Math.floor(budget / (entryPrice * 100));
+    if (contracts <= 0) {
+      addLog('[ERR]', `Budget $${budget.toLocaleString()} too small for ${best.details.ticker} @ $${entryPrice.toFixed(2)}`, 'missed-log');
+      state.positions[stratId] = { lookupDone: true, error: 'Budget too small' };
+      return;
+    }
+
+    const delta = best.greeks?.delta?.toFixed(2) || '?';
+    const deployed = contracts * entryPrice * 100;
+
+    state.positions[stratId] = {
+      lookupDone: true,
+      ticker: best.details.ticker,
+      strike: best.details.strike_price,
+      entryPrice: entryPrice,
+      currentPrice: entryPrice,
+      contracts: contracts,
+      deployed: deployed,
+      pnl: 0,
+      pnlPct: 0,
+      ptHit: false,
+      ptTime: null,
+      exitPrice: null,
+      exitPnl: null,
+      exitTime: null,
+      delta: delta,
+      error: null,
+    };
+
+    // Format the contract name for display: O:SPY260225P00693000 -> SPY $693P
+    const strikeStr = '$' + best.details.strike_price + (contractType === 'put' ? 'P' : 'C');
+    addLog('[>>]', `${stratId} POSITION OPENED: ${underlying} ${strikeStr} 0DTE | D${delta} | Entry $${entryPrice.toFixed(2)} | ${contracts} contracts | $${deployed.toLocaleString(undefined,{maximumFractionDigits:0})} deployed`, 'trigger');
+
+  } catch(e) {
+    addLog('[ERR]', `Options lookup failed: ${e.message}`, 'missed-log');
+    state.positions[stratId] = { lookupDone: true, error: e.message };
+  }
+}
+
+// -- Poll option prices for open positions --
+async function pollOptionPrices() {
+  for (const [stratId, pos] of Object.entries(state.positions)) {
+    if (!pos || !pos.ticker || pos.exitPrice !== null) continue; // no position or already exited
+
+    const strat = STRATEGIES.find(s => s.id === stratId);
+    if (!strat) continue;
+
+    try {
+      const snap = await fetchOptionSnapshot(strat.ticker, pos.ticker);
+      if (!snap) continue;
+
+      const price = snap.last_quote?.midpoint || snap.last_trade?.price || snap.day?.close || 0;
+      if (price <= 0) continue;
+
+      pos.currentPrice = price;
+      pos.pnl = (price - pos.entryPrice) * pos.contracts * 100;
+      pos.pnlPct = ((price - pos.entryPrice) / pos.entryPrice) * 100;
+
+      // Check +50% profit target
+      if (!pos.ptHit && pos.pnlPct >= 50) {
+        pos.ptHit = true;
+        pos.ptTime = timeStr(new Date());
+        pos.exitPrice = price;
+        pos.exitPnl = pos.pnl;
+        pos.exitTime = pos.ptTime;
+        const sig = state.signals[stratId];
+        if (sig) sig.exited = true;
+        addLog('[PT]', `${stratId} +50% PROFIT TARGET HIT -- P&L: ${fmt(pos.pnl)} (${pos.pnlPct>=0?'+':''}${pos.pnlPct.toFixed(1)}%) -- EXIT NOW`, 'trigger', `${pos.ticker.split(':')[1]||pos.ticker} $${price.toFixed(2)}`);
+        beep(880, 200, 5);
+        showAlert(`${stratId} +50% PT HIT -- P&L ${fmt(pos.pnl)} -- EXIT NOW!`, 'entry');
+      }
+
+    } catch(e) {
+      // Silent fail on individual option poll
+    }
+  }
+}
+
+// -- Load prior day data --
+async function loadPriorDay(){
+  try{
+    document.getElementById('pollStatus').textContent='Loading prior day...';
+    const[spyBars,qqqBars]=await Promise.all([fetchDailyBars('SPY',30),fetchDailyBars('QQQ',30)]);
+    const today=todayStr();
+    const spyPrior=spyBars.filter(b=>b.date<today),qqqPrior=qqqBars.filter(b=>b.date<today);
+    if(spyPrior.length<20||qqqPrior.length<20){document.getElementById('pollStatus').textContent='ERROR: Not enough history';return}
+
+    const sp=spyPrior[spyPrior.length-1],qp=qqqPrior[qqqPrior.length-1];
+    state.spyPrior=sp;state.qqqPrior=qp;
+    state.spyPrevClose=sp.close;state.qqqPrevClose=qp.close;
+
+    const spyRange=sp.high-sp.low;
+    state.spyCloseLoc=spyRange>0?(sp.close-sp.low)/spyRange:0.5;
+    const qqqRange=qp.high-qp.low;
+    state.qqqCloseLoc=qqqRange>0?(qp.close-qp.low)/qqqRange:0.5;
+
+    const spy20=spyPrior.slice(-20);
+    state.spySMA20=spy20.reduce((s,b)=>s+b.close,0)/spy20.length;
+    state.spyBelowSMA20=sp.close<state.spySMA20;
+
+    const spy20Vol=spy20.reduce((s,b)=>s+b.volume,0)/20;
+    const spy20Range=spy20.reduce((s,b)=>s+(b.high-b.low),0)/20;
+    state.spyVolRatio=spy20Vol>0?sp.volume/spy20Vol:1;
+    state.spyRangeRatio=spy20Range>0?spyRange/spy20Range:1;
+
+    checkPreOpenSignals();
+    state.priorLoaded=true;
+    renderKPIs();renderCards();
+
+    addLog('[DATA]','Prior day data loaded -- SPY close loc '+Math.round(state.spyCloseLoc*100)+'%, QQQ close loc '+Math.round(state.qqqCloseLoc*100)+'%','price-log',`SPY $${sp.close.toFixed(2)} QQQ $${qp.close.toFixed(2)}`);
+    addLog('[SMA]','SMA20: $'+state.spySMA20.toFixed(2)+' -- SPY '+(state.spyBelowSMA20?'BELOW (longs OK)':'ABOVE (longs filtered)'),'price-log');
+
+    Object.entries(state.signals).forEach(([id,sig])=>{
+      if(sig.active) addLog('[!]',id+' signal ACTIVE (pre-open) -- '+sig.reason,'alert-entry');
+    });
+
+    document.getElementById('pollStatus').textContent='Prior day loaded';
+  }catch(e){
+    document.getElementById('pollStatus').textContent='Error: '+e.message;
+    addLog('[ERR]','Error loading prior day: '+e.message,'missed-log');
+  }
+}
+
+// -- Pre-open signal check --
+function checkPreOpenSignals(){
+  const s=state,signals={};
+  signals['GapLarge']={active:false,reason:'Needs gap data at open (1-2% gap up required)',pending:true};
+  const hvwr=s.spyVolRatio>1.5&&s.spyRangeRatio>1.5;
+  signals['HighVolWR']={active:hvwr,reason:`Vol ratio ${s.spyVolRatio.toFixed(1)}x ${s.spyVolRatio>1.5?'>':'<'} 1.5x, Range ratio ${s.spyRangeRatio.toFixed(1)}x ${s.spyRangeRatio>1.5?'>':'<'} 1.5x`,pending:hvwr};
+  const qqqStrong=s.qqqCloseLoc>0.75;
+  signals['QQQ Short']={active:qqqStrong,reason:`QQQ close location ${(s.qqqCloseLoc*100).toFixed(0)}% ${qqqStrong?'>':'<'} 75%`+(qqqStrong?' -- WAITING for above OR midpoint':''),needsOR:qqqStrong,orTriggered:false};
+  const spyStrong=s.spyCloseLoc>0.75;
+  signals['SPY Short']={active:spyStrong,reason:`SPY close location ${(s.spyCloseLoc*100).toFixed(0)}% ${spyStrong?'>':'<'} 75%`+(spyStrong?' -- WAITING for above OR midpoint':''),needsOR:spyStrong,orTriggered:false};
+  const qqqWeak=s.qqqCloseLoc<0.25,qqqRegime=s.spyBelowSMA20;
+  signals['QQQ Weak']={active:qqqWeak&&qqqRegime,blocked:qqqWeak&&!qqqRegime,reason:`QQQ close location ${(s.qqqCloseLoc*100).toFixed(0)}% ${qqqWeak?'<':'>'} 25%`+(qqqWeak?`, SPY ${s.spyBelowSMA20?'below':'above'} SMA20`:'')};
+  const spyWeak=s.spyCloseLoc<0.25;
+  signals['SPY Weak']={active:spyWeak&&s.spyBelowSMA20,blocked:spyWeak&&!s.spyBelowSMA20,reason:`SPY close location ${(s.spyCloseLoc*100).toFixed(0)}% ${spyWeak?'<':'>'} 25%`+(spyWeak?`, SPY ${s.spyBelowSMA20?'below':'above'} SMA20`:'')};
+  signals['50Hi Weak']={active:spyWeak&&s.spyBelowSMA20,blocked:spyWeak&&!s.spyBelowSMA20,reason:`SPY close location ${(s.spyCloseLoc*100).toFixed(0)}% ${spyWeak?'<':'>'} 25%`+(spyWeak?' -- watch for 50-bar high intraday':'')};
+  state.signals=signals;
+}
+
+// -- At-open entries (non-OR strategies) --
+function checkAtOpenEntries() {
+  const min = minutesSinceOpen();
+  // Wait at least 1 minute after open for price data to settle
+  if (min < 1) return;
+
+  STRATEGIES.forEach(strat => {
+    // Skip shorts (handled by OR trigger) and 50Hi Weak (handled by 50-bar check)
+    if (strat.id === 'QQQ Short' || strat.id === 'SPY Short' || strat.id === '50Hi Weak') return;
+
+    const sig = state.signals[strat.id];
+    if (!sig || !sig.active || sig.entered || state.atOpenEntered[strat.id]) return;
+
+    state.atOpenEntered[strat.id] = true;
+    sig.entered = true;
+    sig.triggerTime = timeStr(new Date());
+
+    const contractType = strat.dir === 'SHORT' ? 'put' : 'call';
+    addLog('[>>]', `${strat.name} ENTERED at open -- Buy D${strat.delta} 0DTE ${contractType}s, $${(BUDGETS[strat.id]||0).toLocaleString()} budget, exit ${strat.exit} or +50%`, 'trigger', `${strat.ticker} $${(strat.ticker==='SPY'?state.spyLast:state.qqqLast||0).toFixed(2)}`);
+    beep(880, 200, 3);
+    showAlert(`${strat.name} TRIGGERED -- Buy D${strat.delta} ${contractType}s NOW! Exit by ${strat.exit} or +50% PT`, 'entry');
+
+    findAndEnterOption(strat.ticker, strat.id);
+  });
+}
+
+// -- 50Hi Weak: monitor for new 50-bar high intraday --
+function check50BarHigh() {
+  const sig = state.signals['50Hi Weak'];
+  if (!sig || !sig.active || sig.entered || state.atOpenEntered['50Hi Weak']) return;
+  if (!state.spyLast) return;
+
+  // Need RTH 5-min bars
+  const bars = state.spy5mBars;
+  if (!bars || bars.length < 5) return;
+
+  // Sort by time, use all completed bars (exclude most recent which may be forming)
+  const sorted = [...bars].sort((a, b) => new Date(a.time) - new Date(b.time));
+  const completed = sorted.length > 1 ? sorted.slice(0, -1) : sorted;
+
+  // Get the 50-bar high (or all available if < 50)
+  const lookback = completed.slice(-50);
+  const maxHigh = Math.max(...lookback.map(b => b.high));
+
+  // Current price above the 50-bar high?
+  if (state.spyLast > maxHigh) {
+    state.atOpenEntered['50Hi Weak'] = true;
+    sig.entered = true;
+    sig.triggerTime = timeStr(new Date());
+
+    addLog('[>>]', `50Hi Weak TRIGGERED -- SPY $${state.spyLast.toFixed(2)} > 50-bar high $${maxHigh.toFixed(2)}, Buy D0.50 0DTE calls, $${BUDGETS['50Hi Weak'].toLocaleString()} budget`, 'trigger', `SPY $${state.spyLast.toFixed(2)}`);
+    beep(880, 200, 3);
+    showAlert(`50Hi Weak TRIGGERED -- Buy D0.50 calls NOW! Exit by 3:05 PM or +50% PT`, 'entry');
+
+    findAndEnterOption('SPY', '50Hi Weak');
+  }
+}
+
+// -- Live poll --
+async function pollLive(){
+  if(!state.priorLoaded)return;
+  try{
+    const[spySnap,qqqSnap]=await Promise.all([fetchSnapshot('SPY'),fetchSnapshot('QQQ')]);
+
+    if(spySnap){
+      const last=spySnap.lastTrade?spySnap.lastTrade.p:(spySnap.day?spySnap.day.c:null);
+      const prevClose=spySnap.prevDay?spySnap.prevDay.c:state.spyPrevClose;
+      if(last){state.spyLast=last;state.spyPrevClose=prevClose||state.spyPrevClose;if(spySnap.day&&spySnap.day.o)state.spyOpen=spySnap.day.o}
+    }
+    if(qqqSnap){
+      const last=qqqSnap.lastTrade?qqqSnap.lastTrade.p:(qqqSnap.day?qqqSnap.day.c:null);
+      const prevClose=qqqSnap.prevDay?qqqSnap.prevDay.c:state.qqqPrevClose;
+      if(last){state.qqqLast=last;state.qqqPrevClose=prevClose||state.qqqPrevClose;if(qqqSnap.day&&qqqSnap.day.o)state.qqqOpen=qqqSnap.day.o}
+    }
+
+    state.marketOpen=isMarketHours();
+
+    // Gap check
+    if(state.spyOpen&&state.spyPrevClose){
+      const gap=(state.spyOpen-state.spyPrevClose)/state.spyPrevClose;
+      const gapActive=gap>0.01&&gap<=0.02;
+      const prev=state.signals['GapLarge'];
+      state.signals['GapLarge']={active:gapActive,reason:`SPY gap ${(gap*100).toFixed(2)}% ${gapActive?'(1-2% OK)':gap>0.02?'> 2% (too large)':'< 1% (too small)'}`,pending:false};
+      if(gapActive&&(!prev||!prev.active))addLog('[+]','GapLarge ACTIVATED -- SPY gap '+(gap*100).toFixed(2)+'%','trigger',`Open $${state.spyOpen.toFixed(2)}`);
+    }
+
+    // Fetch 5-min bars for OR + 50Hi Weak intraday monitoring
+    const minSinceOpen=minutesSinceOpen();
+    const needOR=!state.spyORSet||!state.qqqORSet;
+    const need50Hi=state.signals['50Hi Weak']&&state.signals['50Hi Weak'].active&&!state.signals['50Hi Weak'].entered;
+    if(state.marketOpen&&minSinceOpen>=0&&(needOR||need50Hi)){
+      const[spy5m,qqq5m]=await Promise.all([fetch5minBars('SPY'),fetch5minBars('QQQ')]);
+      state.spy5mBars=spy5m.filter(isRTHBar);
+      state.qqq5mBars=qqq5m.filter(isRTHBar);
+      if(needOR)computeOpeningRange();
+    }
+
+    if(state.marketOpen){
+      checkAtOpenEntries();
+      checkORTriggers();
+      check50BarHigh();
+      checkEntryWindows();
+      checkExitWindows();
+      await pollOptionPrices();
+    }
+
+    updateTickerBar();renderCards();renderORBox();
+
+    document.getElementById('lastUpdate').textContent=timeStr(new Date());
+    document.getElementById('pollStatus').textContent=state.marketOpen?'Live':(isPreMarket()?'Pre-market':'After hours');
+    document.getElementById('marketStatus').textContent=state.marketOpen?'OPEN':(isPreMarket()?'PRE-MKT':'CLOSED');
+
+  }catch(e){
+    document.getElementById('pollStatus').textContent='Poll error: '+e.message;
+    console.error('Poll error:',e);
+  }
+}
+
+// -- Opening range (RTH bars only) --
+function computeOpeningRange(){
+  function getFirstRTHBar(bars){
+    if(!bars||bars.length===0)return null;
+    const sorted=[...bars].sort((a,b)=>new Date(a.time)-new Date(b.time));
+    return sorted[0];
+  }
+
+  const spyBar=getFirstRTHBar(state.spy5mBars);
+  if(spyBar&&!state.spyORSet){
+    state.spyORHigh=spyBar.high;state.spyORLow=spyBar.low;
+    state.spyORMid=(spyBar.high+spyBar.low)/2;
+    state.spyORSet=true;
+    addLog('[OR]','SPY Opening Range set -- High $'+spyBar.high.toFixed(2)+' Low $'+spyBar.low.toFixed(2)+' Mid $'+state.spyORMid.toFixed(2),'or-log');
+  }
+
+  const qqqBar=getFirstRTHBar(state.qqq5mBars);
+  if(qqqBar&&!state.qqqORSet){
+    state.qqqORHigh=qqqBar.high;state.qqqORLow=qqqBar.low;
+    state.qqqORMid=(qqqBar.high+qqqBar.low)/2;
+    state.qqqORSet=true;
+    addLog('[OR]','QQQ Opening Range set -- High $'+qqqBar.high.toFixed(2)+' Low $'+qqqBar.low.toFixed(2)+' Mid $'+state.qqqORMid.toFixed(2),'or-log');
+  }
+}
+
+// -- OR trigger check --
+function checkORTriggers(){
+  const min=minutesSinceOpen();
+
+  // SPY Short — only trigger within entry window (<=26 min = 9:56 AM)
+  if(state.signals['SPY Short']&&state.signals['SPY Short'].active&&state.spyORMid&&state.spyLast&&!state.signals['SPY Short'].missed&&min<=26){
+    const above=state.spyLast>state.spyORMid;
+    if(above&&!state.spyShortTriggered){
+      state.spyShortTriggered=true;
+      state.spyShortTriggerTime=timeStr(new Date());
+      state.signals['SPY Short'].orTriggered=true;
+      state.signals['SPY Short'].triggerTime=state.spyShortTriggerTime;
+      state.signals['SPY Short'].reason=`SPY close loc ${(state.spyCloseLoc*100).toFixed(0)}% > 75% -- PRICE ABOVE OR MID ($${state.spyORMid.toFixed(2)}) -> ENTER PUTS`;
+      if(!state.triggerAlertShown['SPY Short']){
+        beep(880,200,3);
+        showAlert('SPY SHORT TRIGGERED -- Buy D0.70 puts NOW! Exit by 10:10 AM or +50% PT','entry');
+        state.triggerAlertShown['SPY Short']=true;
+        addLog('[>>]','SPY SHORT TRIGGERED -- Buy D0.70 0DTE puts, $99K budget, exit 10:10 AM or +50%','trigger',`SPY $${state.spyLast.toFixed(2)} > OR mid $${state.spyORMid.toFixed(2)}`);
+        // Immediately look up the option strike
+        findAndEnterOption('SPY', 'SPY Short');
+      }
+    }else if(!above&&!state.spyShortTriggered){
+      state.signals['SPY Short'].reason=`SPY close loc ${(state.spyCloseLoc*100).toFixed(0)}% > 75% -- price $${state.spyLast.toFixed(2)} below OR mid $${state.spyORMid.toFixed(2)}... waiting`;
+    }
+  }
+
+  // QQQ Short — only trigger within entry window (<=26 min = 9:56 AM)
+  if(state.signals['QQQ Short']&&state.signals['QQQ Short'].active&&state.qqqORMid&&state.qqqLast&&!state.signals['QQQ Short'].missed&&min<=26){
+    const above=state.qqqLast>state.qqqORMid;
+    if(above&&!state.qqqShortTriggered){
+      state.qqqShortTriggered=true;
+      state.qqqShortTriggerTime=timeStr(new Date());
+      state.signals['QQQ Short'].orTriggered=true;
+      state.signals['QQQ Short'].triggerTime=state.qqqShortTriggerTime;
+      state.signals['QQQ Short'].reason=`QQQ close loc ${(state.qqqCloseLoc*100).toFixed(0)}% > 75% -- PRICE ABOVE OR MID ($${state.qqqORMid.toFixed(2)}) -> ENTER PUTS`;
+      if(!state.triggerAlertShown['QQQ Short']){
+        beep(660,200,3);
+        showAlert('QQQ SHORT TRIGGERED -- Buy D0.70 puts NOW! Exit by 10:00 AM or +50% PT','entry');
+        state.triggerAlertShown['QQQ Short']=true;
+        addLog('[>>]','QQQ SHORT TRIGGERED -- Buy D0.70 0DTE puts, $104K budget, exit 10:00 AM or +50%','trigger',`QQQ $${state.qqqLast.toFixed(2)} > OR mid $${state.qqqORMid.toFixed(2)}`);
+        // Immediately look up the option strike
+        findAndEnterOption('QQQ', 'QQQ Short');
+      }
+    }else if(!above&&!state.qqqShortTriggered){
+      state.signals['QQQ Short'].reason=`QQQ close loc ${(state.qqqCloseLoc*100).toFixed(0)}% > 75% -- price $${state.qqqLast.toFixed(2)} below OR mid $${state.qqqORMid.toFixed(2)}... waiting`;
+    }
+  }
+}
+
+// -- Entry window close --
+function checkEntryWindows(){
+  const min=minutesSinceOpen();
+  if(min>26&&!state.spyShortTriggered&&state.signals['SPY Short']&&state.signals['SPY Short'].active&&!state.signals['SPY Short'].missed){
+    state.signals['SPY Short'].missed=true;
+    state.signals['SPY Short'].reason+=' -- entry window CLOSED (9:56 AM)';
+    addLog('[X]','SPY SHORT entry window CLOSED -- no trigger by 9:56 AM','missed-log',`SPY $${(state.spyLast||0).toFixed(2)}`);
+    beep(440,150,1);
+    showAlert('SPY Short -- entry window closed, no trigger today','caution');
+  }
+  if(min>26&&!state.qqqShortTriggered&&state.signals['QQQ Short']&&state.signals['QQQ Short'].active&&!state.signals['QQQ Short'].missed){
+    state.signals['QQQ Short'].missed=true;
+    state.signals['QQQ Short'].reason+=' -- entry window CLOSED (9:56 AM)';
+    addLog('[X]','QQQ SHORT entry window CLOSED -- no trigger by 9:56 AM','missed-log',`QQQ $${(state.qqqLast||0).toFixed(2)}`);
+    beep(440,150,1);
+    showAlert('QQQ Short -- entry window closed, no trigger today','caution');
+  }
+}
+
+// -- Exit window alerts --
+function checkExitWindows(){
+  const min=minutesSinceOpen();
+
+  STRATEGIES.forEach(strat=>{
+    const sig=state.signals[strat.id];
+    if(!sig||(!sig.orTriggered&&!sig.entered))return;
+
+    const exitKey='exit_'+strat.id;
+    const pos=state.positions[strat.id];
+
+    // Skip if already exited via PT
+    if(pos&&pos.ptHit)return;
+
+    // 2-minute warning before exit
+    if(min>=strat.exitMin-2&&min<strat.exitMin&&!state.exitAlertShown['warn_'+exitKey]){
+      state.exitAlertShown['warn_'+exitKey]=true;
+      const curPnl=pos&&pos.pnl?` | P&L: ${fmt(pos.pnl)}`:'';
+      addLog('[!!]',strat.name+' EXIT in 2 minutes ('+strat.exit+')'+curPnl,'alert-entry',`${strat.ticker} $${(strat.ticker==='SPY'?state.spyLast:state.qqqLast||0).toFixed(2)}`);
+      beep(550,150,2);
+      showAlert(strat.name+' -- EXIT TIME in 2 minutes ('+strat.exit+')','caution');
+    }
+
+    // Exit time reached
+    if(min>=strat.exitMin&&!state.exitAlertShown[exitKey]){
+      state.exitAlertShown[exitKey]=true;
+      sig.exited=true;
+
+      // Capture final P&L from option position
+      if(pos&&pos.ticker&&pos.exitPrice===null){
+        pos.exitPrice=pos.currentPrice;
+        pos.exitPnl=pos.pnl;
+        pos.exitTime=timeStr(new Date());
+      }
+
+      const price=strat.ticker==='SPY'?state.spyLast:state.qqqLast;
+      const pnlStr=pos&&pos.exitPnl!==null?` | Final P&L: ${fmt(pos.exitPnl)} (${pos.pnlPct>=0?'+':''}${pos.pnlPct.toFixed(1)}%)`:'';
+      addLog('[EXIT]',strat.name+' EXIT NOW -- close position ('+strat.exit+')'+pnlStr,'exit-log',`${strat.ticker} $${(price||0).toFixed(2)}`);
+      beep(880,200,3);
+      showAlert(strat.name+' -- EXIT NOW! Close your position'+pnlStr,'exit');
+    }
+  });
+}
+
+// -- UI --
+function updateTickerBar(){
+  if(state.spyLast){
+    document.getElementById('spyPrice').textContent=fmtP(state.spyLast);
+    if(state.spyPrevClose){const c=state.spyLast-state.spyPrevClose,p=c/state.spyPrevClose*100;const e=document.getElementById('spyChg');e.textContent=`${c>=0?'+':''}${c.toFixed(2)} (${p>=0?'+':''}${p.toFixed(2)}%)`;e.style.color=c>=0?'#4ade80':'#f87171'}
+  }
+  if(state.qqqLast){
+    document.getElementById('qqqPrice').textContent=fmtP(state.qqqLast);
+    if(state.qqqPrevClose){const c=state.qqqLast-state.qqqPrevClose,p=c/state.qqqPrevClose*100;const e=document.getElementById('qqqChg');e.textContent=`${c>=0?'+':''}${c.toFixed(2)} (${p>=0?'+':''}${p.toFixed(2)}%)`;e.style.color=c>=0?'#4ade80':'#f87171'}
+  }
+}
+
+function renderKPIs(){
+  const s=state;
+  const spyCL=s.spyCloseLoc,qqqCL=s.qqqCloseLoc;
+  const spyCLLabel=spyCL>0.75?'STRONG':(spyCL<0.25?'WEAK':'NEUTRAL');
+  const qqqCLLabel=qqqCL>0.75?'STRONG':(qqqCL<0.25?'WEAK':'NEUTRAL');
+  const spyCLColor=spyCL>0.75?'#f87171':(spyCL<0.25?'#4ade80':'#888');
+  const qqqCLColor=qqqCL>0.75?'#f87171':(qqqCL<0.25?'#4ade80':'#888');
+  const regColor=s.spyBelowSMA20?'#4ade80':'#f87171';
+  const regLabel=s.spyBelowSMA20?'BELOW SMA20':'ABOVE SMA20';
+  let h='';
+  h+=`<div class="k"><div class="lab">SPY Prior Close</div><div class="val">${fmtP(s.spyPrior.close)}</div><div class="sub" style="color:${spyCLColor}">${spyCLLabel} (${(spyCL*100).toFixed(0)}%)</div></div>`;
+  h+=`<div class="k"><div class="lab">QQQ Prior Close</div><div class="val">${fmtP(s.qqqPrior.close)}</div><div class="sub" style="color:${qqqCLColor}">${qqqCLLabel} (${(qqqCL*100).toFixed(0)}%)</div></div>`;
+  h+=`<div class="k"><div class="lab">Vol Ratio</div><div class="val">${s.spyVolRatio.toFixed(1)}x</div><div class="sub">vs 20d avg</div></div>`;
+  h+=`<div class="k"><div class="lab">Range Ratio</div><div class="val">${s.spyRangeRatio.toFixed(1)}x</div><div class="sub">vs 20d avg</div></div>`;
+  h+=`<div class="k"><div class="lab">Regime</div><div class="val" style="font-size:13px;color:${regColor}">${regLabel}</div><div class="sub">SMA20: ${fmtP(s.spySMA20)}</div></div>`;
+  document.getElementById('kpiStrip').innerHTML=h;
+}
+
+function renderORBox(){
+  const box=document.getElementById('orBox');
+  if(!state.marketOpen&&!state.spyORMid){box.style.display='none';return}
+  if(!state.signals['SPY Short']?.active&&!state.signals['QQQ Short']?.active){box.style.display='none';return}
+  box.style.display='block';
+  let h='';
+  if(state.spyORMid){
+    const above=state.spyLast&&state.spyLast>state.spyORMid;const col=above?'#4ade80':'#fbbf24';
+    h+=`<div class="or-item"><div class="ol">SPY OR High</div><div class="ov">${fmtP(state.spyORHigh)}</div></div>`;
+    h+=`<div class="or-item"><div class="ol">SPY OR Mid</div><div class="ov" style="color:${col}">${fmtP(state.spyORMid)}</div><div class="os" style="color:${col}">${above?'ABOVE':'Below'}</div></div>`;
+    h+=`<div class="or-item"><div class="ol">SPY OR Low</div><div class="ov">${fmtP(state.spyORLow)}</div></div>`;
+  }else{h+=`<div class="or-item"><div class="ol">SPY OR</div><div class="ov" style="color:#fbbf24">Building...</div><div class="os" style="color:#888">Waiting for 9:30 RTH bar</div></div>`}
+  if(state.qqqORMid){
+    const above=state.qqqLast&&state.qqqLast>state.qqqORMid;const col=above?'#4ade80':'#fbbf24';
+    h+=`<div class="or-item"><div class="ol">QQQ OR High</div><div class="ov">${fmtP(state.qqqORHigh)}</div></div>`;
+    h+=`<div class="or-item"><div class="ol">QQQ OR Mid</div><div class="ov" style="color:${col}">${fmtP(state.qqqORMid)}</div><div class="os" style="color:${col}">${above?'ABOVE':'Below'}</div></div>`;
+    h+=`<div class="or-item"><div class="ol">QQQ OR Low</div><div class="ov">${fmtP(state.qqqORLow)}</div></div>`;
+  }else{h+=`<div class="or-item"><div class="ol">QQQ OR</div><div class="ov" style="color:#fbbf24">Building...</div><div class="os" style="color:#888">Waiting for 9:30 RTH bar</div></div>`}
+  document.getElementById('orRow').innerHTML=h;
+}
+
+function renderPositionBox(stratId) {
+  const pos = state.positions[stratId];
+  if (!pos || !pos.lookupDone) return '';
+  if (pos.error) return `<div class="pos-box"><div class="pos-title">POSITION</div><div style="color:#f87171;font-size:12px;margin-top:4px">Options lookup: ${pos.error}</div></div>`;
+
+  const strat = STRATEGIES.find(s => s.id === stratId);
+  const contractType = strat.dir === 'SHORT' ? 'P' : 'C';
+  const strikeLabel = `${strat.ticker} $${pos.strike}${contractType} 0DTE`;
+  const isExited = pos.exitPrice !== null;
+  const pnlClass = pos.pnl > 0 ? 'profit' : (pos.pnl < 0 ? 'loss' : 'flat');
+  const displayPnl = isExited ? pos.exitPnl : pos.pnl;
+  const displayPct = isExited ? ((pos.exitPrice - pos.entryPrice) / pos.entryPrice * 100) : pos.pnlPct;
+  const displayPrice = isExited ? pos.exitPrice : pos.currentPrice;
+
+  let h = `<div class="pos-box">`;
+  h += `<div class="pos-header"><span class="pos-title">POSITION</span><span class="pos-contract">${strikeLabel}</span></div>`;
+  h += `<div class="pos-grid">`;
+  h += `<div class="pg"><div class="pl">Entry</div><div class="pv">$${pos.entryPrice.toFixed(2)}</div></div>`;
+  h += `<div class="pg"><div class="pl">${isExited ? 'Exit' : 'Current'}</div><div class="pv" style="color:${displayPrice>=pos.entryPrice?'#4ade80':'#f87171'}">$${displayPrice.toFixed(2)}</div></div>`;
+  h += `<div class="pg"><div class="pl">Contracts</div><div class="pv">${pos.contracts.toLocaleString()}</div></div>`;
+  h += `<div class="pg"><div class="pl">Delta</div><div class="pv">${pos.delta}</div></div>`;
+  h += `<div class="pg"><div class="pl">Deployed</div><div class="pv">$${pos.deployed.toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>`;
+  h += `<div class="pg"><div class="pl">${isExited?'Exit Time':'Tracking'}</div><div class="pv" style="font-size:11px">${isExited ? pos.exitTime : 'LIVE'}</div></div>`;
+  h += `</div>`;
+
+  // P&L bar
+  const finalPnlClass = (isExited ? (displayPnl > 0 ? 'profit' : (displayPnl < 0 ? 'loss' : 'flat')) : pnlClass);
+  h += `<div class="pos-pnl ${finalPnlClass}">`;
+  h += `<span class="pnl-label">${isExited ? 'FINAL P&L' : 'LIVE P&L'}</span>`;
+  h += `<span class="pnl-value">${fmt(displayPnl)}</span>`;
+  h += `<span class="pnl-pct">${displayPct>=0?'+':''}${displayPct.toFixed(1)}%</span>`;
+  h += `</div>`;
+
+  // PT indicator
+  if (pos.ptHit) {
+    h += `<div class="pos-pt">+50% PROFIT TARGET HIT at ${pos.ptTime} -- Position closed</div>`;
+  }
+
+  h += `</div>`;
+  return h;
+}
+
+function renderCards(){
+  let activeCount=0,totalPremium=0,html='';
+
+  STRATEGIES.forEach(strat=>{
+    const sig=state.signals[strat.id]||{},hist=HIST[strat.id]||{},budget=BUDGETS[strat.id]||0;
+    const active=sig.active,blocked=sig.blocked,triggered=sig.orTriggered,entered=sig.entered,missed=sig.missed,exited=sig.exited;
+    if(active){activeCount++;totalPremium+=budget}
+
+    let cardStyle='',cardClass='card';
+    if(exited){cardStyle=`background:#60a5fa15;border:2px solid #60a5fa;`}
+    else if(triggered||entered){cardStyle=`background:${strat.color}25;border:2px solid ${strat.color};`}
+    else if(active){cardStyle=`background:${strat.color}15;border:1px solid ${strat.color};`}
+    else if(blocked){cardClass+=' blocked'}
+    else{cardClass+=' inactive'}
+
+    let badge='';
+    if(exited){badge=`<span style="background:#1e40af;color:#93c5fd;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:700">EXITED</span>`}
+    else if(triggered||entered){badge=`<span class="active-badge" style="background:${strat.color};animation:pulse 1s infinite">TRACKING</span>`}
+    else if(missed){badge=`<span style="background:#4c1d1d;color:#f87171;padding:2px 10px;border-radius:4px;font-size:11px;font-weight:600">MISSED</span>`}
+    else if(active){badge=`<span class="active-badge" style="background:${strat.color}">ACTIVE</span>`}
+    else if(blocked){badge=`<span class="blocked-badge">REGIME BLOCKED</span>`}
+    else{badge=`<span class="inactive-badge">INACTIVE</span>`}
+
+    html+=`<div class="${cardClass}" style="${cardStyle}">`;
+    html+=`<div class="card-top"><div><span class="card-name">${strat.name}</span><span class="badge ${strat.dir.toLowerCase()}">${strat.dir}</span><span class="badge delta">D${strat.delta}</span><span style="color:#666;font-size:11px;margin-left:8px">${strat.ticker}</span></div>${badge}</div>`;
+    html+=`<div class="desc">${strat.desc}</div>`;
+    html+=`<div class="signal-reason"><b>Signal:</b> ${sig.reason||'Checking...'}</div>`;
+
+    // Trigger row for OR-based strategies
+    if(active&&sig.needsOR){
+      let trigClass='waiting',trigText='Waiting for price above OR midpoint...';
+      if(exited){trigClass='exited';trigText=`POSITION CLOSED -- exited at ${strat.exit}. Triggered at ${sig.triggerTime||'?'}`}
+      else if(triggered){trigClass='triggered';trigText=`TRIGGERED at ${sig.triggerTime||'?'} -- ENTER ${strat.dir==='SHORT'?'PUTS':'CALLS'} NOW. Exit by ${strat.exit} or +50% PT`}
+      else if(missed){trigClass='missed';trigText='Entry window closed -- no trigger today'}
+      html+=`<div class="trigger-row ${trigClass}"><span class="dot"></span>${trigText}</div>`;
+    }
+
+    // Trigger row for at-open / intraday entered strategies
+    if(entered&&!sig.needsOR){
+      let trigClass=exited?'exited':'triggered';
+      let trigText=exited?`POSITION CLOSED -- exited at ${strat.exit}. Entered at ${sig.triggerTime||'?'}`:`ENTERED at ${sig.triggerTime||'?'} -- tracking ${strat.dir==='SHORT'?'puts':'calls'}. Exit by ${strat.exit} or +50% PT`;
+      html+=`<div class="trigger-row ${trigClass}"><span class="dot"></span>${trigText}</div>`;
+    }
+
+    // Position box (shows option contract, prices, live P&L)
+    if(triggered||entered||exited){
+      html+=renderPositionBox(strat.id);
+    }
+
+    if(active||triggered||entered||exited){
+      html+=`<div class="details">`;
+      html+=`<div><div class="dl">Entry Window</div><div class="dv">${strat.entry}</div></div>`;
+      html+=`<div><div class="dl">Exit / PT</div><div class="dv">${strat.exit} / +50%</div></div>`;
+      html+=`<div><div class="dl">Budget</div><div class="dv">$${budget.toLocaleString()}</div></div>`;
+      html+=`<div><div class="dl">Win Rate</div><div class="dv" style="color:#4ade80">${hist.wr?.toFixed(0)||'--'}%</div></div>`;
+      html+=`<div><div class="dl">Avg P&L</div><div class="dv" style="color:#4ade80">${hist.avg?fmt(hist.avg):'--'}</div></div>`;
+      if(sig.triggerTime){html+=`<div><div class="dl">Triggered</div><div class="dv" style="color:#fbbf24">${sig.triggerTime}</div></div>`}
+      else{html+=`<div><div class="dl">Hist ROI</div><div class="dv" style="color:#fbbf24">${hist.roi?'+'+hist.roi.toFixed(0)+'%':'--'}</div></div>`}
+      html+=`</div>`;
+    }
+    html+=`</div>`;
+  });
+
+  document.getElementById('stratCards').innerHTML=html;
+
+  const now=nowET();
+  document.getElementById('dateLabel').textContent=now.toLocaleDateString('en-US',{weekday:'long',timeZone:'America/New_York'})+', '+todayStr();
+
+  let statusColor,statusText;
+  if(activeCount===0){statusColor='#666';statusText='NO SIGNALS'}
+  else if(activeCount<=2){statusColor='#fbbf24';statusText=activeCount+' SIGNAL'+(activeCount>1?'S':'')+' ACTIVE'}
+  else{statusColor='#4ade80';statusText=activeCount+' SIGNALS ACTIVE'}
+  const pill=document.getElementById('statusPill');
+  pill.textContent=statusText;pill.style.background=statusColor+'20';pill.style.border='1px solid '+statusColor;pill.style.color=statusColor;
+
+  const pl=document.getElementById('premiumLine');
+  pl.innerHTML=activeCount>0?`Total premium at risk: <b>$${totalPremium.toLocaleString()}</b> (EqLoss $20K sizing + PT 50%)`:'';
+}
+
+// -- Init --
+async function init(){
+  addLog('[--]','Dashboard starting -- loading prior day data...','price-log');
+  renderCards();
+  await loadPriorDay();
+  await pollLive();
+  setInterval(pollLive,POLL_MS);
+  document.getElementById('footerText').textContent=`Polling Polygon every ${POLL_MS/1000}s | EqLoss $20K sizing | +50% profit target exit | Options auto-tracked`;
+}
+init();
+</script>
+</body></html>

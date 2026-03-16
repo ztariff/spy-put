@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momentum Trader — v5 Strategy Report</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #151528;
+    --border: #222244;
+    --text: #d4d4e0;
+    --muted: #888899;
+    --heading: #ffffff;
+    --green: #00e676;
+    --red: #ff5252;
+    --accent: #5566ff;
+    --accent2: #ff9100;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; line-height: 1.7; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 60px 0 40px; }
+  .hero h1 { font-size: 42px; color: var(--heading); font-weight: 800; letter-spacing: -1px; }
+  .hero .subtitle { font-size: 20px; color: var(--muted); margin-top: 8px; }
+  .hero .divider { width: 80px; height: 3px; background: var(--accent); margin: 24px auto; border-radius: 2px; }
+  .hero .tagline { font-size: 15px; color: var(--muted); }
+
+  /* KPI strip */
+  .kpi-strip { display: flex; justify-content: center; gap: 40px; padding: 24px 0; margin: 20px 0 40px; flex-wrap: wrap; }
+  .kpi { text-align: center; }
+  .kpi .val { font-size: 28px; font-weight: 800; }
+  .kpi .lbl { font-size: 12px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Sections */
+  h2 { font-size: 26px; color: var(--heading); font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 18px; color: var(--heading); font-weight: 600; margin: 32px 0 10px; }
+  p { margin-bottom: 16px; font-size: 15px; }
+
+  /* Strategy cards */
+  .strat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; transition: border-color 0.2s; }
+  .strat-card:hover { border-color: #444466; }
+  .strat-card .strat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+  .strat-card .strat-name { font-size: 16px; font-weight: 700; color: var(--heading); }
+  .strat-card .strat-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 2px 10px; border-radius: 12px; font-weight: 600; }
+  .badge.long { background: rgba(0,230,118,0.12); color: var(--green); }
+  .badge.short { background: rgba(255,145,0,0.12); color: var(--accent2); }
+  .badge.ticker { background: rgba(85,102,255,0.12); color: var(--accent); }
+  .badge.filter { background: rgba(255,255,255,0.06); color: var(--muted); }
+  .strat-card .strat-stats { display: flex; gap: 24px; margin: 12px 0 10px; flex-wrap: wrap; }
+  .strat-card .strat-stat { font-size: 13px; color: var(--muted); }
+  .strat-card .strat-stat span { color: var(--heading); font-weight: 600; }
+  .strat-card p { font-size: 14px; color: #aaaabc; margin-bottom: 0; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 14px; }
+  th { background: #1a1a2e; color: var(--heading); font-weight: 600; text-align: center; padding: 10px 12px; border-bottom: 2px solid var(--accent); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  th:first-child { text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: center; }
+  td:first-child { text-align: left; font-weight: 500; }
+  tr:hover td { background: rgba(85,102,255,0.04); }
+  .pos { color: var(--green); font-weight: 600; }
+  .neg { color: var(--red); font-weight: 600; }
+  tr.total-row td { border-top: 2px solid var(--accent); font-weight: 700; background: rgba(85,102,255,0.06); }
+
+  /* Info boxes */
+  .info-box { background: var(--card); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 20px 0; }
+  .info-box.warn { border-left-color: var(--accent2); }
+  .info-box .info-title { font-size: 14px; font-weight: 700; color: var(--heading); margin-bottom: 6px; }
+  .info-box p { font-size: 14px; margin-bottom: 0; color: #aaaabc; }
+
+  /* TOC */
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 32px 0; }
+  .toc h3 { margin-top: 0; font-size: 16px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .toc a { display: block; color: var(--accent); text-decoration: none; padding: 5px 0; font-size: 15px; transition: color 0.15s; }
+  .toc a:hover { color: #8899ff; }
+
+  /* Yearly bars */
+  .year-bars { display: flex; flex-direction: column; gap: 6px; margin: 16px 0 24px; }
+  .year-bar { display: flex; align-items: center; gap: 12px; }
+  .year-bar .yr { width: 40px; font-size: 13px; color: var(--muted); font-weight: 600; }
+  .year-bar .bar-wrap { flex: 1; height: 24px; background: #1a1a30; border-radius: 4px; position: relative; overflow: hidden; }
+  .year-bar .bar { height: 100%; border-radius: 4px; min-width: 2px; }
+  .year-bar .bar.green { background: linear-gradient(90deg, #00c853, #00e676); }
+  .year-bar .bar.red { background: linear-gradient(90deg, #ff5252, #ff1744); }
+  .year-bar .val { width: 80px; font-size: 13px; font-weight: 700; text-align: right; }
+
+  .confidential { text-align: center; font-size: 12px; color: #444; margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Momentum Trader</h1>
+    <div class="subtitle">v5 Strategy Report</div>
+    <div class="divider"></div>
+    <div class="tagline">Intraday Mean-Reversion Strategies on SPY & QQQ</div>
+    <div class="tagline" style="margin-top:4px">5-Minute Timeframe &middot; Jan 2021 – Feb 2026</div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi"><div class="val pos">1.45</div><div class="lbl">Sharpe Ratio</div></div>
+    <div class="kpi"><div class="val pos">+$4.12M</div><div class="lbl">Total P&L</div></div>
+    <div class="kpi"><div class="val neg">$748K</div><div class="lbl">Max Drawdown</div></div>
+    <div class="kpi"><div class="val" style="color:var(--heading)">1,654</div><div class="lbl">Total Trades</div></div>
+    <div class="kpi"><div class="val" style="color:var(--heading)">51.8%</div><div class="lbl">Win Rate</div></div>
+  </div>
+
+  <div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:40px">
+    Sized at $3,000,000 notional per trade &middot; 915 active trading days
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>Contents</h3>
+    <a href="#summary">Executive Summary</a>
+    <a href="#overview">Strategy Overview</a>
+    <a href="#long">Long Strategies (5 Rules)</a>
+    <a href="#short">Short Strategies (2 Rules)</a>
+    <a href="#design">Key Design Decisions</a>
+    <a href="#performance">Performance Summary</a>
+    <a href="#regime">Regime Dependence</a>
+    <a href="#risk">Risk Profile</a>
+    <a href="#validation">Cross-Asset Validation</a>
+    <a href="#limitations">Limitations and Caveats</a>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <h2 id="summary">Executive Summary</h2>
+  <p>This report documents a portfolio of seven intraday strategies trading SPY and QQQ on the 5-minute timeframe. The strategies exploit a consistent mean-reversion edge: when higher-timeframe conditions suggest weakness or overextension, price tends to drift in the opposite direction over the next several hours. Five rules trade the long side (buying weakness) and two trade the short side (fading strength).</p>
+  <p>The system was developed through a six-phase quantitative research process. Phase 1 downloaded and cleaned 5+ years of 5-minute bar data from Polygon.io. Phase 2 computed higher-timeframe context features (prior-day patterns, weekly ranges, 50-day highs/lows). Phase 3 screened thousands of entry condition combinations. Phase 4 validated candidates through walk-forward backtesting. Phase 5 optimized position sizing and discovered that removing stop losses dramatically improved performance on slow-drift signals. Phase 6 added intraday confirmation filters (relative volume, opening range width, position within prior ranges) and introduced directional short-side rules.</p>
+
+  <div class="info-box">
+    <div class="info-title">Key Discovery</div>
+    <p>Traditional stop losses destroy the edge on these trades. Because the signals rely on a slow intraday drift rather than momentum, normal 5-minute noise on SPY and QQQ (typically 0.3–1.0%) triggers stops before the drift materializes. Removing stops and relying purely on time-based exits turned a losing system into one with a 1.45 Sharpe ratio.</p>
+  </div>
+
+  <!-- STRATEGY OVERVIEW -->
+  <h2 id="overview">Strategy Overview</h2>
+  <p>All seven rules share a common structure: a higher-timeframe setup condition determines trade direction, an intraday confirmation filter refines entry timing, and a fixed time exit closes the position. Most entries occur at or near the open (9:30 AM ET), and the majority of trades are held for exactly 55 bars (roughly 4.5 hours on the 5-minute chart), exiting around 2:00–2:30 PM ET. The system is entirely mechanical with no discretionary overrides.</p>
+
+  <!-- LONG STRATEGIES -->
+  <h2 id="long">Long Strategies (5 Rules)</h2>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">1. PriorDayWeak_30min_QQQ</div>
+      <div class="strat-badges">
+        <span class="badge long">LONG</span>
+        <span class="badge ticker">QQQ</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>309</span></div>
+      <div class="strat-stat">Win Rate: <span>52.4%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$2,446</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$755,690</span></div>
+    </div>
+    <p>This is the workhorse long rule and the single most consistent strategy in the portfolio. It looks for days where QQQ closed weak the prior session (close in the lower portion of the daily range), then enters long at the open and holds for 55 bars. The logic is straightforward: a weak prior close on QQQ often leads to mean-reversion buying during the following session. There are no additional intraday filters on this rule. It was the top performer in 2025 at +$662K. It did lose money in 2021 and 2022, mainly during sustained downtrends where weakness led to more weakness.</p>
+  </div>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">2. PriorDayWeak_30min_SPY (Filtered)</div>
+      <div class="strat-badges">
+        <span class="badge long">LONG</span>
+        <span class="badge ticker">SPY</span>
+        <span class="badge filter">RVOL &gt; 1.5</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>164</span></div>
+      <div class="strat-stat">Win Rate: <span>50.6%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$2,077</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$340,601</span></div>
+    </div>
+    <p>The SPY version of the prior-day weakness setup. Same core logic: when SPY closes weak, buy the open the next day and hold for 55 bars. This rule adds a relative volume filter requiring bar-level RVOL above 1.5 at entry, which ensures there is genuine participation behind the early price action rather than a low-conviction drift. The filter cut the trade count roughly in half but preserved the edge. It performed especially well in 2022, where the filter kept it out of many false reversals.</p>
+  </div>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">3. HighVolWR_30min_SPY (Filtered)</div>
+      <div class="strat-badges">
+        <span class="badge long">LONG</span>
+        <span class="badge ticker">SPY</span>
+        <span class="badge filter">Wide OR</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>35</span></div>
+      <div class="strat-stat">Win Rate: <span>68.6%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$16,945</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$593,083</span></div>
+    </div>
+    <p>This rule fires on days where SPY has both elevated volume and a wide daily range over recent sessions, signaling a high-volatility regime. It enters long at the open and holds for 55 bars. The intraday filter requires a wide opening range (OR width above 1.5x the 20-day average), which confirms that the current session is also volatile enough for the drift to develop. This is a rare but powerful setup: only 35 trades in five years, but a 68.6% win rate. The average winner is enormous ($16,945 per trade) because high-volatility days produce outsized intraday swings. It was the top performer in 2025 at +$424K.</p>
+  </div>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">4. PriorDayWeak_50Hi_SPY (Filtered)</div>
+      <div class="strat-badges">
+        <span class="badge long">LONG</span>
+        <span class="badge ticker">SPY</span>
+        <span class="badge filter">RVOL &gt; 1.5</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>168</span></div>
+      <div class="strat-stat">Win Rate: <span>51.2%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$1,017</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$170,829</span></div>
+    </div>
+    <p>This rule combines two higher-timeframe conditions: SPY closed weak the prior day AND is within proximity of a 50-day high. This creates a specific scenario where a stock in an uptrend has a single weak session, and the strategy bets on a resumption of the larger trend. The entry timing is different from the other rules: it can trigger throughout the session (not just at the open) with a shorter average hold of about 28 bars. It was inconsistent year-to-year, losing in 2021 through 2024 before a massive +$265K in 2025.</p>
+  </div>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">5. GapLarge_First30min_SPY</div>
+      <div class="strat-badges">
+        <span class="badge long">LONG</span>
+        <span class="badge ticker">SPY</span>
+        <span class="badge filter">Stop + Target</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>44</span></div>
+      <div class="strat-stat">Win Rate: <span>63.6%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$323</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$14,192</span></div>
+    </div>
+    <p>The only pure momentum rule in the portfolio. It triggers when SPY gaps significantly at the open, then enters long in the direction of the gap within the first 30 minutes. Unlike the other rules, this one has a tight profit target and stop loss, with an average hold of only 3 bars (about 15 minutes). It is a quick scalp rather than a drift trade. The P&L is modest compared to the drift trades, but it fires on different days and provides diversification. It is the only rule that uses traditional stop losses, which work here because the holding period is short enough that the stop is meaningful.</p>
+  </div>
+
+  <!-- SHORT STRATEGIES -->
+  <h2 id="short">Short Strategies (2 Rules)</h2>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">6. PriorDayStrong_AboveOR_SPY (Short)</div>
+      <div class="strat-badges">
+        <span class="badge short">SHORT</span>
+        <span class="badge ticker">SPY</span>
+        <span class="badge filter">Above OR Mid</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>464</span></div>
+      <div class="strat-stat">Win Rate: <span>50.9%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$1,941</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$900,572</span></div>
+    </div>
+    <p>The mirror image of the long weakness trades. This rule looks for days where SPY closed strong the prior session (close near the high of the daily range), then waits for intraday confirmation that price is above the opening range midpoint before entering short. The logic fades overextended strength: when a strong prior day is followed by even more buying at the open, the move is often exhausted and reverts. It was a monster in 2022 (+$667K) when the bear market created countless fade-the-bounce opportunities. In 2024, the relentless bull grind made this a modest loser (-$22K) as strength kept following through.</p>
+  </div>
+
+  <div class="strat-card">
+    <div class="strat-header">
+      <div class="strat-name">7. PriorDayStrong_AboveOR_QQQ (Short)</div>
+      <div class="strat-badges">
+        <span class="badge short">SHORT</span>
+        <span class="badge ticker">QQQ</span>
+        <span class="badge filter">Above OR Mid</span>
+      </div>
+    </div>
+    <div class="strat-stats">
+      <div class="strat-stat">Trades: <span>470</span></div>
+      <div class="strat-stat">Win Rate: <span>50.6%</span></div>
+      <div class="strat-stat">Avg P&L: <span class="pos">+$2,869</span></div>
+      <div class="strat-stat">Total: <span class="pos">+$1,348,244</span></div>
+    </div>
+    <p>The QQQ version of the strength-fading short. Same setup and filter as the SPY variant: prior day closed strong, and price is above the opening range midpoint. QQQ tends to be more volatile than SPY, which makes the mean-reversion effect more pronounced. This is the single highest-grossing rule in the portfolio at $1,348,244 across 470 trades. The average winner is larger on QQQ because the reversals are bigger when tech names mean-revert. Like the SPY short, it suffered in 2024 (-$141K) but dominated in 2022 (+$859K) and 2025 (+$324K).</p>
+  </div>
+
+  <!-- KEY DESIGN DECISIONS -->
+  <h2 id="design">Key Design Decisions</h2>
+
+  <h3>No Stop Losses on Drift Trades</h3>
+  <p>The most counterintuitive aspect of this system is the absence of stop losses on six of seven rules. During development, backtests with stops consistently underperformed. The analysis showed that time-based exits generated +$136K in aggregate profit while stop-loss exits destroyed -$150K. The reason is mechanical: SPY and QQQ routinely fluctuate 0.3–1.0% within a session. Any reasonable stop level gets triggered by this normal noise before the slow drift has time to play out. Removing stops and holding to the time exit allows the statistical edge to compound over hundreds of trades.</p>
+
+  <h3>Time-Based Exits</h3>
+  <p>The primary exit mechanism is a fixed bar count of 55 bars from entry (approximately 4 hours 35 minutes on the 5-minute chart). Trades entered at 9:30 AM exit around 2:05 PM. This was determined empirically: the mean-reversion drift is strongest in the morning-to-early-afternoon window and tends to fade or reverse in the final hour. An end-of-day exit is used as a backstop for any trades still open at 4:00 PM.</p>
+
+  <h3>Position Sizing at $3M Notional</h3>
+  <p>The report is sized at $3,000,000 notional per trade, which calibrates the single worst historical trade (a -3.3% QQQ long on June 28, 2022) to approximately a $100,000 loss. The worst historical day (September 27, 2022, with four trades all going against the system) would have produced a $181K loss. On a given day, the system typically runs 1–2 trades, with occasional days of 4 simultaneous positions creating peak notional exposure of $12M.</p>
+
+  <h3>Intraday Confirmation Filters</h3>
+  <p>Phase 6 of the research tested 28 intraday features as entry filters. The key finding was that momentum confirmation filters (EMA crossovers, price above VWAP, breakouts above the opening range) actually hurt performance. This confirmed that the edge is mean-reversion, not momentum. The filters that improved results were: relative volume above 1.5x (ensures genuine participation), wide opening range (confirms volatility), and position in the lower half of the prior day range for longs. For shorts, the filter is being above the opening range midpoint, which confirms the overextension that the strategy fades.</p>
+
+  <!-- PERFORMANCE SUMMARY -->
+  <h2 id="performance">Performance Summary</h2>
+
+  <h3>Portfolio Statistics ($3M per trade)</h3>
+  <table>
+    <thead>
+      <tr><th>Strategy</th><th>Ticker</th><th>Dir</th><th>Trades</th><th>Win Rate</th><th>Avg P&L</th><th>Total P&L</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PriorDayWeak 30m QQQ</td><td>QQQ</td><td>Long</td><td>309</td><td>52.4%</td><td class="pos">+$2,446</td><td class="pos">+$755,690</td></tr>
+      <tr><td>PriorDayWeak 30m SPY*</td><td>SPY</td><td>Long</td><td>164</td><td>50.6%</td><td class="pos">+$2,077</td><td class="pos">+$340,601</td></tr>
+      <tr><td>HighVolWR 30m SPY*</td><td>SPY</td><td>Long</td><td>35</td><td>68.6%</td><td class="pos">+$16,945</td><td class="pos">+$593,083</td></tr>
+      <tr><td>PriorDayWeak 50Hi SPY*</td><td>SPY</td><td>Long</td><td>168</td><td>51.2%</td><td class="pos">+$1,017</td><td class="pos">+$170,829</td></tr>
+      <tr><td>GapLarge First30m SPY</td><td>SPY</td><td>Long</td><td>44</td><td>63.6%</td><td class="pos">+$323</td><td class="pos">+$14,192</td></tr>
+      <tr><td>PriorDayStrong SPY&dagger;</td><td>SPY</td><td>Short</td><td>464</td><td>50.9%</td><td class="pos">+$1,941</td><td class="pos">+$900,572</td></tr>
+      <tr><td>PriorDayStrong QQQ&dagger;</td><td>QQQ</td><td>Short</td><td>470</td><td>50.6%</td><td class="pos">+$2,869</td><td class="pos">+$1,348,244</td></tr>
+      <tr class="total-row"><td>TOTAL</td><td></td><td></td><td>1,654</td><td>51.8%</td><td class="pos">+$2,493</td><td class="pos">+$4,123,211</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--muted);margin-top:-12px">* Filtered entry (RVOL &gt; 1.5 or Wide OR) &nbsp;&nbsp; &dagger; Filter: Above OR Midpoint</p>
+
+  <h3>Annual Performance</h3>
+  <div class="year-bars">
+    <div class="year-bar"><span class="yr">2021</span><div class="bar-wrap"><div class="bar green" style="width:13.5%"></div></div><span class="val pos">+$277K</span></div>
+    <div class="year-bar"><span class="yr">2022</span><div class="bar-wrap"><div class="bar green" style="width:79.6%"></div></div><span class="val pos">+$1,636K</span></div>
+    <div class="year-bar"><span class="yr">2023</span><div class="bar-wrap"><div class="bar green" style="width:1.4%"></div></div><span class="val pos">+$28K</span></div>
+    <div class="year-bar"><span class="yr">2024</span><div class="bar-wrap"><div class="bar red" style="width:0.3%"></div></div><span class="val neg">-$6K</span></div>
+    <div class="year-bar"><span class="yr">2025</span><div class="bar-wrap"><div class="bar green" style="width:100%"></div></div><span class="val pos">+$2,054K</span></div>
+    <div class="year-bar"><span class="yr">2026</span><div class="bar-wrap"><div class="bar green" style="width:6.6%"></div></div><span class="val pos">+$135K</span></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Year</th><th>Total P&L</th><th>Trades</th><th>Win Rate</th><th>Best Day</th><th>Worst Day</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2021</td><td class="pos">+$277K</td><td>329</td><td>49.7%</td><td class="pos">+$114K</td><td class="neg">-$124K</td><td>Mixed</td></tr>
+      <tr><td>2022</td><td class="pos">+$1,636K</td><td>357</td><td>52.4%</td><td class="pos">+$320K</td><td class="neg">-$181K</td><td>Bear market</td></tr>
+      <tr><td>2023</td><td class="pos">+$28K</td><td>311</td><td>47.0%</td><td class="pos">+$157K</td><td class="neg">-$120K</td><td>Flat/choppy</td></tr>
+      <tr><td>2024</td><td class="neg">-$6K</td><td>317</td><td>51.1%</td><td class="pos">+$166K</td><td class="neg">-$85K</td><td>Bull grind</td></tr>
+      <tr><td>2025</td><td class="pos">+$2,054K</td><td>303</td><td>57.2%</td><td class="pos">+$731K</td><td class="neg">-$125K</td><td>Strong year</td></tr>
+      <tr><td>2026*</td><td class="pos">+$135K</td><td>37</td><td>60.0%</td><td class="pos">+$122K</td><td class="neg">-$51K</td><td>YTD</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--muted);margin-top:-12px">* 2026 is partial year through Feb 23</p>
+
+  <!-- REGIME DEPENDENCE -->
+  <h2 id="regime">Regime Dependence</h2>
+  <p>The strategies exhibit clear regime sensitivity. The short rules (fading prior-day strength) dominate in volatile, mean-reverting environments like 2022 and early 2025. The long rules (buying prior-day weakness) perform best when markets are trending higher with periodic pullbacks. In 2024, a persistent low-volatility grind higher caused the short rules to lose $163K as strength kept following through, while longs still made $157K, resulting in a near-flat year.</p>
+  <p>This regime dependence is a feature, not a bug. The portfolio combines long and short rules specifically so that one side tends to compensate when the other underperforms. In 2022, shorts carried the book (+$1.5M) while longs lost (-$90K). In the 2025 rally, both sides contributed positively because the market moved in larger swings that created opportunities in both directions.</p>
+
+  <div class="info-box warn">
+    <div class="info-title">Hardest Regime</div>
+    <p>The most challenging environment is a low-volatility drift with no intraday reversion (2024). In this regime, neither the long weakness buys nor the short strength fades find enough reversion within the 55-bar window. The system essentially breaks even during these periods rather than producing large drawdowns.</p>
+  </div>
+
+  <!-- RISK PROFILE -->
+  <h2 id="risk">Risk Profile</h2>
+  <p>At $3M per trade, the worst single trade in the backtest was a -$100,058 loss on a QQQ long (June 28, 2022), representing a -3.3% adverse move against the position over the holding period. The worst single day was September 27, 2022, with four trades producing a combined -$181K loss. The maximum drawdown measured on daily aggregated P&L was $748K, occurring during a multi-week losing streak.</p>
+  <p>On a typical day, the system takes 1–2 trades with average P&L of +$4,506. The daily standard deviation is approximately $46K, giving a daily Sharpe of roughly 0.10 (annualized to 1.44). Approximately 52% of active trading days are profitable. The distribution of daily returns is slightly right-skewed, meaning the average winning day is larger than the average losing day.</p>
+  <p>Peak capital exposure occurs on days with 4 simultaneous positions ($12M notional). These multi-trade days tend to be the highest-variance sessions. The system has no mechanism to limit concurrent exposure, which is a potential area for future refinement.</p>
+
+  <!-- CROSS-ASSET VALIDATION -->
+  <h2 id="validation">Cross-Asset Validation</h2>
+  <p>To test whether the edge generalizes beyond SPY and QQQ, the core prior-day-weakness rules were run on 11 additional ETFs: IWM, DIA, XLK, XLF, XLE, XLV, XLI, XLP, XLY, GLD, and TLT. Of the 13 total instruments tested, 11 were profitable (85%). The only two that failed were GLD and TLT, both non-equity instruments with fundamentally different price dynamics. Every equity sector ETF was profitable, confirming that the mean-reversion edge is a broad market phenomenon rather than something idiosyncratic to large-cap tech or the S&P 500.</p>
+
+  <!-- LIMITATIONS -->
+  <h2 id="limitations">Limitations and Caveats</h2>
+
+  <h3>Backtest Assumptions</h3>
+  <p>The simulation assumes 5 basis points of slippage per side (entry and exit) and uses Polygon.io adjusted close data. Fills are assumed at the bar close price plus slippage, with no partial fills or liquidity constraints. At $3M notional on SPY, this represents roughly 6,500 shares, which is well within the stock's average 5-minute volume and should fill with minimal market impact.</p>
+
+  <h3>Survivorship and Look-Ahead Bias</h3>
+  <p>SPY and QQQ are the two most liquid equity ETFs in the world and existed throughout the entire backtest period. The higher-timeframe features (prior-day close position, 50-day high, weekly range) use only data available at the time of entry. Intraday features (RVOL, opening range) are computed from the current session up to and including the entry bar.</p>
+
+  <h3>No Transaction Costs Beyond Slippage</h3>
+  <p>The backtest does not account for commissions, borrowing costs on short positions, or financing costs on leveraged exposure. At institutional commission rates, these are likely negligible relative to the P&L per trade, but they would reduce net returns.</p>
+
+  <h3>Regime Risk</h3>
+  <p>As shown in the 2024 results, the strategy can go effectively flat for an extended period in unfavorable regimes. While the maximum drawdown of $748K over five years is manageable at this sizing, there is no guarantee that future drawdowns will remain within historical bounds.</p>
+
+  <h3>Sample Size on Filtered Rules</h3>
+  <p>The HighVolWR rule has only 35 trades in five years. While its 68.6% win rate is impressive, the statistical confidence is lower than for rules with 300+ trades. Its outsized per-trade P&L also means a few losing trades could significantly impact the running total.</p>
+
+  <div class="confidential">Confidential &middot; Momentum Trader v5 Strategy Report</div>
+</div>
+</body>
+</html>

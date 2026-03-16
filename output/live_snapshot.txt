@@ -1,0 +1,84 @@
+======================================================================
+  LIVE SNAPSHOT — 2026-02-25 09:59:20
+======================================================================
+
+── SPY SNAPSHOT ──
+  Last trade:  $690.98
+  Today open:  $690.18
+  Today high:  $691.41
+  Today low:   $690.1
+  Today close: $691.0053
+  Today vol:   4,758,291
+  Prev close:  $687.35
+  Prev high:   $688.35
+  Prev low:    $680
+  Prev close location: 88.0%
+  Gap from prev close: +0.41%
+
+── QQQ SNAPSHOT ──
+  Last trade:  $613.72
+  Today open:  $611.07
+  Today high:  $613.91
+  Today low:   $611
+  Today close: $613.82
+  Today vol:   5,898,803
+  Prev close:  $607.87
+  Prev high:   $608.99
+  Prev low:    $599.73
+  Prev close location: 87.9%
+  Gap from prev close: +0.53%
+
+── SPY 5-MIN BARS (RTH ONLY) ──
+  Total bars (all): 69, RTH only: 3
+  First RTH bar (14:30 UTC = 9:30 ET): O=$690.18 H=$691.24 L=$690.10 C=$690.84
+  Opening Range: High=$691.24  Low=$690.10  Mid=$690.67
+  Latest RTH bar (14:40 UTC = 9:40 ET): O=$691.14 H=$691.33 L=$690.62 C=$690.92
+  Latest close $690.92 ABOVE OR mid $690.67
+  RTH bars with high > OR mid: 3/3
+  First RTH bar above OR mid: 14:30 UTC = 9:30 ET (high=$691.24)
+
+  ENTRY WINDOW (9:30-9:56 ET):
+    Bars in window: 3
+    Bars above OR mid: 3
+    → TRIGGER CONFIRMED at entry window
+
+  All RTH bars (first 15):
+    14:30 UTC (9:30 ET): O=$690.18 H=$691.24 L=$690.10 C=$690.84 V=1,486,738 *** ABOVE OR MID [ENTRY WINDOW]
+    14:35 UTC (9:35 ET): O=$690.83 H=$691.41 L=$690.73 C=$691.14 V=1,103,027 *** ABOVE OR MID [ENTRY WINDOW]
+    14:40 UTC (9:40 ET): O=$691.14 H=$691.33 L=$690.62 C=$690.92 V=985,809 *** ABOVE OR MID [ENTRY WINDOW]
+
+── QQQ 5-MIN BARS (RTH ONLY) ──
+  Total bars (all): 69, RTH only: 3
+  First RTH bar (14:30 UTC = 9:30 ET): O=$611.07 H=$613.08 L=$611.00 C=$612.56
+  Opening Range: High=$613.08  Low=$611.00  Mid=$612.04
+  Latest RTH bar (14:40 UTC = 9:40 ET): O=$613.12 H=$613.91 L=$612.84 C=$613.75
+  Latest close $613.75 ABOVE OR mid $612.04
+  RTH bars with high > OR mid: 3/3
+  First RTH bar above OR mid: 14:30 UTC = 9:30 ET (high=$613.08)
+
+  ENTRY WINDOW (9:30-9:56 ET):
+    Bars in window: 3
+    Bars above OR mid: 3
+    → TRIGGER CONFIRMED at entry window
+
+  All RTH bars (first 15):
+    14:30 UTC (9:30 ET): O=$611.07 H=$613.08 L=$611.00 C=$612.56 V=1,830,286 *** ABOVE OR MID [ENTRY WINDOW]
+    14:35 UTC (9:35 ET): O=$612.55 H=$613.32 L=$612.44 C=$613.13 V=1,691,541 *** ABOVE OR MID [ENTRY WINDOW]
+    14:40 UTC (9:40 ET): O=$613.12 H=$613.91 L=$612.84 C=$613.75 V=1,105,229 *** ABOVE OR MID [ENTRY WINDOW]
+
+── SPY SMA20 CHECK ──
+  SMA20: $688.51
+  Prior close: $687.35
+  BELOW SMA20 → longs OK
+  Vol ratio: 0.86x
+  Range ratio: 0.21x
+
+======================================================================
+  SIGNAL VERIFICATION SUMMARY
+======================================================================
+  SPY Short: Prior close loc 88% > 75% ✓ — check OR trigger above
+  QQQ Short: Prior close loc 88% > 75% ✓ — check OR trigger above
+  GapLarge:  Need 1-2% gap — check gap % above
+  HighVolWR: Need vol ratio > 1.5x AND range ratio > 1.5x
+  Weak strats: Need close loc < 25% — both at 88%, INACTIVE
+======================================================================

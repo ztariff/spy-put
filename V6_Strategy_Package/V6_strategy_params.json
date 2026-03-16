@@ -1,0 +1,167 @@
+{
+  "strategy_name": "0DTE Short Put Options \u2014 QQQ Short + SPY Short",
+  "version": "V6",
+  "backtest_start": "2021-01-04",
+  "backtest_end": "2026-02-23",
+  "backtest_years": 5.1,
+  "instruments": [
+    "QQQ",
+    "SPY"
+  ],
+  "option_type": "PUT",
+  "expiry": "0DTE (same-day expiration)",
+  "entry_time": "9:31 AM ET (first 1-min bar close)",
+  "entry_data": "Polygon 1-min bars, adjusted=false",
+  "exit_rules": {
+    "profit_target": "50% gain on option premium",
+    "time_exit": "9:50 AM ET if PT not triggered",
+    "exit_data": "Polygon 1-min bars, adjusted=false"
+  },
+  "delta_targets": {
+    "QQQ_Short": 0.55,
+    "SPY_Short": 0.6
+  },
+  "budget_per_strategy": "~$100,000 per trade",
+  "direction": "SHORT bias \u2014 buys put options on prior-day-strong names above opening range",
+  "signal_QQQ": "Prior day strong close, price above opening range at 9:31 AM \u2192 buy OTM put (\u03b40.55)",
+  "signal_SPY": "Prior day strong close, price above opening range at 9:31 AM \u2192 buy OTM put (\u03b40.60)",
+  "cost_model": {
+    "commission_per_side": 0.55,
+    "commission_rt": 1.1,
+    "entry_slippage_pct": 1.5,
+    "exit_slippage_pct_time_exits": 1.5,
+    "exit_slippage_pct_pt_exits": 0.0,
+    "total_commissions_5yr": 463455
+  },
+  "performance": {
+    "total_pnl": 8546266.37,
+    "annualized_pnl": 1663925.0,
+    "total_premium_deployed": 52691567.0,
+    "roi_on_premium_pct": 16.22,
+    "sharpe_ratio": 3.18,
+    "sortino_ratio": 5.61,
+    "calmar_ratio": 8.43,
+    "recovery_factor": 43.31,
+    "max_drawdown": 197312.0,
+    "max_drawdown_pct_of_peak": 2.3,
+    "max_dd_date": "2023-08-01"
+  },
+  "trade_stats": {
+    "total_trades": 520,
+    "trading_days": 353,
+    "win_rate_pct": 62.5,
+    "win_day_rate_pct": 62.6,
+    "avg_pnl_per_trade": 16435.0,
+    "avg_win": 37901.0,
+    "avg_loss": -19341.0,
+    "win_loss_ratio": 1.96,
+    "profit_factor": 3.27,
+    "expected_value_per_trade": 16435.0,
+    "largest_win": 233272.0,
+    "largest_loss": -62738.0,
+    "max_win_streak": 15,
+    "max_loss_streak": 7,
+    "avg_hold_minutes": 19.4,
+    "median_hold_minutes": 19.0,
+    "contracts_total_oneway": 421323,
+    "contracts_total_roundtrip": 842646
+  },
+  "daily_stats": {
+    "avg_day_pnl": 24210.0,
+    "best_day": 369719.0,
+    "worst_day": -81098.0,
+    "daily_stddev": 31799.0,
+    "win_days": 221,
+    "loss_days": 132
+  },
+  "monthly_stats": {
+    "positive_months": 51,
+    "negative_months": 11,
+    "pct_positive_months": 82.0,
+    "avg_month_pnl": 137843.0,
+    "best_month": 522430.0,
+    "worst_month": -157798.0
+  },
+  "exit_breakdown": {
+    "pt_exits": {
+      "count": 164,
+      "pct": 31.5,
+      "win_rate": 92.7,
+      "avg_pnl": 51568.0,
+      "total_pnl": 8457157.0,
+      "pct_of_total_pnl": 99.0
+    },
+    "time_exits": {
+      "count": 356,
+      "pct": 68.5,
+      "win_rate": 48.6,
+      "avg_pnl": 250.0,
+      "total_pnl": 89109.0,
+      "pct_of_total_pnl": 1.0
+    }
+  },
+  "per_strategy": {
+    "QQQ_Short": {
+      "trades": 252,
+      "win_rate": 65.5,
+      "total_pnl": 4561194.0,
+      "avg_win": 39347.0,
+      "avg_loss": -22196.0,
+      "profit_factor": 3.36,
+      "avg_hold_min": 18.7,
+      "delta": 0.55,
+      "avg_entry_price": 2.2262,
+      "avg_contracts": 610.0
+    },
+    "SPY_Short": {
+      "trades": 268,
+      "win_rate": 59.7,
+      "total_pnl": 3985073.0,
+      "avg_win": 36410.0,
+      "avg_loss": -17041.0,
+      "profit_factor": 3.17,
+      "avg_hold_min": 20.2,
+      "delta": 0.6,
+      "avg_entry_price": 1.8792,
+      "avg_contracts": 998.0
+    }
+  },
+  "yearly": {
+    "2021": {
+      "pnl": 1851625.0,
+      "trades": 103,
+      "win_rate": 61.2,
+      "avg_pnl": 17977.0
+    },
+    "2022": {
+      "pnl": 1955867.0,
+      "trades": 99,
+      "win_rate": 69.7,
+      "avg_pnl": 19756.0
+    },
+    "2023": {
+      "pnl": 971126.0,
+      "trades": 92,
+      "win_rate": 56.5,
+      "avg_pnl": 10556.0
+    },
+    "2024": {
+      "pnl": 2111281.0,
+      "trades": 109,
+      "win_rate": 63.3,
+      "avg_pnl": 19370.0
+    },
+    "2025": {
+      "pnl": 1436243.0,
+      "trades": 108,
+      "win_rate": 60.2,
+      "avg_pnl": 13299.0
+    },
+    "2026": {
+      "pnl": 220124.0,
+      "trades": 9,
+      "win_rate": 77.8,
+      "avg_pnl": 24458.0
+    }
+  }
+}

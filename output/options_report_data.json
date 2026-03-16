@@ -1,0 +1,574 @@
+{
+  "rules": [
+    "GapLarge_First30min_SPY",
+    "HighVolWR_30min_SPY_filtered",
+    "PriorDayStrong_AboveOR_QQQ_short",
+    "PriorDayStrong_AboveOR_SPY_short",
+    "PriorDayWeak_30min_QQQ",
+    "PriorDayWeak_30min_SPY_filtered",
+    "PriorDayWeak_50Hi_SPY_filtered"
+  ],
+  "deltas": [
+    "0.1",
+    "0.2",
+    "0.3",
+    "0.5",
+    "0.7",
+    "0.9"
+  ],
+  "rule_data": {
+    "GapLarge_First30min_SPY": {
+      "equity_pnl": 47,
+      "equity_wr": 63.6,
+      "equity_trades": 44,
+      "deltas": {
+        "0.1": {
+          "pnl": -361154,
+          "roi": -82.2,
+          "wr": 22.7,
+          "trades": 44,
+          "avg_entry": 0.32,
+          "avg_contracts": 2579
+        },
+        "0.2": {
+          "pnl": -81991,
+          "roi": -18.7,
+          "wr": 36.4,
+          "trades": 44,
+          "avg_entry": 0.6,
+          "avg_contracts": 846
+        },
+        "0.3": {
+          "pnl": 4999,
+          "roi": 1.1,
+          "wr": 52.3,
+          "trades": 44,
+          "avg_entry": 1.0,
+          "avg_contracts": 222
+        },
+        "0.5": {
+          "pnl": 24179,
+          "roi": 5.6,
+          "wr": 61.4,
+          "trades": 44,
+          "avg_entry": 2.25,
+          "avg_contracts": 52
+        },
+        "0.7": {
+          "pnl": 17942,
+          "roi": 4.2,
+          "wr": 61.4,
+          "trades": 44,
+          "avg_entry": 4.62,
+          "avg_contracts": 24
+        },
+        "0.9": {
+          "pnl": 10986,
+          "roi": 2.6,
+          "wr": 59.1,
+          "trades": 44,
+          "avg_entry": 8.91,
+          "avg_contracts": 13
+        }
+      },
+      "best_delta": 0.5,
+      "best_roi": 5.6,
+      "best_pnl": 24179
+    },
+    "HighVolWR_30min_SPY_filtered": {
+      "equity_pnl": 1977,
+      "equity_wr": 68.6,
+      "equity_trades": 35,
+      "deltas": {
+        "0.1": {
+          "pnl": 133555,
+          "roi": 38.3,
+          "wr": 28.6,
+          "trades": 35,
+          "avg_entry": 0.61,
+          "avg_contracts": 520
+        },
+        "0.2": {
+          "pnl": 121704,
+          "roi": 35.0,
+          "wr": 40.0,
+          "trades": 35,
+          "avg_entry": 1.02,
+          "avg_contracts": 199
+        },
+        "0.3": {
+          "pnl": 111172,
+          "roi": 32.0,
+          "wr": 48.6,
+          "trades": 35,
+          "avg_entry": 1.53,
+          "avg_contracts": 102
+        },
+        "0.5": {
+          "pnl": 115134,
+          "roi": 33.4,
+          "wr": 54.3,
+          "trades": 35,
+          "avg_entry": 2.71,
+          "avg_contracts": 45
+        },
+        "0.7": {
+          "pnl": 87313,
+          "roi": 25.5,
+          "wr": 60.0,
+          "trades": 35,
+          "avg_entry": 4.39,
+          "avg_contracts": 26
+        },
+        "0.9": {
+          "pnl": 61377,
+          "roi": 18.1,
+          "wr": 60.0,
+          "trades": 35,
+          "avg_entry": 7.55,
+          "avg_contracts": 15
+        }
+      },
+      "best_delta": 0.1,
+      "best_roi": 38.3,
+      "best_pnl": 133555
+    },
+    "PriorDayStrong_AboveOR_QQQ_short": {
+      "equity_pnl": 4494,
+      "equity_wr": 50.6,
+      "equity_trades": 470,
+      "deltas": {
+        "0.1": {
+          "pnl": -1010389,
+          "roi": -21.5,
+          "wr": 17.0,
+          "trades": 470,
+          "avg_entry": 0.31,
+          "avg_contracts": 769
+        },
+        "0.2": {
+          "pnl": -257103,
+          "roi": -5.5,
+          "wr": 23.2,
+          "trades": 470,
+          "avg_entry": 0.54,
+          "avg_contracts": 331
+        },
+        "0.3": {
+          "pnl": -95171,
+          "roi": -2.0,
+          "wr": 27.2,
+          "trades": 470,
+          "avg_entry": 0.84,
+          "avg_contracts": 169
+        },
+        "0.5": {
+          "pnl": 171983,
+          "roi": 3.7,
+          "wr": 36.0,
+          "trades": 470,
+          "avg_entry": 1.75,
+          "avg_contracts": 66
+        },
+        "0.7": {
+          "pnl": 220296,
+          "roi": 4.8,
+          "wr": 45.5,
+          "trades": 470,
+          "avg_entry": 3.45,
+          "avg_contracts": 33
+        },
+        "0.9": {
+          "pnl": 38372,
+          "roi": 0.8,
+          "wr": 48.7,
+          "trades": 468,
+          "avg_entry": 6.94,
+          "avg_contracts": 16
+        }
+      },
+      "best_delta": 0.7,
+      "best_roi": 4.8,
+      "best_pnl": 220296
+    },
+    "PriorDayStrong_AboveOR_SPY_short": {
+      "equity_pnl": 3002,
+      "equity_wr": 50.9,
+      "equity_trades": 464,
+      "deltas": {
+        "0.1": {
+          "pnl": -1497916,
+          "roi": -32.3,
+          "wr": 16.2,
+          "trades": 464,
+          "avg_entry": 0.26,
+          "avg_contracts": 839
+        },
+        "0.2": {
+          "pnl": -442805,
+          "roi": -9.6,
+          "wr": 21.6,
+          "trades": 464,
+          "avg_entry": 0.46,
+          "avg_contracts": 370
+        },
+        "0.3": {
+          "pnl": -75783,
+          "roi": -1.6,
+          "wr": 25.9,
+          "trades": 464,
+          "avg_entry": 0.71,
+          "avg_contracts": 199
+        },
+        "0.5": {
+          "pnl": 248317,
+          "roi": 5.4,
+          "wr": 37.9,
+          "trades": 464,
+          "avg_entry": 1.51,
+          "avg_contracts": 78
+        },
+        "0.7": {
+          "pnl": 254358,
+          "roi": 5.6,
+          "wr": 45.5,
+          "trades": 464,
+          "avg_entry": 3.01,
+          "avg_contracts": 38
+        },
+        "0.9": {
+          "pnl": 94872,
+          "roi": 2.1,
+          "wr": 47.9,
+          "trades": 461,
+          "avg_entry": 6.01,
+          "avg_contracts": 18
+        }
+      },
+      "best_delta": 0.7,
+      "best_roi": 5.6,
+      "best_pnl": 254358
+    },
+    "PriorDayWeak_30min_QQQ": {
+      "equity_pnl": 2519,
+      "equity_wr": 52.4,
+      "equity_trades": 309,
+      "deltas": {
+        "0.1": {
+          "pnl": -1825653,
+          "roi": -59.3,
+          "wr": 15.9,
+          "trades": 308,
+          "avg_entry": 0.26,
+          "avg_contracts": 1536
+        },
+        "0.2": {
+          "pnl": -494845,
+          "roi": -16.1,
+          "wr": 23.9,
+          "trades": 309,
+          "avg_entry": 0.53,
+          "avg_contracts": 450
+        },
+        "0.3": {
+          "pnl": -128108,
+          "roi": -4.2,
+          "wr": 30.1,
+          "trades": 309,
+          "avg_entry": 0.9,
+          "avg_contracts": 180
+        },
+        "0.5": {
+          "pnl": 33638,
+          "roi": 1.1,
+          "wr": 39.0,
+          "trades": 308,
+          "avg_entry": 1.96,
+          "avg_contracts": 60
+        },
+        "0.7": {
+          "pnl": -272,
+          "roi": -0.0,
+          "wr": 44.7,
+          "trades": 309,
+          "avg_entry": 3.67,
+          "avg_contracts": 30
+        },
+        "0.9": {
+          "pnl": -4087,
+          "roi": -0.1,
+          "wr": 49.0,
+          "trades": 308,
+          "avg_entry": 6.8,
+          "avg_contracts": 16
+        }
+      },
+      "best_delta": 0.5,
+      "best_roi": 1.1,
+      "best_pnl": 33638
+    },
+    "PriorDayWeak_30min_SPY_filtered": {
+      "equity_pnl": 1135,
+      "equity_wr": 50.6,
+      "equity_trades": 164,
+      "deltas": {
+        "0.1": {
+          "pnl": -848685,
+          "roi": -51.8,
+          "wr": 17.1,
+          "trades": 164,
+          "avg_entry": 0.27,
+          "avg_contracts": 1704
+        },
+        "0.2": {
+          "pnl": -160857,
+          "roi": -9.8,
+          "wr": 26.2,
+          "trades": 164,
+          "avg_entry": 0.52,
+          "avg_contracts": 522
+        },
+        "0.3": {
+          "pnl": -25835,
+          "roi": -1.6,
+          "wr": 29.9,
+          "trades": 164,
+          "avg_entry": 0.85,
+          "avg_contracts": 208
+        },
+        "0.5": {
+          "pnl": 43982,
+          "roi": 2.7,
+          "wr": 40.9,
+          "trades": 164,
+          "avg_entry": 1.81,
+          "avg_contracts": 67
+        },
+        "0.7": {
+          "pnl": 3394,
+          "roi": 0.2,
+          "wr": 45.7,
+          "trades": 164,
+          "avg_entry": 3.3,
+          "avg_contracts": 35
+        },
+        "0.9": {
+          "pnl": 22926,
+          "roi": 1.4,
+          "wr": 49.4,
+          "trades": 164,
+          "avg_entry": 6.14,
+          "avg_contracts": 18
+        }
+      },
+      "best_delta": 0.5,
+      "best_roi": 2.7,
+      "best_pnl": 43982
+    },
+    "PriorDayWeak_50Hi_SPY_filtered": {
+      "equity_pnl": 569,
+      "equity_wr": 51.2,
+      "equity_trades": 168,
+      "deltas": {
+        "0.1": {
+          "pnl": -742001,
+          "roi": -44.2,
+          "wr": 14.9,
+          "trades": 168,
+          "avg_entry": 0.16,
+          "avg_contracts": 3014
+        },
+        "0.2": {
+          "pnl": -213523,
+          "roi": -12.7,
+          "wr": 20.8,
+          "trades": 168,
+          "avg_entry": 0.32,
+          "avg_contracts": 1357
+        },
+        "0.3": {
+          "pnl": 32651,
+          "roi": 1.9,
+          "wr": 26.8,
+          "trades": 168,
+          "avg_entry": 0.5,
+          "avg_contracts": 762
+        },
+        "0.5": {
+          "pnl": 53945,
+          "roi": 3.2,
+          "wr": 38.7,
+          "trades": 168,
+          "avg_entry": 1.12,
+          "avg_contracts": 246
+        },
+        "0.7": {
+          "pnl": 38695,
+          "roi": 2.3,
+          "wr": 43.5,
+          "trades": 168,
+          "avg_entry": 2.15,
+          "avg_contracts": 85
+        },
+        "0.9": {
+          "pnl": -576,
+          "roi": -0.0,
+          "wr": 48.8,
+          "trades": 168,
+          "avg_entry": 4.04,
+          "avg_contracts": 39
+        }
+      },
+      "best_delta": 0.5,
+      "best_roi": 3.2,
+      "best_pnl": 53945
+    }
+  },
+  "overall": {
+    "0.1": {
+      "pnl": -6152243,
+      "roi": -37.3,
+      "wr": 16.8,
+      "trades": 1653,
+      "total_prem": 16512213
+    },
+    "0.2": {
+      "pnl": -1529420,
+      "roi": -9.3,
+      "wr": 23.6,
+      "trades": 1654,
+      "total_prem": 16502664
+    },
+    "0.3": {
+      "pnl": -176075,
+      "roi": -1.1,
+      "wr": 28.7,
+      "trades": 1654,
+      "total_prem": 16479925
+    },
+    "0.5": {
+      "pnl": 691178,
+      "roi": 4.2,
+      "wr": 38.9,
+      "trades": 1653,
+      "total_prem": 16392125
+    },
+    "0.7": {
+      "pnl": 621726,
+      "roi": 3.8,
+      "wr": 45.9,
+      "trades": 1654,
+      "total_prem": 16276456
+    },
+    "0.9": {
+      "pnl": 223870,
+      "roi": 1.4,
+      "wr": 49.2,
+      "trades": 1648,
+      "total_prem": 15974883
+    }
+  },
+  "equity_total_pnl": 13744,
+  "equity_total_wr": 51.8,
+  "equity_total_trades": 1654,
+  "optimal_pnl": 763953,
+  "optimal_config": {
+    "GapLarge_First30min_SPY": {
+      "delta": 0.5,
+      "pnl": 24179,
+      "roi": 5.6
+    },
+    "HighVolWR_30min_SPY_filtered": {
+      "delta": 0.1,
+      "pnl": 133555,
+      "roi": 38.3
+    },
+    "PriorDayStrong_AboveOR_QQQ_short": {
+      "delta": 0.7,
+      "pnl": 220296,
+      "roi": 4.8
+    },
+    "PriorDayStrong_AboveOR_SPY_short": {
+      "delta": 0.7,
+      "pnl": 254358,
+      "roi": 5.6
+    },
+    "PriorDayWeak_30min_QQQ": {
+      "delta": 0.5,
+      "pnl": 33638,
+      "roi": 1.1
+    },
+    "PriorDayWeak_30min_SPY_filtered": {
+      "delta": 0.5,
+      "pnl": 43982,
+      "roi": 2.7
+    },
+    "PriorDayWeak_50Hi_SPY_filtered": {
+      "delta": 0.5,
+      "pnl": 53945,
+      "roi": 3.2
+    }
+  },
+  "yearly": {
+    "2021": {
+      "0.1": -1431653,
+      "0.2": -755386,
+      "0.3": -428659,
+      "0.5": -153225,
+      "0.7": -58214,
+      "0.9": -30470,
+      "equity": 925,
+      "optimal": -123857
+    },
+    "2022": {
+      "0.1": -1107426,
+      "0.2": -43673,
+      "0.3": 201017,
+      "0.5": 296467,
+      "0.7": 281765,
+      "0.9": 175640,
+      "equity": 5450,
+      "optimal": 260583
+    },
+    "2023": {
+      "0.1": -1816066,
+      "0.2": -555751,
+      "0.3": -281419,
+      "0.5": -71738,
+      "0.7": -2907,
+      "0.9": -26070,
+      "equity": 95,
+      "optimal": -22237
+    },
+    "2024": {
+      "0.1": -1667426,
+      "0.2": -657285,
+      "0.3": -285202,
+      "0.5": -38459,
+      "0.7": -10360,
+      "0.9": -61072,
+      "equity": -20,
+      "optimal": 64218
+    },
+    "2025": {
+      "0.1": -322175,
+      "0.2": 278275,
+      "0.3": 478878,
+      "0.5": 576587,
+      "0.7": 373895,
+      "0.9": 157999,
+      "equity": 6846,
+      "optimal": 602025
+    },
+    "2026": {
+      "0.1": 192503,
+      "0.2": 204400,
+      "0.3": 139310,
+      "0.5": 81546,
+      "0.7": 37547,
+      "0.9": 7843,
+      "equity": 448,
+      "optimal": -16779
+    }
+  }
+}

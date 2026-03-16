@@ -1,0 +1,712 @@
+#!/usr/bin/env python3
+"""
+V6 Live Trading Dashboard
+==========================
+Generates a live HTML dashboard for the V6 strategy:
+  - QQQ Short (δ0.55) + SPY Short (δ0.60)
+  - Signal: prior day close location > 75%
+  - Gap sizing: gap-down = 1.5x budget, gap-up = 0.75x budget
+  - Entry: 9:31 AM | Exit: PT 50% OR 9:50 AM
+
+The HTML uses JavaScript to auto-refresh live prices via Polygon REST API.
+
+Usage:
+    python run_live_dashboard_v6.py
+"""
+
+import os, sys, json, requests
+from datetime import datetime, date, timedelta
+from src.config import POLYGON_API_KEY, OUTPUT_DIR
+
+BASE = "https://api.polygon.io/v2"
+BASE_V3 = "https://api.polygon.io/v3"
+
+# ── V6 Strategy Parameters ──────────────────────────────────────────────────
+V6 = {
+    "QQQ": {
+        "label": "QQQ Short",
+        "ticker": "QQQ",
+        "delta": 0.55,
+        "base_budget": 104_000,
+        "option_type": "put",
+        "color": "#ef4444",
+        "wr": 62.7,
+        "avg_pnl": 15634,
+        "sharpe": 5.56,
+    },
+    "SPY": {
+        "label": "SPY Short",
+        "ticker": "SPY",
+        "delta": 0.60,
+        "base_budget": 99_000,
+        "option_type": "put",
+        "color": "#f97316",
+        "wr": 58.2,
+        "avg_pnl": 10996,
+        "sharpe": 4.21,
+    },
+}
+
+GAP_DOWN_MULT = 1.5
+GAP_UP_MULT   = 0.75
+PROFIT_TARGET = 0.50   # 50% gain on premium
+SIGNAL_THRESHOLD = 0.75
+ENTRY_TIME = "09:31"
+TIME_EXIT  = "09:50"
+
+
+def fetch(url, params=None):
+    p = {"apiKey": POLYGON_API_KEY}
+    if params:
+        p.update(params)
+    try:
+        r = requests.get(url, params=p, timeout=10)
+        return r.json()
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def build_html(today_str):
+    # All data fetching is done client-side via JS — Python just generates the shell
+    static_data = {
+        "today": today_str,
+        "api_key": POLYGON_API_KEY,
+        "entry_time": ENTRY_TIME,
+        "time_exit": TIME_EXIT,
+        "profit_target": PROFIT_TARGET,
+        "gap_down_mult": GAP_DOWN_MULT,
+        "gap_up_mult": GAP_UP_MULT,
+        "signal_threshold": SIGNAL_THRESHOLD,
+        "strategies": {
+            "QQQ": V6["QQQ"],
+            "SPY": V6["SPY"],
+        }
+    }
+    data_json = json.dumps(static_data)
+
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V6 Live Dashboard — {today_str}</title>
+<style>
+*{{margin:0;padding:0;box-sizing:border-box}}
+:root{{
+  --bg:#08090d;--card:#0f1117;--border:#1e2230;
+  --green:#00c896;--red:#ef4444;--amber:#f59e0b;
+  --blue:#60a5fa;--purple:#a78bfa;--text:#e2e8f0;
+  --muted:#64748b;--accent:#00c896;
+}}
+body{{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding:16px}}
+.container{{max-width:960px;margin:0 auto}}
+
+/* Header */
+.header{{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}}
+.header-left .date{{font-size:22px;font-weight:700;color:#fff}}
+.header-left .subtitle{{font-size:12px;color:var(--muted);margin-top:2px}}
+.clock{{font-size:28px;font-weight:300;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:1px}}
+.market-badge{{font-size:11px;font-weight:600;padding:3px 10px;border-radius:4px;text-align:right;margin-top:4px}}
+
+/* Phase banner */
+.phase-banner{{text-align:center;padding:10px 20px;border-radius:8px;margin-bottom:18px;font-weight:700;font-size:14px;letter-spacing:.5px;border:1px solid}}
+
+/* Grid */
+.grid-2{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}}
+.grid-3{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}}
+@media(max-width:600px){{.grid-2{{grid-template-columns:1fr}}.grid-3{{grid-template-columns:1fr 1fr}}}}
+
+/* Cards */
+.card{{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}}
+.card.active-signal{{border-color:var(--green)}}
+.card.inactive{{opacity:.55}}
+.card-title{{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px}}
+.card-value{{font-size:24px;font-weight:700;color:#fff}}
+.card-sub{{font-size:11px;color:var(--muted);margin-top:3px}}
+
+/* Signal card */
+.sig-card{{background:var(--card);border-radius:12px;padding:18px;border:1px solid var(--border)}}
+.sig-header{{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}}
+.sig-title{{font-size:20px;font-weight:700;color:#fff}}
+.sig-badge{{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700}}
+.badge-active{{background:#052e16;color:var(--green);border:1px solid var(--green)}}
+.badge-inactive{{background:#1a1a2e;color:var(--muted);border:1px solid var(--border)}}
+.sig-meta{{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}}
+.meta-item .label{{font-size:9px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}}
+.meta-item .val{{font-size:16px;font-weight:700;color:#fff}}
+.meta-item .val.green{{color:var(--green)}}
+.meta-item .val.red{{color:var(--red)}}
+.meta-item .val.amber{{color:var(--amber)}}
+.divider{{border:none;border-top:1px solid var(--border);margin:12px 0}}
+
+/* Trade setup */
+.setup-card{{background:#0a1628;border:1px solid #1e3a5f;border-radius:12px;padding:18px;margin-bottom:12px}}
+.setup-title{{font-size:13px;font-weight:600;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}}
+.setup-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}}
+.setup-item .s-label{{font-size:9px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}}
+.setup-item .s-val{{font-size:18px;font-weight:700;color:#fff}}
+.setup-item .s-val.big{{font-size:22px;color:var(--amber)}}
+.setup-item .s-sub{{font-size:10px;color:var(--muted);margin-top:1px}}
+
+/* Entry alert */
+.entry-alert{{background:#0c1f0c;border:2px solid var(--green);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:12px}}
+.entry-dot{{width:12px;height:12px;background:var(--green);border-radius:50%;animation:pulse 1s infinite}}
+@keyframes pulse{{0%,100%{{opacity:1;transform:scale(1)}}50%{{opacity:.5;transform:scale(1.3)}}}}
+.entry-text{{font-size:15px;font-weight:700;color:var(--green)}}
+.entry-sub{{font-size:12px;color:#4ade80;margin-top:2px}}
+
+/* P&L tracker */
+.pnl-section{{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}}
+.pnl-title{{font-size:13px;font-weight:600;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}}
+.pnl-input-row{{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}}
+.pnl-input-row label{{font-size:11px;color:var(--muted);white-space:nowrap}}
+.pnl-input-row input{{background:#16213e;border:1px solid #2d3561;border-radius:6px;color:#fff;padding:6px 10px;font-size:14px;width:110px;outline:none}}
+.pnl-input-row input:focus{{border-color:var(--purple)}}
+.pnl-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}}
+.pnl-item .p-label{{font-size:9px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}}
+.pnl-item .p-val{{font-size:22px;font-weight:700}}
+.p-val.profit{{color:var(--green)}}
+.p-val.loss{{color:var(--red)}}
+.p-val.neutral{{color:#fff}}
+
+/* Exit alert */
+.exit-alert{{border-radius:10px;padding:14px 18px;margin-bottom:12px;display:none;align-items:center;gap:12px}}
+.exit-pt{{background:#0c200c;border:2px solid var(--green)}}
+.exit-time{{background:#1a1208;border:2px solid var(--amber)}}
+.exit-text{{font-size:15px;font-weight:700}}
+.exit-text.green{{color:var(--green)}}
+.exit-text.amber{{color:var(--amber)}}
+
+/* Stats footer */
+.stats-bar{{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:12px}}
+.stat-item{{background:var(--card);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--border)}}
+.stat-item .st-label{{font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}}
+.stat-item .st-val{{font-size:15px;font-weight:700;color:#fff}}
+
+/* Misc */
+.close-loc-bar{{height:6px;background:#1e2230;border-radius:3px;margin-top:6px;position:relative;overflow:hidden}}
+.close-loc-fill{{height:100%;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#ef4444);position:absolute;left:0;top:0}}
+.threshold-line{{position:absolute;top:0;bottom:0;width:2px;background:#ffffff50;left:75%}}
+.footer{{text-align:center;margin-top:18px;color:var(--muted);font-size:10px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="date" id="hdr-date">Loading...</div>
+      <div class="subtitle">V6 Live Trading Dashboard · 0DTE Short Puts</div>
+    </div>
+    <div style="text-align:right">
+      <div class="clock" id="live-clock">--:--:--</div>
+      <div class="market-badge" id="market-badge">--</div>
+    </div>
+  </div>
+
+  <!-- Phase Banner -->
+  <div class="phase-banner" id="phase-banner">Loading...</div>
+
+  <!-- Signal Cards -->
+  <div class="grid-2" id="signal-cards">
+    <div class="sig-card" id="qqq-sig-card">
+      <div class="sig-header">
+        <div>
+          <div class="sig-title">QQQ Short</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Put · δ0.55 · 0DTE</div>
+        </div>
+        <div class="sig-badge" id="qqq-badge">...</div>
+      </div>
+      <div class="close-loc-bar">
+        <div class="close-loc-fill" id="qqq-loc-fill" style="width:0%"></div>
+        <div class="threshold-line"></div>
+      </div>
+      <div style="font-size:9px;margin-top:4px;color:var(--muted)" id="qqq-close-loc-label">▲ 75% threshold · close location</div>
+      <hr class="divider">
+      <div class="sig-meta" id="qqq-trade-meta" style="display:none">
+        <div class="meta-item"><div class="label">Gap</div><div class="val" id="qqq-gap">--</div></div>
+        <div class="meta-item"><div class="label">Size Mult</div><div class="val amber" id="qqq-mult">--</div></div>
+        <div class="meta-item"><div class="label">Budget</div><div class="val" id="qqq-budget">--</div></div>
+      </div>
+    </div>
+
+    <div class="sig-card" id="spy-sig-card">
+      <div class="sig-header">
+        <div>
+          <div class="sig-title">SPY Short</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Put · δ0.60 · 0DTE</div>
+        </div>
+        <div class="sig-badge" id="spy-badge">...</div>
+      </div>
+      <div class="close-loc-bar">
+        <div class="close-loc-fill" id="spy-loc-fill" style="width:0%"></div>
+        <div class="threshold-line"></div>
+      </div>
+      <div style="font-size:9px;margin-top:4px;color:var(--muted)" id="spy-close-loc-label">▲ 75% threshold · close location</div>
+      <hr class="divider">
+      <div class="sig-meta" id="spy-trade-meta" style="display:none">
+        <div class="meta-item"><div class="label">Gap</div><div class="val" id="spy-gap">--</div></div>
+        <div class="meta-item"><div class="label">Size Mult</div><div class="val amber" id="spy-mult">--</div></div>
+        <div class="meta-item"><div class="label">Budget</div><div class="val" id="spy-budget">--</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trade Setup Panels (one per active signal) -->
+  <div id="qqq-setup" style="display:none">
+    <div class="setup-card">
+      <div class="setup-title">🎯 QQQ Trade Setup</div>
+      <div class="setup-grid">
+        <div class="setup-item"><div class="s-label">Underlying</div><div class="s-val" id="qqq-underlying">--</div><div class="s-sub">live price</div></div>
+        <div class="setup-item"><div class="s-label">Strike</div><div class="s-val big" id="qqq-strike">--</div><div class="s-sub" id="qqq-delta-act">target δ0.55</div></div>
+        <div class="setup-item"><div class="s-label">Live Bid/Ask</div><div class="s-val" id="qqq-opt-price">--</div><div class="s-sub" id="qqq-opt-spread">fetching...</div></div>
+        <div class="setup-item"><div class="s-label">Limit Order</div><div class="s-val big" id="qqq-limit">--</div><div class="s-sub">mid of bid/ask</div></div>
+        <div class="setup-item"><div class="s-label">Contracts</div><div class="s-val big" id="qqq-contracts">--</div><div class="s-sub" id="qqq-premium">--</div></div>
+        <div class="setup-item"><div class="s-label">PT Target</div><div class="s-val" style="color:var(--green)" id="qqq-pt">--</div><div class="s-sub">+50% on premium</div></div>
+        <div class="setup-item"><div class="s-label">Entry Time</div><div class="s-val">9:31 AM</div><div class="s-sub">market open</div></div>
+        <div class="setup-item"><div class="s-label">Time Exit</div><div class="s-val" style="color:var(--amber)">9:50 AM</div><div class="s-sub">if PT not hit</div></div>
+        <div class="setup-item"><div class="s-label">Max Loss</div><div class="s-val" style="color:var(--red)" id="qqq-maxloss">--</div><div class="s-sub">full premium</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="spy-setup" style="display:none">
+    <div class="setup-card">
+      <div class="setup-title">🎯 SPY Trade Setup</div>
+      <div class="setup-grid">
+        <div class="setup-item"><div class="s-label">Underlying</div><div class="s-val" id="spy-underlying">--</div><div class="s-sub">live price</div></div>
+        <div class="setup-item"><div class="s-label">Strike</div><div class="s-val big" id="spy-strike">--</div><div class="s-sub" id="spy-delta-act">target δ0.60</div></div>
+        <div class="setup-item"><div class="s-label">Live Bid/Ask</div><div class="s-val" id="spy-opt-price">--</div><div class="s-sub" id="spy-opt-spread">fetching...</div></div>
+        <div class="setup-item"><div class="s-label">Limit Order</div><div class="s-val big" id="spy-limit">--</div><div class="s-sub">mid of bid/ask</div></div>
+        <div class="setup-item"><div class="s-label">Contracts</div><div class="s-val big" id="spy-contracts">--</div><div class="s-sub" id="spy-premium">--</div></div>
+        <div class="setup-item"><div class="s-label">PT Target</div><div class="s-val" style="color:var(--green)" id="spy-pt">--</div><div class="s-sub">+50% on premium</div></div>
+        <div class="setup-item"><div class="s-label">Entry Time</div><div class="s-val">9:31 AM</div><div class="s-sub">market open</div></div>
+        <div class="setup-item"><div class="s-label">Time Exit</div><div class="s-val" style="color:var(--amber)">9:50 AM</div><div class="s-sub">if PT not hit</div></div>
+        <div class="setup-item"><div class="s-label">Max Loss</div><div class="s-val" style="color:var(--red)" id="spy-maxloss">--</div><div class="s-sub">full premium</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entry Alert -->
+  <div class="entry-alert" id="entry-alert" style="display:none">
+    <div class="entry-dot"></div>
+    <div>
+      <div class="entry-text" id="entry-alert-text">ENTER NOW — 9:31 AM</div>
+      <div class="entry-sub" id="entry-alert-sub">Place limit orders at mid price shown above</div>
+    </div>
+  </div>
+
+  <!-- Exit Alerts -->
+  <div class="exit-alert exit-pt" id="exit-pt-alert">
+    <div style="font-size:20px">✅</div>
+    <div>
+      <div class="exit-text green">PROFIT TARGET HIT — EXIT NOW</div>
+      <div style="font-size:12px;color:#4ade80;margin-top:2px" id="exit-pt-detail">Sell to close at market / limit</div>
+    </div>
+  </div>
+  <div class="exit-alert exit-time" id="exit-time-alert">
+    <div style="font-size:20px">⏰</div>
+    <div>
+      <div class="exit-text amber">9:50 AM TIME EXIT — CLOSE POSITION</div>
+      <div style="font-size:12px;color:#fbbf24;margin-top:2px">Sell to close at market</div>
+    </div>
+  </div>
+
+  <!-- P&L Tracker -->
+  <div class="pnl-section" id="pnl-section" style="display:none">
+    <div class="pnl-title">📊 Live P&amp;L Tracker</div>
+    <div class="pnl-input-row">
+      <label>QQQ Entry Price:</label>
+      <input type="number" id="qqq-entry-input" placeholder="e.g. 3.45" step="0.01" oninput="updatePnL()">
+      <label>SPY Entry Price:</label>
+      <input type="number" id="spy-entry-input" placeholder="e.g. 2.80" step="0.01" oninput="updatePnL()">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:10px">
+      <div style="background:#0a0a14;border-radius:8px;padding:14px">
+        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Total P&amp;L</div>
+        <div class="p-val neutral" id="pnl-total" style="font-size:32px">--</div>
+      </div>
+      <div style="background:#0a0a14;border-radius:8px;padding:14px">
+        <div style="font-size:9px;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Time to 9:50 Exit</div>
+        <div class="p-val neutral" id="pnl-countdown" style="font-size:32px">--</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;font-size:12px;color:var(--muted)">
+      <span>QQQ: <span id="pnl-qqq-pnl" style="color:#fff">--</span></span>
+      <span>SPY: <span id="pnl-spy-pnl" style="color:#fff">--</span></span>
+    </div>
+    <!-- hidden elements kept for JS compat -->
+    <span id="pnl-qqq-live" style="display:none"></span>
+    <span id="pnl-spy-live" style="display:none"></span>
+  </div>
+
+  <!-- Historical Stats -->
+  <div class="stats-bar">
+    <div class="stat-item"><div class="st-label">QQQ Win Rate</div><div class="st-val" style="color:var(--green)">62.7%</div></div>
+    <div class="stat-item"><div class="st-label">QQQ Avg P&L</div><div class="st-val" style="color:var(--green)">$15,634</div></div>
+    <div class="stat-item"><div class="st-label">SPY Win Rate</div><div class="st-val" style="color:var(--green)">58.2%</div></div>
+    <div class="stat-item"><div class="st-label">SPY Avg P&L</div><div class="st-val" style="color:var(--green)">$10,996</div></div>
+    <div class="stat-item"><div class="st-label">V6 Sharpe</div><div class="st-val">3.18</div></div>
+    <div class="stat-item"><div class="st-label">V6 Max DD</div><div class="st-val" style="color:var(--red)">$197K</div></div>
+    <div class="stat-item"><div class="st-label">Backtest P&L</div><div class="st-val" style="color:var(--green)">$8.55M</div></div>
+    <div class="stat-item"><div class="st-label">Win Rate (all)</div><div class="st-val">62.5%</div></div>
+  </div>
+
+  <div class="footer" id="footer">Auto-refreshes every 30s · V6 Strategy · 0DTE Puts · Entry 9:31 · Exit PT50% or 9:50AM</div>
+</div>
+
+<script>
+const DATA = {data_json};
+const API  = DATA.api_key;
+const POLY = 'https://api.polygon.io';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fmt$ = n => (n==null||isNaN(n)) ? '--' : '$'+n.toLocaleString('en-US',{{minimumFractionDigits:2,maximumFractionDigits:2}});
+const fmtK = n => (n==null||isNaN(n)) ? '--' : (n>=0?'+$':'-$')+Math.abs(n).toLocaleString('en-US',{{maximumFractionDigits:0}});
+const fmtP = n => (n==null||isNaN(n)) ? '--' : (n>=0?'+':'')+((n*100).toFixed(2))+'%';
+
+async function poly(path) {{
+  try {{
+    const sep = path.includes('?') ? '&' : '?';
+    const r = await fetch(POLY+path+sep+'apiKey='+API);
+    return await r.json();
+  }} catch(e) {{ return {{}}; }}
+}}
+
+// ── Time helpers ──────────────────────────────────────────────────────────────
+const getET   = () => new Date(new Date().toLocaleString('en-US',{{timeZone:'America/New_York'}}));
+const isWkday = () => {{ const d=new Date().getDay(); return d>=1&&d<=5; }};
+function phase(et) {{
+  const m = et.getHours()*60+et.getMinutes();
+  if (m < 9*60+30)  return 'pre';
+  if (m === 9*60+31) return 'entry';
+  if (m < 9*60+50)  return 'active';
+  if (m === 9*60+50) return 'time_exit';
+  if (m < 16*60)    return 'post_exit';
+  return 'closed';
+}}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+const S = {{
+  QQQ: {{ signal:false, closeLoc:0, priorClose:null, priorH:null, priorL:null,
+          open:null, livePrice:null, gapUp:null, budget:null,
+          strike:null, strikeLocked:false,
+          optBid:null, optAsk:null, optMid:null, contracts:null, actualDelta:null }},
+  SPY: {{ signal:false, closeLoc:0, priorClose:null, priorH:null, priorL:null,
+          open:null, livePrice:null, gapUp:null, budget:null,
+          strike:null, strikeLocked:false,
+          optBid:null, optAsk:null, optMid:null, contracts:null, actualDelta:null }},
+}};
+
+// ── Fetch Prior Day Bars → Signal ─────────────────────────────────────────────
+async function fetchSignals() {{
+  const today = DATA.today;
+  const start = new Date(new Date(today) - 10*24*3600*1000).toISOString().slice(0,10);
+  for (const tk of ['QQQ','SPY']) {{
+    const d = await poly(`/v2/aggs/ticker/${{tk}}/range/1/day/${{start}}/${{today}}?adjusted=true&sort=asc&limit=15`);
+    const bars = d.results || [];
+    // Find prior bar (last bar before today)
+    const prior = bars.filter(b => new Date(b.t).toISOString().slice(0,10) < today).slice(-1)[0];
+    if (!prior) continue;
+    const rng = prior.h - prior.l;
+    const loc = rng > 0 ? (prior.c - prior.l) / rng : 0.5;
+    S[tk].closeLoc   = loc;
+    S[tk].priorClose = prior.c;
+    S[tk].priorH     = prior.h;
+    S[tk].priorL     = prior.l;
+    S[tk].signal     = loc > DATA.signal_threshold;
+    renderSignalCard(tk);
+  }}
+}}
+
+// ── Fetch Live Prices ─────────────────────────────────────────────────────────
+async function fetchPrices() {{
+  for (const tk of ['QQQ','SPY']) {{
+    const d = await poly(`/v2/snapshot/locale/us/markets/stocks/tickers/${{tk}}`);
+    const snap = d.ticker;
+    if (!snap) continue;
+    const price = snap.lastTrade?.p || snap.day?.c;
+    const open  = snap.day?.o;
+    if (price) {{ S[tk].livePrice = price; }}
+    // Use today's open; fall back to live price pre-market
+    const effectiveOpen = open || price;
+    if (effectiveOpen) {{
+      if (open) S[tk].open = open;
+      if (S[tk].priorClose) {{
+        S[tk].gapUp = effectiveOpen > S[tk].priorClose;
+        const mult  = S[tk].gapUp ? DATA.gap_up_mult : DATA.gap_down_mult;
+        S[tk].budget = Math.round(DATA.strategies[tk].base_budget * mult / 1000) * 1000;
+      }} else {{
+        // priorClose not loaded yet — use base budget as placeholder
+        S[tk].budget = DATA.strategies[tk].base_budget;
+      }}
+    }}
+    set(tk.toLowerCase()+'-live-price', price ? fmt$(price) : '--');
+    renderSignalCard(tk);
+  }}
+}}
+
+// ── Fetch Option Chain ────────────────────────────────────────────────────────
+async function fetchOptions() {{
+  const today = DATA.today;
+  const currentPhase = phase(getET());
+  // Lock strike once we're at or past entry time — never re-select mid-trade
+  const shouldLock = ['entry','active','time_exit','post_exit'].includes(currentPhase);
+
+  for (const tk of ['QQQ','SPY']) {{
+    if (!S[tk].signal) continue;
+    const stk = S[tk];
+    const tgtDelta = DATA.strategies[tk].delta;
+    const underlying = stk.livePrice || stk.open;
+    if (!underlying) continue;
+
+    if (stk.strikeLocked && stk.strike) {{
+      // ── LOCKED MODE: just refresh bid/ask for the fixed 9:31 strike ──────────
+      const d = await poly(`/v3/snapshot/options/${{tk}}?expiration_date=${{today}}&option_type=put&strike_price_gte=${{stk.strike}}&strike_price_lte=${{stk.strike}}&limit=5`);
+      const best = (d.results || [])[0];
+      if (best) {{
+        stk.optBid = best.last_quote?.bid ?? null;
+        stk.optAsk = best.last_quote?.ask ?? null;
+        stk.optMid = (stk.optBid!=null && stk.optAsk!=null) ? (stk.optBid+stk.optAsk)/2 : (best.day?.close ?? stk.optMid);
+        stk.actualDelta = best.greeks?.delta ? Math.abs(best.greeks.delta) : stk.actualDelta;
+      }}
+    }} else {{
+      // ── SCAN MODE (pre-market): find best-delta option in wide range ──────────
+      const sMin = Math.floor(underlying * 0.95);
+      const sMax = Math.ceil(underlying * 1.12);
+      const d = await poly(`/v3/snapshot/options/${{tk}}?expiration_date=${{today}}&option_type=put&strike_price_gte=${{sMin}}&strike_price_lte=${{sMax}}&limit=100&order=desc`);
+      const results = (d.results || []).filter(o => o.greeks?.delta);
+
+      let best = null, bestDiff = 99;
+      for (const o of results) {{
+        const delta = Math.abs(o.greeks.delta);
+        const diff  = Math.abs(delta - tgtDelta);
+        if (diff < bestDiff) {{ bestDiff=diff; best=o; }}
+      }}
+
+      if (best) {{
+        stk.strike      = best.details?.strike_price;
+        stk.actualDelta = Math.abs(best.greeks.delta);
+        stk.optBid      = best.last_quote?.bid ?? best.day?.open ?? null;
+        stk.optAsk      = best.last_quote?.ask ?? null;
+        stk.optMid      = (stk.optBid!=null && stk.optAsk!=null) ? (stk.optBid+stk.optAsk)/2 : (best.day?.close ?? null);
+      }} else {{
+        const otm = tgtDelta >= 0.60 ? 0.001 : 0.004;
+        stk.strike = Math.round(underlying * (1 - otm));
+        stk.optMid = null;
+      }}
+
+      // Lock strike once we hit entry time
+      if (shouldLock && stk.strike) stk.strikeLocked = true;
+    }}
+
+    if (stk.optMid && stk.budget) {{
+      stk.contracts = Math.floor(stk.budget / (stk.optMid * 100));
+    }}
+    renderSetup(tk);
+    checkPtAlert(tk);
+  }}
+  updatePnL();
+}}
+
+// ── Render Signal Card ────────────────────────────────────────────────────────
+function renderSignalCard(tk) {{
+  const stk = S[tk]; const t = tk.toLowerCase();
+  const cfg = DATA.strategies[tk];
+
+  el(t+'-loc-fill').style.width = Math.min((stk.closeLoc||0)*100,100)+'%';
+  const locPct = stk.closeLoc ? (stk.closeLoc*100).toFixed(1)+'%' : '--';
+  const locLbl = el(t+'-close-loc-label');
+  if (locLbl) {{
+    locLbl.textContent = 'Close Loc: '+locPct+' · ▲ 75% threshold';
+    locLbl.style.color = stk.signal ? '#ef4444' : (stk.closeLoc < 0.25 ? '#00c896' : 'var(--muted)');
+  }}
+
+  const badge = el(t+'-badge');
+  if (stk.signal) {{
+    badge.textContent='ACTIVE'; badge.className='sig-badge badge-active';
+    el(t+'-sig-card').className='sig-card active-signal';
+    el(t+'-setup').style.display='block';
+  }} else {{
+    badge.textContent='INACTIVE'; badge.className='sig-badge badge-inactive';
+    el(t+'-sig-card').className='sig-card inactive';
+    el(t+'-setup').style.display='none';
+  }}
+
+  if (stk.open) {{
+    if (stk.signal && stk.priorClose) {{
+      const gapPct = (stk.open - stk.priorClose)/stk.priorClose;
+      const gapStr = (gapPct>=0?'+':'')+(gapPct*100).toFixed(2)+'%';
+      const mult   = stk.gapUp ? DATA.gap_up_mult : DATA.gap_down_mult;
+      el(t+'-trade-meta').style.display='grid';
+      const openStr = stk.open ? ' (open $'+stk.open.toFixed(2)+')' : '';
+      el(t+'-gap').textContent = gapStr+openStr;
+      el(t+'-gap').className   = 'val '+(stk.gapUp?'red':'green');
+      el(t+'-mult').textContent = mult.toFixed(2)+'x  '+(stk.gapUp?'(gap up — smaller)':'(gap dn — larger)');
+      el(t+'-budget').textContent = stk.budget ? '$'+stk.budget.toLocaleString() : '--';
+    }}
+  }}
+}}
+
+// ── Render Trade Setup ────────────────────────────────────────────────────────
+function renderSetup(tk) {{
+  const stk = S[tk]; const t = tk.toLowerCase();
+  const tgtDelta = DATA.strategies[tk].delta;
+
+  // Strike — show lock indicator once frozen at 9:31
+  const strikeEl = el(t+'-strike');
+  if (strikeEl) {{
+    strikeEl.textContent = stk.strike ? '$'+stk.strike : '--';
+    const deltaOff = stk.actualDelta ? Math.abs(stk.actualDelta - tgtDelta) : 0;
+    strikeEl.style.color = (deltaOff > 0.12) ? 'var(--red)' : (deltaOff > 0.06 ? 'var(--amber)' : '#fff');
+  }}
+
+  // Delta / lock sub-label
+  const deltaSubEl = el(t+'-delta-act');
+  if (deltaSubEl) {{
+    if (stk.strikeLocked) {{
+      deltaSubEl.textContent = '🔒 locked at 9:31';
+      deltaSubEl.style.color = '#60a5fa';
+    }} else if (stk.actualDelta) {{
+      const deltaOff = Math.abs(stk.actualDelta - tgtDelta);
+      deltaSubEl.textContent = 'actual δ '+stk.actualDelta.toFixed(3)+(deltaOff>0.08?' ⚠':'');
+      deltaSubEl.style.color = deltaOff > 0.12 ? '#ef4444' : deltaOff > 0.06 ? '#f59e0b' : '#00c896';
+    }}
+  }}
+
+  // Underlying price
+  set(t+'-underlying', stk.livePrice ? fmt$(stk.livePrice) : (stk.open ? fmt$(stk.open) : '--'));
+
+  // Bid / Ask
+  if (stk.optBid!=null && stk.optAsk!=null) {{
+    set(t+'-opt-price', fmt$(stk.optBid)+' / '+fmt$(stk.optAsk));
+    set(t+'-opt-spread', 'spread $'+((stk.optAsk-stk.optBid)*100).toFixed(0)+'/c');
+  }} else {{
+    set(t+'-opt-price', stk.optMid ? fmt$(stk.optMid) : 'fetching...');
+    set(t+'-opt-spread', '');
+  }}
+
+  set(t+'-limit',     stk.optMid ? fmt$(stk.optMid) : '--');
+  set(t+'-contracts', stk.contracts ? stk.contracts : '--');
+  const premium = stk.optMid && stk.contracts ? stk.optMid*stk.contracts*100 : null;
+  set(t+'-premium',   premium ? 'total $'+Math.round(premium).toLocaleString() : (stk.budget ? 'budget $'+stk.budget.toLocaleString() : '--'));
+  set(t+'-pt',        stk.optMid ? fmt$(stk.optMid*1.5) : '--');
+  set(t+'-maxloss',   stk.budget  ? '$'+stk.budget.toLocaleString() : '--');
+}}
+
+// ── Check PT Alert ────────────────────────────────────────────────────────────
+function checkPtAlert(tk) {{
+  const stk = S[tk]; const t = tk.toLowerCase();
+  const entry = parseFloat(el(t+'-entry-input')?.value);
+  if (!isNaN(entry) && stk.optMid && stk.optMid >= entry*1.5) {{
+    el('exit-pt-alert').style.display='flex';
+    set('exit-pt-detail', tk+' hit PT — mid '+fmt$(stk.optMid)+' vs entry '+fmt$(entry)+' (+'+((stk.optMid/entry-1)*100).toFixed(0)+'%)');
+  }}
+}}
+
+// ── P&L Tracker ──────────────────────────────────────────────────────────────
+function updatePnL() {{
+  let total=0, hasAny=false;
+  for (const tk of ['QQQ','SPY']) {{
+    const stk=S[tk]; const t=tk.toLowerCase();
+    const entry=parseFloat(el(t+'-entry-input')?.value);
+    const live=stk.optMid; const contracts=stk.contracts;
+    if (!isNaN(entry) && live && contracts) {{
+      const pnl=(live-entry)*contracts*100;
+      const pct=(live-entry)/entry;
+      const pnlEl=el('pnl-'+t+'-pnl');
+      pnlEl.textContent=fmtK(pnl)+' ('+fmtP(pct)+')';
+      pnlEl.className='p-val '+(pnl>=0?'profit':'loss');
+      total+=pnl; hasAny=true;
+    }}
+    set('pnl-'+t+'-live', live ? fmt$(live) : '--');
+  }}
+  if (hasAny) {{
+    const tot=el('pnl-total');
+    tot.textContent=fmtK(total);
+    tot.className='p-val '+(total>=0?'profit':'loss');
+  }}
+  // Countdown
+  const et=getET();
+  const diffM=(9*60+50)-(et.getHours()*60+et.getMinutes());
+  const diffS=diffM*60-et.getSeconds();
+  const cd=el('pnl-countdown');
+  if (diffS>0) {{
+    const mm=Math.floor(diffS/60), ss=diffS%60;
+    cd.textContent=mm+'m '+ss.toString().padStart(2,'0')+'s to exit';
+    cd.className='p-val '+(diffM<=5?'loss':diffM<=10?'amber':'neutral');
+  }} else {{ cd.textContent='Exited'; cd.className='p-val neutral'; }}
+}}
+
+// ── Phase Banner ──────────────────────────────────────────────────────────────
+function updateClock() {{
+  const et=getET();
+  const ts=et.toLocaleTimeString('en-US',{{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'}});
+  set('live-clock',ts);
+  const dow=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][et.getDay()];
+  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][et.getMonth()];
+  set('hdr-date', dow+', '+mon+' '+et.getDate()+', '+et.getFullYear());
+
+  const p=phase(et); const banner=el('phase-banner'); const mb=el('market-badge');
+  if (!isWkday()) {{
+    banner.textContent='🔴  MARKET CLOSED — Weekend'; applyStyle(banner,'#1a0a0a','#444','#666');
+    mb.textContent='CLOSED'; applyStyle(mb,'#1a0a0a','#444','#666'); return;
+  }}
+  const map={{
+    pre:       ['⏳  PRE-MARKET — Signal check complete · Market opens 9:30 AM ET','#08122a','#1e3a5f','#60a5fa','PRE-MKT'],
+    entry:     ['🚨  ENTRY NOW — 9:31 AM · PLACE LIMIT ORDERS AT MID PRICE','#031a0a','#00c896','#00c896','ENTER'],
+    active:    ['📈  POSITION ACTIVE — Monitor PT (50%) or time exit at 9:50 AM','#1a1208','#d97706','#f59e0b','IN TRADE'],
+    time_exit: ['⏰  9:50 AM TIME EXIT — SELL TO CLOSE ALL POSITIONS NOW','#1a0808','#b91c1c','#ef4444','EXIT NOW'],
+    post_exit: ['✅  SESSION COMPLETE — Position should be flat','#08122a','#1e3a5f','#60a5fa','DONE'],
+    closed:    ['🔴  MARKET CLOSED','#0f0f0f','#333','#555','CLOSED'],
+  }};
+  const [txt,bg,bc,tc,mb_txt]=map[p]||map.closed;
+  banner.textContent=txt; applyStyle(banner,bg,bc,tc);
+  mb.textContent=mb_txt; applyStyle(mb,bg,bc,tc);
+  el('entry-alert').style.display=(p==='entry')?'flex':'none';
+  el('exit-time-alert').style.display=(p==='time_exit')?'flex':'none';
+  el('pnl-section').style.display=['entry','active','time_exit','post_exit'].includes(p)?'block':'none';
+  updatePnL();
+}}
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+const el  = id => document.getElementById(id);
+const set = (id,v) => {{ const e=el(id); if(e) e.textContent=v; }};
+function applyStyle(e,bg,bc,tc) {{ e.style.background=bg; e.style.borderColor=bc; e.style.color=tc; }}
+
+// ── Main Loop ─────────────────────────────────────────────────────────────────
+async function tick() {{
+  await fetchPrices();
+  const p=phase(getET());
+  if (isWkday() && ['entry','active','time_exit','post_exit','pre'].includes(p)) {{
+    await fetchOptions();
+  }}
+  set('footer','Last updated: '+new Date().toLocaleTimeString()+' · auto-refreshes 30s · V6 Strategy · 0DTE puts · entry 9:31 · exit PT50% or 9:50');
+}}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+fetchSignals().then(tick);
+setInterval(updateClock, 1000);
+setInterval(tick, 30000);
+updateClock();
+</script>
+</body>
+</html>"""
+    return html
+
+
+def run():
+    today = date.today().strftime("%Y-%m-%d")
+    print(f"Building V6 Live Dashboard for {today}")
+    print("(All market data fetched client-side via browser → Polygon API)")
+
+    html = build_html(today)
+    out_path = os.path.join(OUTPUT_DIR, "live_dashboard_v6.html")
+    with open(out_path, "w") as f:
+        f.write(html)
+    print(f"\n✅ Dashboard saved: {out_path}")
+
+
+if __name__ == "__main__":
+    run()

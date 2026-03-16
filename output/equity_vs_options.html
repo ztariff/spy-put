@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equity vs Options — Side by Side</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;padding:24px}
+.c{max-width:1400px;margin:0 auto}
+h1{font-size:26px;font-weight:700;color:#f8fafc;margin-bottom:6px}
+h2{font-size:18px;font-weight:600;margin:28px 0 12px;color:#f1f5f9;border-bottom:1px solid #334155;padding-bottom:6px}
+.sub{color:#94a3b8;font-size:13px;margin-bottom:24px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:900px){.pair{grid-template-columns:1fr}}
+.panel{background:#1e293b;border-radius:10px;padding:18px;border:1px solid #334155}
+.panel-title{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.tag{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600}
+.tag-eq{background:#1e3a5f;color:#60a5fa}
+.tag-opt{background:#3b1764;color:#c084fc}
+.tag-best{background:#166534;color:#4ade80;margin-left:6px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:8px}
+th{color:#64748b;font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.5px;padding:6px 4px;text-align:right;border-bottom:1px solid #334155}
+th:first-child{text-align:left}
+td{padding:6px 4px;text-align:right;border-bottom:1px solid #0f172a}
+td:first-child{text-align:left;color:#94a3b8}
+.hl{background:#0f172a;font-weight:600}
+.kpis{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.kpi{text-align:center;flex:1;min-width:70px}
+.kpi-v{font-size:18px;font-weight:700}
+.kpi-l{font-size:10px;color:#64748b;text-transform:uppercase;margin-top:2px}
+.delta-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.delta-chip{font-size:10px;padding:3px 8px;border-radius:6px;background:#0f172a;border:1px solid #334155;cursor:default}
+.delta-chip.best{border-color:#4ade80;color:#4ade80;font-weight:700}
+.strat-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.strat-name{font-size:17px;font-weight:700;color:#f8fafc}
+.dir-badge{font-size:10px;padding:2px 10px;border-radius:12px;font-weight:600}
+.dir-l{background:#166534;color:#4ade80}
+.dir-s{background:#7f1d1d;color:#fca5a5}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.summary-card{background:#1e293b;border-radius:8px;padding:14px;border:1px solid #334155;text-align:center}
+.summary-card .kpi-v{font-size:22px}
+.footer{color:#475569;font-size:11px;margin-top:30px;padding-top:12px;border-top:1px solid #1e293b}
+</style></head><body><div class="c">
+<h1>Equity vs Options — Strategy Comparison</h1>
+<p class="sub">Equity: $3M per trade &nbsp;|&nbsp; Options: $10K premium per trade &nbsp;|&nbsp; 7 strategies, 2021–2026</p>
+
+<div class="summary-grid">
+<div class="summary-card"><div class="kpi-v" style="color:#4ade80">+$4,123,211</div><div class="kpi-l">Equity Total P&L</div></div>
+<div class="summary-card"><div class="kpi-v" style="color:#4ade80">+$1,872,423</div><div class="kpi-l">Options Best-Delta P&L</div></div>
+<div class="summary-card"><div class="kpi-v" style="color:#f87171">-$100,058</div><div class="kpi-l">Equity Worst Trade</div></div>
+<div class="summary-card"><div class="kpi-v" style="color:#4ade80">-$10,000</div><div class="kpi-l">Options Worst Trade</div></div>
+</div>
+
+<div class="strat-hdr"><span class="strat-name">GapLarge SPY</span><span class="dir-badge dir-l">LONG</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$14,192</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">63.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">0.72</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">44</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$323</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$5,655</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,382</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$13,149</td></tr><tr><td>2022</td><td style="color:#f87171">-$28,136</td></tr><tr><td>2023</td><td style="color:#4ade80">+$10,129</td></tr><tr><td>2024</td><td style="color:#4ade80">+$7,569</td></tr><tr><td>2025</td><td style="color:#4ade80">+$11,481</td></tr><tr><td>2026</td><td style="color:#64748b">+$0</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.3</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$37,869</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">54.5%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+8.9%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">44</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$861</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$19,569</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$7,060</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$7,699</td></tr><tr><td>2022</td><td style="color:#f87171">-$2,073</td></tr><tr><td>2023</td><td style="color:#4ade80">+$3,574</td></tr><tr><td>2024</td><td style="color:#4ade80">+$16,854</td></tr><tr><td>2025</td><td style="color:#4ade80">+$11,815</td></tr><tr><td>2026</td><td style="color:#64748b">+$0</td></tr></table>
+<div class="delta-row"><span class="delta-chip" title="P&L: -$6,602  ROI: -3.1%  WR: 44.8%">&Delta;0.1 -$6,602</span><span class="delta-chip" title="P&L: +$24,161  ROI: +7.1%  WR: 55.3%">&Delta;0.2 +$24,161</span><span class="delta-chip best" title="P&L: +$37,869  ROI: +8.9%  WR: 54.5%">&Delta;0.3 +$37,869</span><span class="delta-chip" title="P&L: +$24,223  ROI: +5.6%  WR: 61.4%">&Delta;0.5 +$24,223</span><span class="delta-chip" title="P&L: +$13,293  ROI: +3.1%  WR: 61.4%">&Delta;0.7 +$13,293</span><span class="delta-chip" title="P&L: +$4,603  ROI: +1.1%  WR: 56.8%">&Delta;0.9 +$4,603</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">HighVolWR SPY</span><span class="dir-badge dir-l">LONG</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$593,083</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">68.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">5.39</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">35</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$16,945</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$233,172</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$61,072</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$82,710</td></tr><tr><td>2022</td><td style="color:#f87171">-$33,868</td></tr><tr><td>2023</td><td style="color:#4ade80">+$48,118</td></tr><tr><td>2024</td><td style="color:#4ade80">+$67,432</td></tr><tr><td>2025</td><td style="color:#4ade80">+$423,664</td></tr><tr><td>2026</td><td style="color:#4ade80">+$5,027</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.1</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$223,935</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">35.3%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+76.3%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">34</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$6,586</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$166,189</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,860</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$10,252</td></tr><tr><td>2022</td><td style="color:#f87171">-$35,438</td></tr><tr><td>2023</td><td style="color:#4ade80">+$14,485</td></tr><tr><td>2024</td><td style="color:#4ade80">+$76,131</td></tr><tr><td>2025</td><td style="color:#4ade80">+$166,595</td></tr><tr><td>2026</td><td style="color:#f87171">-$8,090</td></tr></table>
+<div class="delta-row"><span class="delta-chip best" title="P&L: +$223,935  ROI: +76.3%  WR: 35.3%">&Delta;0.1 +$223,935</span><span class="delta-chip" title="P&L: +$142,410  ROI: +41.4%  WR: 40.0%">&Delta;0.2 +$142,410</span><span class="delta-chip" title="P&L: +$116,718  ROI: +33.6%  WR: 48.6%">&Delta;0.3 +$116,718</span><span class="delta-chip" title="P&L: +$113,303  ROI: +32.8%  WR: 54.3%">&Delta;0.5 +$113,303</span><span class="delta-chip" title="P&L: +$83,205  ROI: +24.3%  WR: 60.0%">&Delta;0.7 +$83,205</span><span class="delta-chip" title="P&L: +$56,118  ROI: +16.6%  WR: 60.0%">&Delta;0.9 +$56,118</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">PD Strong QQQ Short</span><span class="dir-badge dir-s">SHORT</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$1,348,244</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">50.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">1.83</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">470</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$2,869</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$102,352</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$67,836</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$315,569</td></tr><tr><td>2022</td><td style="color:#4ade80">+$858,716</td></tr><tr><td>2023</td><td style="color:#f87171">-$64,684</td></tr><tr><td>2024</td><td style="color:#f87171">-$140,819</td></tr><tr><td>2025</td><td style="color:#4ade80">+$323,588</td></tr><tr><td>2026</td><td style="color:#4ade80">+$55,874</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.1</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$449,057</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">19.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+12.8%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">450</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$998</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$430,510</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,902</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$139,132</td></tr><tr><td>2022</td><td style="color:#4ade80">+$196,221</td></tr><tr><td>2023</td><td style="color:#f87171">-$256,280</td></tr><tr><td>2024</td><td style="color:#f87171">-$18,870</td></tr><tr><td>2025</td><td style="color:#4ade80">+$156,702</td></tr><tr><td>2026</td><td style="color:#4ade80">+$232,152</td></tr></table>
+<div class="delta-row"><span class="delta-chip best" title="P&L: +$449,057  ROI: +12.8%  WR: 19.6%">&Delta;0.1 +$449,057</span><span class="delta-chip" title="P&L: +$264,179  ROI: +5.9%  WR: 23.9%">&Delta;0.2 +$264,179</span><span class="delta-chip" title="P&L: +$128,058  ROI: +2.7%  WR: 28.8%">&Delta;0.3 +$128,058</span><span class="delta-chip" title="P&L: +$199,856  ROI: +4.3%  WR: 36.2%">&Delta;0.5 +$199,856</span><span class="delta-chip" title="P&L: +$186,576  ROI: +4.0%  WR: 45.1%">&Delta;0.7 +$186,576</span><span class="delta-chip" title="P&L: -$22,539  ROI: -0.5%  WR: 47.2%">&Delta;0.9 -$22,539</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">PD Strong SPY Short</span><span class="dir-badge dir-s">SHORT</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$900,572</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">50.9%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">1.65</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">464</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$1,941</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$91,187</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$52,841</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#4ade80">+$4,108</td></tr><tr><td>2022</td><td style="color:#4ade80">+$667,068</td></tr><tr><td>2023</td><td style="color:#4ade80">+$17,775</td></tr><tr><td>2024</td><td style="color:#f87171">-$22,429</td></tr><tr><td>2025</td><td style="color:#4ade80">+$170,210</td></tr><tr><td>2026</td><td style="color:#4ade80">+$63,840</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.5</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$296,594</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">38.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+6.4%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">464</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$639</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$77,384</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,957</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$57,666</td></tr><tr><td>2022</td><td style="color:#4ade80">+$165,193</td></tr><tr><td>2023</td><td style="color:#4ade80">+$39,388</td></tr><tr><td>2024</td><td style="color:#4ade80">+$8,404</td></tr><tr><td>2025</td><td style="color:#4ade80">+$51,714</td></tr><tr><td>2026</td><td style="color:#4ade80">+$89,560</td></tr></table>
+<div class="delta-row"><span class="delta-chip" title="P&L: +$149,567  ROI: +4.5%  WR: 18.1%">&Delta;0.1 +$149,567</span><span class="delta-chip" title="P&L: +$167,199  ROI: +3.8%  WR: 22.9%">&Delta;0.2 +$167,199</span><span class="delta-chip" title="P&L: +$205,972  ROI: +4.5%  WR: 26.7%">&Delta;0.3 +$205,972</span><span class="delta-chip best" title="P&L: +$296,594  ROI: +6.4%  WR: 38.6%">&Delta;0.5 +$296,594</span><span class="delta-chip" title="P&L: +$229,417  ROI: +5.0%  WR: 45.5%">&Delta;0.7 +$229,417</span><span class="delta-chip" title="P&L: +$37,855  ROI: +0.8%  WR: 46.6%">&Delta;0.9 +$37,855</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">PD Weak QQQ</span><span class="dir-badge dir-l">LONG</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$755,690</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">52.4%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">1.12</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">309</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$2,446</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$274,334</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$100,058</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$17,058</td></tr><tr><td>2022</td><td style="color:#f87171">-$55,611</td></tr><tr><td>2023</td><td style="color:#4ade80">+$57,405</td></tr><tr><td>2024</td><td style="color:#4ade80">+$108,950</td></tr><tr><td>2025</td><td style="color:#4ade80">+$662,242</td></tr><tr><td>2026</td><td style="color:#f87171">-$239</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.5</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$45,800</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">39.3%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+1.5%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">308</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$149</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$50,235</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$10,000</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$34,990</td></tr><tr><td>2022</td><td style="color:#f87171">-$57,984</td></tr><tr><td>2023</td><td style="color:#f87171">-$28,709</td></tr><tr><td>2024</td><td style="color:#4ade80">+$32,193</td></tr><tr><td>2025</td><td style="color:#4ade80">+$158,238</td></tr><tr><td>2026</td><td style="color:#f87171">-$22,947</td></tr></table>
+<div class="delta-row"><span class="delta-chip" title="P&L: -$115,387  ROI: -6.5%  WR: 20.8%">&Delta;0.1 -$115,387</span><span class="delta-chip" title="P&L: -$94,577  ROI: -3.4%  WR: 25.1%">&Delta;0.2 -$94,577</span><span class="delta-chip" title="P&L: +$40,873  ROI: +1.3%  WR: 31.7%">&Delta;0.3 +$40,873</span><span class="delta-chip best" title="P&L: +$45,800  ROI: +1.5%  WR: 39.3%">&Delta;0.5 +$45,800</span><span class="delta-chip" title="P&L: -$24,111  ROI: -0.8%  WR: 44.3%">&Delta;0.7 -$24,111</span><span class="delta-chip" title="P&L: -$44,338  ROI: -1.5%  WR: 48.4%">&Delta;0.9 -$44,338</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">PD Weak SPY</span><span class="dir-badge dir-l">LONG</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$340,601</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">50.6%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">1.28</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">164</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$2,077</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$129,786</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$64,955</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$100,253</td></tr><tr><td>2022</td><td style="color:#4ade80">+$237,967</td></tr><tr><td>2023</td><td style="color:#f87171">-$1,511</td></tr><tr><td>2024</td><td style="color:#f87171">-$3,743</td></tr><tr><td>2025</td><td style="color:#4ade80">+$197,373</td></tr><tr><td>2026</td><td style="color:#4ade80">+$10,769</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.1</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$91,539</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">24.0%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+10.1%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">121</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$757</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$104,285</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,860</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$80,138</td></tr><tr><td>2022</td><td style="color:#4ade80">+$87,811</td></tr><tr><td>2023</td><td style="color:#f87171">-$47,541</td></tr><tr><td>2024</td><td style="color:#4ade80">+$122,428</td></tr><tr><td>2025</td><td style="color:#4ade80">+$31,569</td></tr><tr><td>2026</td><td style="color:#f87171">-$22,589</td></tr></table>
+<div class="delta-row"><span class="delta-chip best" title="P&L: +$91,539  ROI: +10.1%  WR: 24.0%">&Delta;0.1 +$91,539</span><span class="delta-chip" title="P&L: +$74,558  ROI: +5.3%  WR: 28.8%">&Delta;0.2 +$74,558</span><span class="delta-chip" title="P&L: +$79,127  ROI: +4.9%  WR: 33.5%">&Delta;0.3 +$79,127</span><span class="delta-chip" title="P&L: +$54,755  ROI: +3.4%  WR: 40.9%">&Delta;0.5 +$54,755</span><span class="delta-chip" title="P&L: -$6,268  ROI: -0.4%  WR: 45.7%">&Delta;0.7 -$6,268</span><span class="delta-chip" title="P&L: +$2,651  ROI: +0.2%  WR: 49.4%">&Delta;0.9 +$2,651</span></div></div></div>
+
+<div class="strat-hdr"><span class="strat-name">PD Weak 50Hi SPY</span><span class="dir-badge dir-l">LONG</span></div>
+<div class="pair">
+<div class="panel">
+<div class="panel-title"><span>Equity ($3M/trade) <span class="tag tag-eq">STOCK</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$170,829</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">51.2%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">0.67</div><div class="kpi-l">Sharpe</div></div>
+<div class="kpi"><div class="kpi-v">168</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$1,017</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$223,050</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$68,322</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$20,800</td></tr><tr><td>2022</td><td style="color:#f87171">-$11,038</td></tr><tr><td>2023</td><td style="color:#f87171">-$38,852</td></tr><tr><td>2024</td><td style="color:#f87171">-$22,846</td></tr><tr><td>2025</td><td style="color:#4ade80">+$265,134</td></tr><tr><td>2026</td><td style="color:#f87171">-$770</td></tr></table></div>
+<div class="panel">
+<div class="panel-title"><span>Options ($10K prem) <span class="tag tag-opt">OPTIONS</span><span class="tag tag-best">Best: &Delta; 0.1</span></span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi-v" style="color:#4ade80">+$727,629</div><div class="kpi-l">Total P&L</div></div>
+<div class="kpi"><div class="kpi-v">28.3%</div><div class="kpi-l">Win Rate</div></div>
+<div class="kpi"><div class="kpi-v">+104.1%</div><div class="kpi-l">ROI</div></div>
+<div class="kpi"><div class="kpi-v">99</div><div class="kpi-l">Trades</div></div>
+</div>
+<table><tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Avg P&L</td><td style="color:#4ade80">+$7,350</td></tr>
+<tr><td>Best Trade</td><td style="color:#4ade80">+$652,978</td></tr>
+<tr><td>Worst Trade</td><td style="color:#f87171">-$9,956</td></tr>
+</table>
+<table><tr><th>Year</th><th>P&L</th></tr><tr><td>2021</td><td style="color:#f87171">-$50,149</td></tr><tr><td>2022</td><td style="color:#4ade80">+$20,364</td></tr><tr><td>2023</td><td style="color:#4ade80">+$10,315</td></tr><tr><td>2024</td><td style="color:#4ade80">+$44,841</td></tr><tr><td>2025</td><td style="color:#4ade80">+$714,632</td></tr><tr><td>2026</td><td style="color:#f87171">-$12,374</td></tr></table>
+<div class="delta-row"><span class="delta-chip best" title="P&L: +$727,629  ROI: +104.1%  WR: 28.3%">&Delta;0.1 +$727,629</span><span class="delta-chip" title="P&L: +$405,878  ROI: +36.8%  WR: 24.8%">&Delta;0.2 +$405,878</span><span class="delta-chip" title="P&L: +$236,835  ROI: +16.8%  WR: 29.8%">&Delta;0.3 +$236,835</span><span class="delta-chip" title="P&L: +$183,603  ROI: +11.3%  WR: 39.2%">&Delta;0.5 +$183,603</span><span class="delta-chip" title="P&L: +$65,947  ROI: +4.0%  WR: 43.5%">&Delta;0.7 +$65,947</span><span class="delta-chip" title="P&L: -$7,481  ROI: -0.5%  WR: 48.2%">&Delta;0.9 -$7,481</span></div></div></div>
+<div class="footer">Equity vs Options Comparison &middot; $3M equity / $10K options premium per trade &middot; Feb 2026</div></div></body></html>

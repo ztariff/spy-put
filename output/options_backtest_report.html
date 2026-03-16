@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Options vs Equity Backtest Comparison</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; }
+.container { max-width: 1400px; margin: 0 auto; }
+h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: #f8fafc; }
+h2 { font-size: 20px; font-weight: 600; margin: 30px 0 15px; color: #f1f5f9; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+h3 { font-size: 16px; font-weight: 600; margin: 20px 0 10px; color: #cbd5e1; }
+.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 25px; }
+.kpi-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 30px; }
+.kpi { background: #1e293b; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 180px; border: 1px solid #334155; }
+.kpi-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+.kpi-value { font-size: 24px; font-weight: 700; }
+.kpi-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+th { background: #1e293b; color: #94a3b8; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 10px 8px; text-align: right; border-bottom: 2px solid #334155; }
+th:first-child { text-align: left; }
+td { padding: 10px 8px; border-bottom: 1px solid #1e293b; text-align: right; }
+td:first-child { text-align: left; font-weight: 500; color: #f1f5f9; }
+tr:hover { background: #1e293b44; }
+.highlight-row { background: #1e293b; font-weight: 600; }
+.best { background: #166534; color: #4ade80; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+
+.rule-card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #334155; }
+.rule-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.rule-name { font-size: 16px; font-weight: 600; color: #f8fafc; }
+.rule-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+.badge-long { background: #166534; color: #4ade80; }
+.badge-short { background: #7f1d1d; color: #fca5a5; }
+.rule-optimal { font-size: 13px; color: #fbbf24; margin-bottom: 10px; }
+
+.bar-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; margin: 15px 0; padding: 0 10px; }
+.bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 1px; transition: height 0.3s; }
+.bar-label { font-size: 10px; color: #64748b; margin-top: 4px; }
+.bar-value { font-size: 10px; color: #94a3b8; margin-bottom: 2px; }
+
+.insight-box { background: #1a2332; border-left: 3px solid #3b82f6; padding: 14px 18px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.insight-box p { font-size: 14px; line-height: 1.6; color: #cbd5e1; }
+.insight-box strong { color: #60a5fa; }
+
+.yearly-table th, .yearly-table td { padding: 8px 12px; }
+.section { margin-bottom: 40px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Options vs Equity Backtest</h1>
+<p class="subtitle">0DTE options replacing stock positions across 7 intraday momentum rules &middot; SPY & QQQ &middot; $10,000 premium budget per trade &middot; 6 delta targets tested</p>
+
+<!-- KPI Strip -->
+<div class="kpi-strip">
+
+  <div class="kpi">
+    <div class="kpi-label">Optimal Options Portfolio</div>
+    <div class="kpi-value" style="color:#4ade80">+$763,953</div>
+    <div class="kpi-sub">Best delta per rule</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">ATM Options (0.50 Delta)</div>
+    <div class="kpi-value" style="color:#4ade80">+$691,178</div>
+    <div class="kpi-sub">38.9% win rate</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Equity Baseline ($10K/trade)</div>
+    <div class="kpi-value" style="color:#4ade80">+$13,744</div>
+    <div class="kpi-sub">51.8% win rate</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Success Rate</div>
+    <div class="kpi-value" style="color:#4ade80">99.9%</div>
+    <div class="kpi-sub">9,916 / 9,924 trades filled</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Max Risk Per Trade</div>
+    <div class="kpi-value" style="color:#60a5fa">$10,000</div>
+    <div class="kpi-sub">Premium = max loss (capped)</div>
+  </div>
+</div>
+
+<div class="insight-box">
+<p><strong>Key Finding:</strong> Using per-rule optimized deltas, the options portfolio generates <strong>+$763,953</strong> vs <strong>+$13,744</strong> equity — a 55x improvement — while capping max loss per trade to $10K premium paid. The standout is <strong>HighVolWR at 0.10 delta</strong> (deep OTM calls), which delivers +38.3% ROI by leveraging its 69% equity win rate into outsized payoffs on winning trades.</p>
+</div>
+
+<div class="section">
+<h2>Overall Performance by Delta</h2>
+<table>
+<tr><th>Delta</th><th>Trades</th><th>Win Rate</th><th>Total P&L</th><th>Total Premium</th><th>ROI</th><th>Avg Entry $</th></tr>
+<tr><td>Δ 0.1</td><td>1,653</td><td>16.8%</td><td style="color:#f87171">-$6,152,243</td><td>$16,512,213</td><td style="color:#f87171">-37.3%</td><td>$0.31</td></tr>
+<tr><td>Δ 0.2</td><td>1,654</td><td>23.6%</td><td style="color:#f87171">-$1,529,420</td><td>$16,502,664</td><td style="color:#f87171">-9.3%</td><td>$0.57</td></tr>
+<tr><td>Δ 0.3</td><td>1,654</td><td>28.7%</td><td style="color:#f87171">-$176,075</td><td>$16,479,925</td><td style="color:#fbbf24">-1.1%</td><td>$0.90</td></tr>
+<tr class="highlight-row"><td>ATM Δ 0.5</td><td>1,653</td><td>38.9%</td><td style="color:#4ade80">+$691,178</td><td>$16,392,125</td><td style="color:#86efac">+4.2%</td><td>$1.87</td></tr>
+<tr><td>Δ 0.7</td><td>1,654</td><td>45.9%</td><td style="color:#4ade80">+$621,726</td><td>$16,276,456</td><td style="color:#86efac">+3.8%</td><td>$3.51</td></tr>
+<tr><td>Δ 0.9</td><td>1,648</td><td>49.2%</td><td style="color:#4ade80">+$223,870</td><td>$15,974,883</td><td style="color:#86efac">+1.4%</td><td>$6.63</td></tr>
+<tr class="highlight-row"><td>Equity ($10K)</td><td>1,654</td><td>51.8%</td><td style="color:#4ade80">+$13,744</td><td>$10K notional</td><td>—</td><td>—</td></tr>
+</table></div>
+<div class="section"><h2>Per-Rule Analysis</h2>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">GapLarge SPY</span>
+  <span class="rule-badge badge-long">LONG</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.5 &rarr; +$24,179 (+5.6% ROI) &nbsp;|&nbsp; Equity: +$47 (63.6% WR, 44 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$361,154</td><td style="color:#f87171">-82.2%</td><td>22.7%</td><td>$0.32</td><td>2579</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$81,991</td><td style="color:#f87171">-18.7%</td><td>36.4%</td><td>$0.60</td><td>846</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#4ade80">+$4,999</td><td style="color:#86efac">+1.1%</td><td>52.3%</td><td>$1.00</td><td>222</td></tr>
+<tr class="highlight-row"><td>Δ 0.5 <span class="best">BEST</span></td><td style="color:#4ade80">+$24,179</td><td style="color:#86efac">+5.6%</td><td>61.4%</td><td>$2.25</td><td>52</td></tr>
+<tr><td>Δ 0.7</td><td style="color:#4ade80">+$17,942</td><td style="color:#86efac">+4.2%</td><td>61.4%</td><td>$4.62</td><td>24</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#4ade80">+$10,986</td><td style="color:#86efac">+2.6%</td><td>59.1%</td><td>$8.91</td><td>13</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">HighVolWR SPY</span>
+  <span class="rule-badge badge-long">LONG</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.1 &rarr; +$133,555 (+38.3% ROI) &nbsp;|&nbsp; Equity: +$1,977 (68.6% WR, 35 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr class="highlight-row"><td>Δ 0.1 <span class="best">BEST</span></td><td style="color:#4ade80">+$133,555</td><td style="color:#4ade80">+38.3%</td><td>28.6%</td><td>$0.61</td><td>520</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#4ade80">+$121,704</td><td style="color:#4ade80">+35.0%</td><td>40.0%</td><td>$1.02</td><td>199</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#4ade80">+$111,172</td><td style="color:#4ade80">+32.0%</td><td>48.6%</td><td>$1.53</td><td>102</td></tr>
+<tr><td>Δ 0.5</td><td style="color:#4ade80">+$115,134</td><td style="color:#4ade80">+33.4%</td><td>54.3%</td><td>$2.71</td><td>45</td></tr>
+<tr><td>Δ 0.7</td><td style="color:#4ade80">+$87,313</td><td style="color:#4ade80">+25.5%</td><td>60.0%</td><td>$4.39</td><td>26</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#4ade80">+$61,377</td><td style="color:#4ade80">+18.1%</td><td>60.0%</td><td>$7.55</td><td>15</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">PD Strong QQQ (Short)</span>
+  <span class="rule-badge badge-short">SHORT</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.7 &rarr; +$220,296 (+4.8% ROI) &nbsp;|&nbsp; Equity: +$4,494 (50.6% WR, 470 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$1,010,389</td><td style="color:#f87171">-21.5%</td><td>17.0%</td><td>$0.31</td><td>769</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$257,103</td><td style="color:#f87171">-5.5%</td><td>23.2%</td><td>$0.54</td><td>331</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#f87171">-$95,171</td><td style="color:#fbbf24">-2.0%</td><td>27.2%</td><td>$0.84</td><td>169</td></tr>
+<tr><td>Δ 0.5</td><td style="color:#4ade80">+$171,983</td><td style="color:#86efac">+3.7%</td><td>36.0%</td><td>$1.75</td><td>66</td></tr>
+<tr class="highlight-row"><td>Δ 0.7 <span class="best">BEST</span></td><td style="color:#4ade80">+$220,296</td><td style="color:#86efac">+4.8%</td><td>45.5%</td><td>$3.45</td><td>33</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#4ade80">+$38,372</td><td style="color:#86efac">+0.8%</td><td>48.7%</td><td>$6.94</td><td>16</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">PD Strong SPY (Short)</span>
+  <span class="rule-badge badge-short">SHORT</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.7 &rarr; +$254,358 (+5.6% ROI) &nbsp;|&nbsp; Equity: +$3,002 (50.9% WR, 464 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$1,497,916</td><td style="color:#f87171">-32.3%</td><td>16.2%</td><td>$0.26</td><td>839</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$442,805</td><td style="color:#f87171">-9.6%</td><td>21.6%</td><td>$0.46</td><td>370</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#f87171">-$75,783</td><td style="color:#fbbf24">-1.6%</td><td>25.9%</td><td>$0.71</td><td>199</td></tr>
+<tr><td>Δ 0.5</td><td style="color:#4ade80">+$248,317</td><td style="color:#86efac">+5.4%</td><td>37.9%</td><td>$1.51</td><td>78</td></tr>
+<tr class="highlight-row"><td>Δ 0.7 <span class="best">BEST</span></td><td style="color:#4ade80">+$254,358</td><td style="color:#86efac">+5.6%</td><td>45.5%</td><td>$3.01</td><td>38</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#4ade80">+$94,872</td><td style="color:#86efac">+2.1%</td><td>47.9%</td><td>$6.01</td><td>18</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">PD Weak QQQ</span>
+  <span class="rule-badge badge-long">LONG</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.5 &rarr; +$33,638 (+1.1% ROI) &nbsp;|&nbsp; Equity: +$2,519 (52.4% WR, 309 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$1,825,653</td><td style="color:#f87171">-59.3%</td><td>15.9%</td><td>$0.26</td><td>1536</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$494,845</td><td style="color:#f87171">-16.1%</td><td>23.9%</td><td>$0.53</td><td>450</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#f87171">-$128,108</td><td style="color:#fbbf24">-4.2%</td><td>30.1%</td><td>$0.90</td><td>180</td></tr>
+<tr class="highlight-row"><td>Δ 0.5 <span class="best">BEST</span></td><td style="color:#4ade80">+$33,638</td><td style="color:#86efac">+1.1%</td><td>39.0%</td><td>$1.96</td><td>60</td></tr>
+<tr><td>Δ 0.7</td><td style="color:#f87171">-$272</td><td style="color:#fbbf24">-0.0%</td><td>44.7%</td><td>$3.67</td><td>30</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#f87171">-$4,087</td><td style="color:#fbbf24">-0.1%</td><td>49.0%</td><td>$6.80</td><td>16</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">PD Weak SPY</span>
+  <span class="rule-badge badge-long">LONG</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.5 &rarr; +$43,982 (+2.7% ROI) &nbsp;|&nbsp; Equity: +$1,135 (50.6% WR, 164 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$848,685</td><td style="color:#f87171">-51.8%</td><td>17.1%</td><td>$0.27</td><td>1704</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$160,857</td><td style="color:#f87171">-9.8%</td><td>26.2%</td><td>$0.52</td><td>522</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#f87171">-$25,835</td><td style="color:#fbbf24">-1.6%</td><td>29.9%</td><td>$0.85</td><td>208</td></tr>
+<tr class="highlight-row"><td>Δ 0.5 <span class="best">BEST</span></td><td style="color:#4ade80">+$43,982</td><td style="color:#86efac">+2.7%</td><td>40.9%</td><td>$1.81</td><td>67</td></tr>
+<tr><td>Δ 0.7</td><td style="color:#4ade80">+$3,394</td><td style="color:#86efac">+0.2%</td><td>45.7%</td><td>$3.30</td><td>35</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#4ade80">+$22,926</td><td style="color:#86efac">+1.4%</td><td>49.4%</td><td>$6.14</td><td>18</td></tr>
+</table></div>
+<div class="rule-card">
+<div class="rule-header">
+  <span class="rule-name">PD Weak 50Hi SPY</span>
+  <span class="rule-badge badge-long">LONG</span>
+</div>
+<div class="rule-optimal">Best: Δ 0.5 &rarr; +$53,945 (+3.2% ROI) &nbsp;|&nbsp; Equity: +$569 (51.2% WR, 168 trades)</div>
+<table>
+<tr><th>Delta</th><th>P&L</th><th>ROI</th><th>Win Rate</th><th>Avg Entry $</th><th>Avg Contracts</th></tr>
+<tr><td>Δ 0.1</td><td style="color:#f87171">-$742,001</td><td style="color:#f87171">-44.2%</td><td>14.9%</td><td>$0.16</td><td>3014</td></tr>
+<tr><td>Δ 0.2</td><td style="color:#f87171">-$213,523</td><td style="color:#f87171">-12.7%</td><td>20.8%</td><td>$0.32</td><td>1357</td></tr>
+<tr><td>Δ 0.3</td><td style="color:#4ade80">+$32,651</td><td style="color:#86efac">+1.9%</td><td>26.8%</td><td>$0.50</td><td>762</td></tr>
+<tr class="highlight-row"><td>Δ 0.5 <span class="best">BEST</span></td><td style="color:#4ade80">+$53,945</td><td style="color:#86efac">+3.2%</td><td>38.7%</td><td>$1.12</td><td>246</td></tr>
+<tr><td>Δ 0.7</td><td style="color:#4ade80">+$38,695</td><td style="color:#86efac">+2.3%</td><td>43.5%</td><td>$2.15</td><td>85</td></tr>
+<tr><td>Δ 0.9</td><td style="color:#f87171">-$576</td><td style="color:#fbbf24">-0.0%</td><td>48.8%</td><td>$4.04</td><td>39</td></tr>
+</table></div>
+</div>
+<div class="section"><h2>Annual Performance</h2>
+<table class="yearly-table"><tr><th>Year</th><th>Δ 0.1</th><th>Δ 0.3</th><th>Δ 0.5</th><th>Δ 0.7</th><th>Δ 0.9</th><th>Optimal</th><th>Equity</th></tr>
+<tr><td>2021</td><td style="color:#f87171">-$1,431,653</td><td style="color:#f87171">-$428,659</td><td style="color:#f87171">-$153,225</td><td style="color:#f87171">-$58,214</td><td style="color:#f87171">-$30,470</td><td style="color:#f87171;font-weight:600">-$123,857</td><td style="color:#4ade80">+$925</td></tr>
+<tr><td>2022</td><td style="color:#f87171">-$1,107,426</td><td style="color:#4ade80">+$201,017</td><td style="color:#4ade80">+$296,467</td><td style="color:#4ade80">+$281,765</td><td style="color:#4ade80">+$175,640</td><td style="color:#4ade80;font-weight:600">+$260,583</td><td style="color:#4ade80">+$5,450</td></tr>
+<tr><td>2023</td><td style="color:#f87171">-$1,816,066</td><td style="color:#f87171">-$281,419</td><td style="color:#f87171">-$71,738</td><td style="color:#f87171">-$2,907</td><td style="color:#f87171">-$26,070</td><td style="color:#f87171;font-weight:600">-$22,237</td><td style="color:#4ade80">+$95</td></tr>
+<tr><td>2024</td><td style="color:#f87171">-$1,667,426</td><td style="color:#f87171">-$285,202</td><td style="color:#f87171">-$38,459</td><td style="color:#f87171">-$10,360</td><td style="color:#f87171">-$61,072</td><td style="color:#4ade80;font-weight:600">+$64,218</td><td style="color:#f87171">-$20</td></tr>
+<tr><td>2025</td><td style="color:#f87171">-$322,175</td><td style="color:#4ade80">+$478,878</td><td style="color:#4ade80">+$576,587</td><td style="color:#4ade80">+$373,895</td><td style="color:#4ade80">+$157,999</td><td style="color:#4ade80;font-weight:600">+$602,025</td><td style="color:#4ade80">+$6,846</td></tr>
+<tr><td>2026</td><td style="color:#4ade80">+$192,503</td><td style="color:#4ade80">+$139,310</td><td style="color:#4ade80">+$81,546</td><td style="color:#4ade80">+$37,547</td><td style="color:#4ade80">+$7,843</td><td style="color:#f87171;font-weight:600">-$16,779</td><td style="color:#4ade80">+$448</td></tr>
+</table></div>
+<div class="section"><h2>Recommended Configuration</h2>
+<div class="insight-box"><p>The optimal portfolio assigns each rule its best-performing delta based on backtested ROI. This configuration generates <strong>+$763,953</strong> total P&L on $10K premium per trade.</p></div>
+<table><tr><th>Rule</th><th>Direction</th><th>Optimal Delta</th><th>P&L</th><th>ROI</th></tr>
+<tr><td>GapLarge SPY</td><td>Long</td><td><span class="best">Δ 0.5</span></td><td style="color:#4ade80">+$24,179</td><td style="color:#86efac">+5.6%</td></tr>
+<tr><td>HighVolWR SPY</td><td>Long</td><td><span class="best">Δ 0.1</span></td><td style="color:#4ade80">+$133,555</td><td style="color:#4ade80">+38.3%</td></tr>
+<tr><td>PD Strong QQQ (Short)</td><td>Short</td><td><span class="best">Δ 0.7</span></td><td style="color:#4ade80">+$220,296</td><td style="color:#86efac">+4.8%</td></tr>
+<tr><td>PD Strong SPY (Short)</td><td>Short</td><td><span class="best">Δ 0.7</span></td><td style="color:#4ade80">+$254,358</td><td style="color:#86efac">+5.6%</td></tr>
+<tr><td>PD Weak QQQ</td><td>Long</td><td><span class="best">Δ 0.5</span></td><td style="color:#4ade80">+$33,638</td><td style="color:#86efac">+1.1%</td></tr>
+<tr><td>PD Weak SPY</td><td>Long</td><td><span class="best">Δ 0.5</span></td><td style="color:#4ade80">+$43,982</td><td style="color:#86efac">+2.7%</td></tr>
+<tr><td>PD Weak 50Hi SPY</td><td>Long</td><td><span class="best">Δ 0.5</span></td><td style="color:#4ade80">+$53,945</td><td style="color:#86efac">+3.2%</td></tr>
+<tr class="highlight-row"><td>TOTAL</td><td>—</td><td>—</td><td style="color:#4ade80">+$763,953</td><td>—</td></tr>
+</table></div>
+
+<div class="section">
+<h2>Key Observations</h2>
+
+<div class="insight-box">
+<p><strong>HighVolWR is the standout options candidate.</strong> Its 69% equity win rate translates to massive leverage at deep OTM (Δ 0.10): +38.3% ROI on premium. The high win rate means OTM options pay off frequently enough to overcome theta decay. No other rule comes close at low deltas.</p>
+</div>
+
+<div class="insight-box">
+<p><strong>Short rules strongly prefer ITM options (Δ 0.70).</strong> Both PriorDay Strong shorts are most profitable at Δ 0.70, where the option behaves more like the underlying but still caps downside. This makes sense — short trades need the option to track the move closely, and OTM puts bleed premium on the many small-loss days.</p>
+</div>
+
+<div class="insight-box">
+<p><strong>Long momentum rules work best at ATM (Δ 0.50).</strong> The PriorDay Weak rules and GapLarge all optimize at Δ 0.50, balancing leverage vs. theta cost. Going further OTM destroys these rules because their ~50% win rate can't overcome the premium decay on losing trades.</p>
+</div>
+
+<div class="insight-box">
+<p><strong>Risk is strictly capped.</strong> Every trade's maximum loss is the $10K premium paid — no gap risk, no overnight exposure, no stop-loss slippage. This is the core advantage over equity positions where a 3.3% adverse move on a $3M position = $100K loss.</p>
+</div>
+
+<div class="insight-box">
+<p><strong>2025 was the big winner.</strong> The 0.50 delta portfolio made +$577K in 2025 alone (through Feb 2026), driven by elevated vol creating favorable option pricing. 2021 and 2023 were tough years — consistent with equity underperformance in those periods plus additional theta drag.</p>
+</div>
+</div>
+
+<div style="color:#64748b;font-size:12px;margin-top:40px;padding-top:15px;border-top:1px solid #1e293b;">
+Options Backtest Report &middot; 0DTE SPY/QQQ Options &middot; Real Polygon.io market data &middot; 9,916 trades &middot; Generated Feb 2026
+</div>
+</div>
+</body>
+</html>

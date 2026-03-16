@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Optimal Options Portfolio — Final Results</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;padding:24px}
+.c{max-width:1200px;margin:0 auto}
+h1{font-size:28px;font-weight:700;color:#f8fafc;margin-bottom:6px}
+h2{font-size:20px;font-weight:600;margin:32px 0 14px;color:#f1f5f9;border-bottom:1px solid #334155;padding-bottom:8px}
+.sub{color:#94a3b8;font-size:14px;margin-bottom:24px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.kpi{background:#1e293b;border-radius:10px;padding:16px 20px;flex:1;min-width:160px;border:1px solid #334155}
+.kpi-l{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.kpi-v{font-size:24px;font-weight:700}
+.kpi-s{font-size:12px;color:#64748b;margin-top:2px}
+table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+th{background:#1e293b;color:#94a3b8;font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.5px;padding:10px 8px;text-align:right;border-bottom:2px solid #334155}
+th:first-child{text-align:left}
+td{padding:10px 8px;border-bottom:1px solid #1e293b;text-align:right}
+td:first-child{text-align:left;font-weight:500;color:#f1f5f9}
+tr:hover{background:#1e293b44}
+.hl{background:#1e293b;font-weight:600}
+.best{background:#166534;color:#4ade80;padding:2px 8px;border-radius:4px;font-weight:700;font-size:12px}
+.card{background:#1e293b;border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid #334155}
+.card-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-name{font-size:16px;font-weight:600;color:#f8fafc}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.badge-l{background:#166534;color:#4ade80}
+.badge-s{background:#7f1d1d;color:#fca5a5}
+.card-stats{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:8px}
+.stat{text-align:center}
+.stat-v{font-size:20px;font-weight:700}
+.stat-l{font-size:11px;color:#94a3b8;text-transform:uppercase}
+.insight{background:#1a2332;border-left:3px solid #3b82f6;padding:14px 18px;margin:14px 0;border-radius:0 8px 8px 0}
+.insight p{font-size:14px;line-height:1.6;color:#cbd5e1}
+.insight strong{color:#60a5fa}
+.bar-row{display:flex;align-items:flex-end;gap:6px;height:100px;margin:12px 0}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center}
+.bar{width:100%;border-radius:3px 3px 0 0;min-height:1px}
+.bar-lbl{font-size:10px;color:#64748b;margin-top:4px}
+.bar-val{font-size:10px;margin-bottom:2px}
+.footer{color:#64748b;font-size:12px;margin-top:40px;padding-top:15px;border-top:1px solid #1e293b}
+</style></head><body><div class="c">
+<h1>Optimal Options Portfolio</h1>
+<p class="sub">Per-rule delta selection &middot; 0DTE SPY/QQQ options &middot; $10K premium per trade &middot; 1,650 trades &middot; 2021–2026</p>
+<div class="kpis">
+  <div class="kpi"><div class="kpi-l">Total P&L</div><div class="kpi-v" style="color:#4ade80">+$948,309</div><div class="kpi-s">+5.8% return on premium</div></div>
+  <div class="kpi"><div class="kpi-l">Win Rate</div><div class="kpi-v" style="color:#fbbf24">43.3%</div><div class="kpi-s">1650 trades</div></div>
+  <div class="kpi"><div class="kpi-l">Annualized Sharpe</div><div class="kpi-v" style="color:#60a5fa">0.85</div><div class="kpi-s">Based on per-trade P&L</div></div>
+  <div class="kpi"><div class="kpi-l">Max Risk Per Trade</div><div class="kpi-v" style="color:#4ade80">$10,000</div><div class="kpi-s">Premium = max loss</div></div>
+  <div class="kpi"><div class="kpi-l">vs Equity ($10K)</div><div class="kpi-v" style="color:#c084fc">69x</div><div class="kpi-s">Equity: +$13,744</div></div>
+</div>
+<div class="insight"><p><strong>The optimal options portfolio generates +$948,309 by assigning each rule its best-performing delta.</strong> The key insight: high-win-rate strategies (HighVolWR at 69%) can use deep OTM options for outsized leverage, while short strategies need ITM options to track the underlying move. Max loss on any single trade is capped at the $10K premium — no gap risk, no stop-loss slippage.</p></div>
+<h2>Optimal Delta Assignment</h2>
+<table><tr><th>Strategy</th><th>Direction</th><th>Delta</th><th>Option Type</th><th>Trades</th><th>P&L</th><th>Win Rate</th><th>ROI</th></tr>
+<tr><td>GapLarge SPY</td><td>Long</td><td><span class="best">&Delta; 0.50</span></td><td>ATM Calls</td><td>44</td><td style="color:#4ade80">+$24,223</td><td>61.4%</td><td style="color:#4ade80">+5.6%</td></tr>
+<tr><td>HighVolWR SPY</td><td>Long</td><td><span class="best">&Delta; 0.10</span></td><td>Deep OTM Calls</td><td>34</td><td style="color:#4ade80">+$223,935</td><td>35.3%</td><td style="color:#4ade80">+76.3%</td></tr>
+<tr><td>PD Strong QQQ (Short)</td><td>Short</td><td><span class="best">&Delta; 0.70</span></td><td>ITM Puts</td><td>470</td><td style="color:#4ade80">+$186,576</td><td>45.1%</td><td style="color:#4ade80">+4.0%</td></tr>
+<tr><td>PD Strong SPY (Short)</td><td>Short</td><td><span class="best">&Delta; 0.70</span></td><td>ITM Puts</td><td>464</td><td style="color:#4ade80">+$229,417</td><td>45.5%</td><td style="color:#4ade80">+5.0%</td></tr>
+<tr><td>PD Weak QQQ</td><td>Long</td><td><span class="best">&Delta; 0.50</span></td><td>ATM Calls</td><td>308</td><td style="color:#4ade80">+$45,800</td><td>39.3%</td><td style="color:#4ade80">+1.5%</td></tr>
+<tr><td>PD Weak SPY</td><td>Long</td><td><span class="best">&Delta; 0.50</span></td><td>ATM Calls</td><td>164</td><td style="color:#4ade80">+$54,755</td><td>40.9%</td><td style="color:#4ade80">+3.4%</td></tr>
+<tr><td>PD Weak 50Hi SPY</td><td>Long</td><td><span class="best">&Delta; 0.50</span></td><td>ATM Calls</td><td>166</td><td style="color:#4ade80">+$183,603</td><td>39.2%</td><td style="color:#4ade80">+11.3%</td></tr>
+<tr class="hl"><td>PORTFOLIO TOTAL</td><td>—</td><td>—</td><td>—</td><td>1650</td><td style="color:#4ade80">+$948,309</td><td>43.3%</td><td style="color:#4ade80">+5.8%</td></tr>
+</table>
+<h2>Strategy Deep Dives</h2>
+<div class="card">
+<div class="card-hdr"><span class="card-name">GapLarge SPY</span><span class="badge badge-l">LONG</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$24,223</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">61.4%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.50</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+5.6%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$2.25</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">52</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$9,826 &nbsp;|&nbsp; Worst trade: -$6,005 &nbsp;|&nbsp; Equity comparison: +$47 (63.6% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">HighVolWR SPY</span><span class="badge badge-l">LONG</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$223,935</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">35.3%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.10</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+76.3%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$0.63</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">293</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$166,189 &nbsp;|&nbsp; Worst trade: -$9,860 &nbsp;|&nbsp; Equity comparison: +$1,977 (68.6% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">PD Strong QQQ (Short)</span><span class="badge badge-s">SHORT</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$186,576</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">45.1%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.70</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+4.0%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$3.45</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">33</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$45,822 &nbsp;|&nbsp; Worst trade: -$10,000 &nbsp;|&nbsp; Equity comparison: +$4,494 (50.6% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">PD Strong SPY (Short)</span><span class="badge badge-s">SHORT</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$229,417</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">45.5%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.70</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+5.0%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$3.01</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">38</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$37,155 &nbsp;|&nbsp; Worst trade: -$9,900 &nbsp;|&nbsp; Equity comparison: +$3,002 (50.9% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">PD Weak QQQ</span><span class="badge badge-l">LONG</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$45,800</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">39.3%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.50</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+1.5%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$1.96</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">60</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$50,235 &nbsp;|&nbsp; Worst trade: -$10,000 &nbsp;|&nbsp; Equity comparison: +$2,519 (52.4% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">PD Weak SPY</span><span class="badge badge-l">LONG</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$54,755</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">40.9%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.50</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+3.4%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$1.81</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">67</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$45,563 &nbsp;|&nbsp; Worst trade: -$9,926 &nbsp;|&nbsp; Equity comparison: +$1,135 (50.6% WR)
+</div>
+</div>
+<div class="card">
+<div class="card-hdr"><span class="card-name">PD Weak 50Hi SPY</span><span class="badge badge-l">LONG</span></div>
+<div class="card-stats">
+  <div class="stat"><div class="stat-v" style="color:#4ade80">+$183,603</div><div class="stat-l">Total P&L</div></div>
+  <div class="stat"><div class="stat-v" style="color:#fbbf24">39.2%</div><div class="stat-l">Win Rate</div></div>
+  <div class="stat"><div class="stat-v">&Delta; 0.50</div><div class="stat-l">Delta</div></div>
+  <div class="stat"><div class="stat-v">+11.3%</div><div class="stat-l">ROI</div></div>
+  <div class="stat"><div class="stat-v">$1.13</div><div class="stat-l">Avg Entry</div></div>
+  <div class="stat"><div class="stat-v">143</div><div class="stat-l">Avg Contracts</div></div>
+</div>
+<div style="font-size:12px;color:#94a3b8;margin-top:6px">
+Best trade: +$94,184 &nbsp;|&nbsp; Worst trade: -$9,996 &nbsp;|&nbsp; Equity comparison: +$569 (51.2% WR)
+</div>
+</div>
+<h2>Annual Performance</h2>
+<table><tr><th>Year</th><th>Trades</th><th>Options P&L</th><th>Win Rate</th><th>ROI</th><th>Equity P&L</th><th>Options / Equity</th></tr>
+<tr><td>2021</td><td>329</td><td style="color:#f87171">-$91,977</td><td>41.6%</td><td style="color:#f87171">-2.8%</td><td style="color:#4ade80">+$925</td><td>-99x</td></tr>
+<tr><td>2022</td><td>357</td><td style="color:#4ade80">+$255,462</td><td>45.9%</td><td style="color:#4ade80">+7.3%</td><td style="color:#4ade80">+$5,450</td><td>47x</td></tr>
+<tr><td>2023</td><td>309</td><td style="color:#4ade80">+$48,702</td><td>41.7%</td><td style="color:#4ade80">+1.6%</td><td style="color:#4ade80">+$95</td><td>515x</td></tr>
+<tr><td>2024</td><td>316</td><td style="color:#4ade80">+$102,164</td><td>39.6%</td><td style="color:#4ade80">+3.3%</td><td style="color:#f87171">-$20</td><td>N/A</td></tr>
+<tr><td>2025</td><td>303</td><td style="color:#4ade80">+$632,389</td><td>48.2%</td><td style="color:#4ade80">+21.4%</td><td style="color:#4ade80">+$6,846</td><td>92x</td></tr>
+<tr><td>2026</td><td>36</td><td style="color:#4ade80">+$1,568</td><td>38.9%</td><td style="color:#4ade80">+0.4%</td><td style="color:#4ade80">+$448</td><td>3x</td></tr>
+</table>
+
+<h2>Key Observations</h2>
+<div class="insight"><p><strong>HighVolWR is the outlier.</strong> At &Delta; 0.10 (deep OTM calls around $0.27), it leverages a 69% equity win rate into +76.3% ROI. When the trade wins, cheap OTM options deliver 5-10x payoffs. When it loses, you only lose the small premium. No other rule can profitably use OTM options because their ~50% win rates can't overcome theta decay.</p></div>
+<div class="insight"><p><strong>Short rules need ITM puts (&Delta; 0.70).</strong> At $3.27 avg entry with 39 contracts, ITM puts closely track the underlying's downward move. OTM puts fail for shorts because most fade trades capture small moves that don't push cheap puts into the money before expiry.</p></div>
+<div class="insight"><p><strong>2024 is profitable under options — unlike equity.</strong> The equity strategy went flat (-$20) in 2024's low-vol bull grind, but the optimal options portfolio made +$102K. The ITM short puts at &Delta; 0.70 captured enough on fade trades while capping losses on the persistent trend days that killed equity shorts.</p></div>
+<div class="insight"><p><strong>Risk is strictly bounded.</strong> Worst single trade: -$10,000 (the premium). Worst single day: -$32,614. Compare to equity where a single trade on $3M notional could lose $100K+ with no stop loss. Options naturally solve the "no stop loss" problem.</p></div>
+<div class="insight"><p><strong>2025 was the breakout year.</strong> +$632K (21.4% ROI) driven by elevated volatility creating favorable option pricing and larger moves that amplified option payoffs. This is consistent with the strategy's design — momentum rules profit most in high-vol regimes, and options magnify those gains.</p></div>
+<div class="footer">Optimal Options Portfolio Report &middot; 0DTE SPY/QQQ &middot; Real Polygon.io market data &middot; Generated Feb 2026</div>
+</div></body></html>

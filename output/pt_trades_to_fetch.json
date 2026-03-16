@@ -1,0 +1,1642 @@
+[
+  {
+    "option_ticker": "O:SPY210104P00374000",
+    "trade_date": "2021-01-04",
+    "entry_time": "2021-01-04 09:31:00-05:00",
+    "exit_time": "2021-01-04 09:40:00-05:00",
+    "entry_px": 0.4567,
+    "exit_px": 1.03,
+    "num_contracts": 2200,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210127P00386000",
+    "trade_date": "2021-01-26",
+    "entry_time": "2021-01-26 09:31:00-05:00",
+    "exit_time": "2021-01-26 10:10:00-05:00",
+    "entry_px": 1.7255,
+    "exit_px": 2.49,
+    "num_contracts": 582,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210224P00387000",
+    "trade_date": "2021-02-24",
+    "entry_time": "2021-02-24 09:31:00-05:00",
+    "exit_time": "2021-02-24 10:05:00-05:00",
+    "entry_px": 1.5225,
+    "exit_px": 2.16,
+    "num_contracts": 660,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210226P00392000",
+    "trade_date": "2021-02-25",
+    "entry_time": "2021-02-25 09:31:00-05:00",
+    "exit_time": "2021-02-25 10:05:00-05:00",
+    "entry_px": 2.4563,
+    "exit_px": 3.01,
+    "num_contracts": 409,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210416P00416000",
+    "trade_date": "2021-04-16",
+    "entry_time": "2021-04-16 09:31:00-04:00",
+    "exit_time": "2021-04-16 10:00:00-04:00",
+    "entry_px": 0.5988,
+    "exit_px": 0.91,
+    "num_contracts": 1677,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210505P00416000",
+    "trade_date": "2021-05-05",
+    "entry_time": "2021-05-05 09:31:00-04:00",
+    "exit_time": "2021-05-05 10:00:00-04:00",
+    "entry_px": 0.4669,
+    "exit_px": 0.75,
+    "num_contracts": 2152,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY210709P00430000",
+    "trade_date": "2021-07-08",
+    "entry_time": "2021-07-08 09:31:00-04:00",
+    "exit_time": "2021-07-08 09:45:00-04:00",
+    "entry_px": 2.2736,
+    "exit_px": 3.32,
+    "num_contracts": 441,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ210709P00359000",
+    "trade_date": "2021-07-09",
+    "entry_time": "2021-07-09 09:31:00-04:00",
+    "exit_time": "2021-07-09 09:35:00-04:00",
+    "entry_px": 1.4108,
+    "exit_px": 1.46,
+    "num_contracts": 748,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ210712P00363000",
+    "trade_date": "2021-07-12",
+    "entry_time": "2021-07-12 09:31:00-04:00",
+    "exit_time": "2021-07-12 09:50:00-04:00",
+    "entry_px": 1.0962,
+    "exit_px": 1.9,
+    "num_contracts": 962,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ210802P00367000",
+    "trade_date": "2021-08-02",
+    "entry_time": "2021-08-02 09:31:00-04:00",
+    "exit_time": "2021-08-02 09:45:00-04:00",
+    "entry_px": 1.1875,
+    "exit_px": 2.68,
+    "num_contracts": 888,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY210806P00441000",
+    "trade_date": "2021-08-06",
+    "entry_time": "2021-08-06 09:31:00-04:00",
+    "exit_time": "2021-08-06 09:50:00-04:00",
+    "entry_px": 0.2537,
+    "exit_px": 0.33,
+    "num_contracts": 3960,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ210816P00367000",
+    "trade_date": "2021-08-16",
+    "entry_time": "2021-08-16 09:31:00-04:00",
+    "exit_time": "2021-08-16 09:50:00-04:00",
+    "entry_px": 0.4364,
+    "exit_px": 0.91,
+    "num_contracts": 2418,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY210816P00442000",
+    "trade_date": "2021-08-16",
+    "entry_time": "2021-08-16 09:31:00-04:00",
+    "exit_time": "2021-08-16 09:50:00-04:00",
+    "entry_px": 0.1827,
+    "exit_px": 0.41,
+    "num_contracts": 5500,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ210818P00366000",
+    "trade_date": "2021-08-17",
+    "entry_time": "2021-08-17 09:31:00-04:00",
+    "exit_time": "2021-08-17 10:00:00-04:00",
+    "entry_px": 1.8067,
+    "exit_px": 2.2,
+    "num_contracts": 584,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ210917P00377000",
+    "trade_date": "2021-09-16",
+    "entry_time": "2021-09-16 09:31:00-04:00",
+    "exit_time": "2021-09-16 09:50:00-04:00",
+    "entry_px": 1.8168,
+    "exit_px": 2.18,
+    "num_contracts": 581,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY210917P00448000",
+    "trade_date": "2021-09-16",
+    "entry_time": "2021-09-16 09:31:00-04:00",
+    "exit_time": "2021-09-16 10:00:00-04:00",
+    "entry_px": 2.6897,
+    "exit_px": 4.13,
+    "num_contracts": 373,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ210917P00376000",
+    "trade_date": "2021-09-17",
+    "entry_time": "2021-09-17 09:31:00-04:00",
+    "exit_time": "2021-09-17 09:50:00-04:00",
+    "entry_px": 0.7917,
+    "exit_px": 1.13,
+    "num_contracts": 1333,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ210927P00369000",
+    "trade_date": "2021-09-27",
+    "entry_time": "2021-09-27 09:31:00-04:00",
+    "exit_time": "2021-09-27 09:40:00-04:00",
+    "entry_px": 0.5075,
+    "exit_px": 1.64,
+    "num_contracts": 2080,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ211004P00359000",
+    "trade_date": "2021-10-04",
+    "entry_time": "2021-10-04 09:31:00-04:00",
+    "exit_time": "2021-10-04 09:40:00-04:00",
+    "entry_px": 1.5326,
+    "exit_px": 2.46,
+    "num_contracts": 688,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY211004P00433000",
+    "trade_date": "2021-10-04",
+    "entry_time": "2021-10-04 09:31:00-04:00",
+    "exit_time": "2021-10-04 10:00:00-04:00",
+    "entry_px": 1.0962,
+    "exit_px": 1.56,
+    "num_contracts": 916,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ211101P00387000",
+    "trade_date": "2021-11-01",
+    "entry_time": "2021-11-01 09:31:00-04:00",
+    "exit_time": "2021-11-01 10:00:00-04:00",
+    "entry_px": 1.5428,
+    "exit_px": 2.31,
+    "num_contracts": 684,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY211101P00459000",
+    "trade_date": "2021-11-01",
+    "entry_time": "2021-11-01 09:31:00-04:00",
+    "exit_time": "2021-11-01 09:45:00-04:00",
+    "entry_px": 0.4669,
+    "exit_px": 0.51,
+    "num_contracts": 2152,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ211126P00397000",
+    "trade_date": "2021-11-26",
+    "entry_time": "2021-11-26 09:31:00-05:00",
+    "exit_time": "2021-11-26 09:40:00-05:00",
+    "entry_px": 1.3804,
+    "exit_px": 1.72,
+    "num_contracts": 764,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY211126P00464000",
+    "trade_date": "2021-11-26",
+    "entry_time": "2021-11-26 09:31:00-05:00",
+    "exit_time": "2021-11-26 09:40:00-05:00",
+    "entry_px": 2.1518,
+    "exit_px": 2.25,
+    "num_contracts": 466,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ211203P00392000",
+    "trade_date": "2021-12-03",
+    "entry_time": "2021-12-03 09:31:00-05:00",
+    "exit_time": "2021-12-03 09:40:00-05:00",
+    "entry_px": 2.2025,
+    "exit_px": 3.35,
+    "num_contracts": 479,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY211203P00459000",
+    "trade_date": "2021-12-03",
+    "entry_time": "2021-12-03 09:31:00-05:00",
+    "exit_time": "2021-12-03 09:40:00-05:00",
+    "entry_px": 1.5225,
+    "exit_px": 2.24,
+    "num_contracts": 660,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ211217P00399000",
+    "trade_date": "2021-12-16",
+    "entry_time": "2021-12-16 09:31:00-05:00",
+    "exit_time": "2021-12-16 10:00:00-05:00",
+    "entry_px": 3.4916,
+    "exit_px": 4.83,
+    "num_contracts": 302,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220126P00432000",
+    "trade_date": "2022-01-25",
+    "entry_time": "2022-01-25 09:31:00-05:00",
+    "exit_time": "2022-01-25 10:00:00-05:00",
+    "entry_px": 5.0039,
+    "exit_px": 7.45,
+    "num_contracts": 200,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY220202P00452000",
+    "trade_date": "2022-02-01",
+    "entry_time": "2022-02-01 09:31:00-05:00",
+    "exit_time": "2022-02-01 10:05:00-05:00",
+    "entry_px": 4.1615,
+    "exit_px": 6.05,
+    "num_contracts": 241,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220216P00355000",
+    "trade_date": "2022-02-16",
+    "entry_time": "2022-02-16 09:31:00-05:00",
+    "exit_time": "2022-02-16 09:50:00-05:00",
+    "entry_px": 3.248,
+    "exit_px": 4.5,
+    "num_contracts": 325,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ220225P00342000",
+    "trade_date": "2022-02-25",
+    "entry_time": "2022-02-25 09:31:00-05:00",
+    "exit_time": "2022-02-25 09:40:00-05:00",
+    "entry_px": 3.8265,
+    "exit_px": 3.56,
+    "num_contracts": 275,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220307P00433000",
+    "trade_date": "2022-03-07",
+    "entry_time": "2022-03-07 09:31:00-05:00",
+    "exit_time": "2022-03-07 10:10:00-05:00",
+    "entry_px": 3.2074,
+    "exit_px": 5.56,
+    "num_contracts": 313,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220311P00335000",
+    "trade_date": "2022-03-11",
+    "entry_time": "2022-03-11 09:31:00-05:00",
+    "exit_time": "2022-03-11 10:00:00-05:00",
+    "entry_px": 2.5781,
+    "exit_px": 5.0,
+    "num_contracts": 409,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220321P00448000",
+    "trade_date": "2022-03-21",
+    "entry_time": "2022-03-21 09:31:00-04:00",
+    "exit_time": "2022-03-21 10:05:00-04:00",
+    "entry_px": 3.7555,
+    "exit_px": 4.79,
+    "num_contracts": 267,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY220330P00462000",
+    "trade_date": "2022-03-29",
+    "entry_time": "2022-03-29 09:31:00-04:00",
+    "exit_time": "2022-03-29 10:05:00-04:00",
+    "entry_px": 2.8724,
+    "exit_px": 4.16,
+    "num_contracts": 349,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220414P00348000",
+    "trade_date": "2022-04-14",
+    "entry_time": "2022-04-14 09:31:00-04:00",
+    "exit_time": "2022-04-14 09:50:00-04:00",
+    "entry_px": 2.7506,
+    "exit_px": 4.29,
+    "num_contracts": 383,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220414P00446000",
+    "trade_date": "2022-04-14",
+    "entry_time": "2022-04-14 09:31:00-04:00",
+    "exit_time": "2022-04-14 09:45:00-04:00",
+    "entry_px": 2.7405,
+    "exit_px": 3.4,
+    "num_contracts": 366,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220420P00347000",
+    "trade_date": "2022-04-20",
+    "entry_time": "2022-04-20 09:31:00-04:00",
+    "exit_time": "2022-04-20 09:45:00-04:00",
+    "entry_px": 1.8067,
+    "exit_px": 3.68,
+    "num_contracts": 584,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220420P00448000",
+    "trade_date": "2022-04-20",
+    "entry_time": "2022-04-20 09:31:00-04:00",
+    "exit_time": "2022-04-20 09:50:00-04:00",
+    "entry_px": 1.8473,
+    "exit_px": 3.07,
+    "num_contracts": 543,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220427P00326000",
+    "trade_date": "2022-04-26",
+    "entry_time": "2022-04-26 09:31:00-04:00",
+    "exit_time": "2022-04-26 10:00:00-04:00",
+    "entry_px": 3.5423,
+    "exit_px": 5.38,
+    "num_contracts": 297,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ220506P00325000",
+    "trade_date": "2022-05-05",
+    "entry_time": "2022-05-05 09:31:00-04:00",
+    "exit_time": "2022-05-05 10:00:00-04:00",
+    "entry_px": 3.8265,
+    "exit_px": 6.23,
+    "num_contracts": 275,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220506P00426000",
+    "trade_date": "2022-05-05",
+    "entry_time": "2022-05-05 09:31:00-04:00",
+    "exit_time": "2022-05-05 10:05:00-04:00",
+    "entry_px": 4.5168,
+    "exit_px": 7.76,
+    "num_contracts": 222,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220711P00294000",
+    "trade_date": "2022-07-11",
+    "entry_time": "2022-07-11 09:31:00-04:00",
+    "exit_time": "2022-07-11 09:40:00-04:00",
+    "entry_px": 2.3345,
+    "exit_px": 5.09,
+    "num_contracts": 452,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ220715P00291000",
+    "trade_date": "2022-07-15",
+    "entry_time": "2022-07-15 09:31:00-04:00",
+    "exit_time": "2022-07-15 09:50:00-04:00",
+    "entry_px": 2.2533,
+    "exit_px": 3.02,
+    "num_contracts": 468,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ220729P00307000",
+    "trade_date": "2022-07-28",
+    "entry_time": "2022-07-28 09:31:00-04:00",
+    "exit_time": "2022-07-28 09:50:00-04:00",
+    "entry_px": 2.9739,
+    "exit_px": 4.48,
+    "num_contracts": 354,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220729P00402500",
+    "trade_date": "2022-07-28",
+    "entry_time": "2022-07-28 09:31:00-04:00",
+    "exit_time": "2022-07-28 09:45:00-04:00",
+    "entry_px": 2.6897,
+    "exit_px": 4.07,
+    "num_contracts": 373,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY220819P00426000",
+    "trade_date": "2022-08-19",
+    "entry_time": "2022-08-19 09:31:00-04:00",
+    "exit_time": "2022-08-19 09:50:00-04:00",
+    "entry_px": 1.8473,
+    "exit_px": 2.86,
+    "num_contracts": 543,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220826P00321000",
+    "trade_date": "2022-08-26",
+    "entry_time": "2022-08-26 09:31:00-04:00",
+    "exit_time": "2022-08-26 10:00:00-04:00",
+    "entry_px": 3.0856,
+    "exit_px": 3.44,
+    "num_contracts": 342,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220826P00420000",
+    "trade_date": "2022-08-26",
+    "entry_time": "2022-08-26 09:31:00-04:00",
+    "exit_time": "2022-08-26 10:00:00-04:00",
+    "entry_px": 2.9232,
+    "exit_px": 3.1,
+    "num_contracts": 343,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ220930P00276000",
+    "trade_date": "2022-09-29",
+    "entry_time": "2022-09-29 09:31:00-04:00",
+    "exit_time": "2022-09-29 10:00:00-04:00",
+    "entry_px": 3.4307,
+    "exit_px": 5.25,
+    "num_contracts": 307,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY220930P00367000",
+    "trade_date": "2022-09-29",
+    "entry_time": "2022-09-29 09:31:00-04:00",
+    "exit_time": "2022-09-29 10:00:00-04:00",
+    "entry_px": 4.0295,
+    "exit_px": 6.3,
+    "num_contracts": 249,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ221005P00280000",
+    "trade_date": "2022-10-05",
+    "entry_time": "2022-10-05 09:31:00-04:00",
+    "exit_time": "2022-10-05 10:00:00-04:00",
+    "entry_px": 2.3548,
+    "exit_px": 2.88,
+    "num_contracts": 448,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ221014P00271000",
+    "trade_date": "2022-10-14",
+    "entry_time": "2022-10-14 09:31:00-04:00",
+    "exit_time": "2022-10-14 10:00:00-04:00",
+    "entry_px": 2.2228,
+    "exit_px": 5.24,
+    "num_contracts": 474,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY221205P00406000",
+    "trade_date": "2022-12-05",
+    "entry_time": "2022-12-05 09:31:00-05:00",
+    "exit_time": "2022-12-05 10:00:00-05:00",
+    "entry_px": 2.4766,
+    "exit_px": 3.89,
+    "num_contracts": 405,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ221227P00267000",
+    "trade_date": "2022-12-27",
+    "entry_time": "2022-12-27 09:31:00-05:00",
+    "exit_time": "2022-12-27 09:40:00-05:00",
+    "entry_px": 1.8371,
+    "exit_px": 2.8,
+    "num_contracts": 574,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY221227P00384000",
+    "trade_date": "2022-12-27",
+    "entry_time": "2022-12-27 09:31:00-05:00",
+    "exit_time": "2022-12-27 10:00:00-05:00",
+    "entry_px": 2.5172,
+    "exit_px": 3.74,
+    "num_contracts": 399,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ221230P00264000",
+    "trade_date": "2022-12-30",
+    "entry_time": "2022-12-30 09:31:00-05:00",
+    "exit_time": "2022-12-30 09:45:00-05:00",
+    "entry_px": 1.7255,
+    "exit_px": 1.38,
+    "num_contracts": 611,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY221230P00383000",
+    "trade_date": "2022-12-30",
+    "entry_time": "2022-12-30 09:31:00-05:00",
+    "exit_time": "2022-12-30 09:45:00-05:00",
+    "entry_px": 2.9536,
+    "exit_px": 2.87,
+    "num_contracts": 340,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230103P00269000",
+    "trade_date": "2023-01-03",
+    "entry_time": "2023-01-03 09:31:00-05:00",
+    "exit_time": "2023-01-03 09:55:00-05:00",
+    "entry_px": 1.9894,
+    "exit_px": 2.95,
+    "num_contracts": 530,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230103P00386000",
+    "trade_date": "2023-01-03",
+    "entry_time": "2023-01-03 09:31:00-05:00",
+    "exit_time": "2023-01-03 09:50:00-05:00",
+    "entry_px": 2.9333,
+    "exit_px": 2.73,
+    "num_contracts": 342,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230112P00278000",
+    "trade_date": "2023-01-12",
+    "entry_time": "2023-01-12 09:31:00-05:00",
+    "exit_time": "2023-01-12 09:45:00-05:00",
+    "entry_px": 1.8777,
+    "exit_px": 3.74,
+    "num_contracts": 562,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230112P00397000",
+    "trade_date": "2023-01-12",
+    "entry_time": "2023-01-12 09:31:00-05:00",
+    "exit_time": "2023-01-12 09:50:00-05:00",
+    "entry_px": 2.4867,
+    "exit_px": 4.83,
+    "num_contracts": 404,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230126P00293000",
+    "trade_date": "2023-01-26",
+    "entry_time": "2023-01-26 09:31:00-05:00",
+    "exit_time": "2023-01-26 09:55:00-05:00",
+    "entry_px": 1.8777,
+    "exit_px": 3.14,
+    "num_contracts": 562,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230126P00404000",
+    "trade_date": "2023-01-26",
+    "entry_time": "2023-01-26 09:31:00-05:00",
+    "exit_time": "2023-01-26 09:50:00-05:00",
+    "entry_px": 1.6849,
+    "exit_px": 3.07,
+    "num_contracts": 596,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY230221P00405000",
+    "trade_date": "2023-02-21",
+    "entry_time": "2023-02-21 09:31:00-05:00",
+    "exit_time": "2023-02-21 10:10:00-05:00",
+    "entry_px": 2.5273,
+    "exit_px": 3.15,
+    "num_contracts": 397,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY230418P00416000",
+    "trade_date": "2023-04-18",
+    "entry_time": "2023-04-18 09:31:00-04:00",
+    "exit_time": "2023-04-18 10:00:00-04:00",
+    "entry_px": 1.4514,
+    "exit_px": 1.71,
+    "num_contracts": 692,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY230425P00412000",
+    "trade_date": "2023-04-25",
+    "entry_time": "2023-04-25 09:31:00-04:00",
+    "exit_time": "2023-04-25 10:10:00-04:00",
+    "entry_px": 1.6443,
+    "exit_px": 2.38,
+    "num_contracts": 611,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230512P00327000",
+    "trade_date": "2023-05-12",
+    "entry_time": "2023-05-12 09:31:00-04:00",
+    "exit_time": "2023-05-12 10:00:00-04:00",
+    "entry_px": 0.8932,
+    "exit_px": 1.35,
+    "num_contracts": 1181,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230512P00414000",
+    "trade_date": "2023-05-12",
+    "entry_time": "2023-05-12 09:31:00-04:00",
+    "exit_time": "2023-05-12 10:00:00-04:00",
+    "entry_px": 1.3804,
+    "exit_px": 1.69,
+    "num_contracts": 727,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230530P00353000",
+    "trade_date": "2023-05-30",
+    "entry_time": "2023-05-30 09:31:00-04:00",
+    "exit_time": "2023-05-30 09:50:00-04:00",
+    "entry_px": 1.8473,
+    "exit_px": 1.56,
+    "num_contracts": 571,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230530P00423000",
+    "trade_date": "2023-05-30",
+    "entry_time": "2023-05-30 09:31:00-04:00",
+    "exit_time": "2023-05-30 09:55:00-04:00",
+    "entry_px": 1.7965,
+    "exit_px": 2.13,
+    "num_contracts": 559,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230602P00356000",
+    "trade_date": "2023-06-02",
+    "entry_time": "2023-06-02 09:31:00-04:00",
+    "exit_time": "2023-06-02 09:50:00-04:00",
+    "entry_px": 2.0503,
+    "exit_px": 3.16,
+    "num_contracts": 514,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230602P00426000",
+    "trade_date": "2023-06-02",
+    "entry_time": "2023-06-02 09:31:00-04:00",
+    "exit_time": "2023-06-02 10:00:00-04:00",
+    "entry_px": 1.5732,
+    "exit_px": 2.05,
+    "num_contracts": 638,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY230616P00443000",
+    "trade_date": "2023-06-16",
+    "entry_time": "2023-06-16 09:31:00-04:00",
+    "exit_time": "2023-06-16 09:40:00-04:00",
+    "entry_px": 1.5225,
+    "exit_px": 2.06,
+    "num_contracts": 660,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230623P00363000",
+    "trade_date": "2023-06-23",
+    "entry_time": "2023-06-23 09:31:00-04:00",
+    "exit_time": "2023-06-23 09:45:00-04:00",
+    "entry_px": 1.5022,
+    "exit_px": 2.44,
+    "num_contracts": 702,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ230711P00368000",
+    "trade_date": "2023-07-11",
+    "entry_time": "2023-07-11 09:31:00-04:00",
+    "exit_time": "2023-07-11 09:40:00-04:00",
+    "entry_px": 2.0909,
+    "exit_px": 1.83,
+    "num_contracts": 504,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230711P00439000",
+    "trade_date": "2023-07-11",
+    "entry_time": "2023-07-11 09:31:00-04:00",
+    "exit_time": "2023-07-11 09:40:00-04:00",
+    "entry_px": 0.3248,
+    "exit_px": 0.31,
+    "num_contracts": 3093,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230808P00372000",
+    "trade_date": "2023-08-08",
+    "entry_time": "2023-08-08 09:31:00-04:00",
+    "exit_time": "2023-08-08 09:45:00-04:00",
+    "entry_px": 1.1875,
+    "exit_px": 1.73,
+    "num_contracts": 888,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230808P00446000",
+    "trade_date": "2023-08-08",
+    "entry_time": "2023-08-08 09:31:00-04:00",
+    "exit_time": "2023-08-08 09:45:00-04:00",
+    "entry_px": 0.477,
+    "exit_px": 0.72,
+    "num_contracts": 2106,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230809P00373000",
+    "trade_date": "2023-08-09",
+    "entry_time": "2023-08-09 09:31:00-04:00",
+    "exit_time": "2023-08-09 09:40:00-04:00",
+    "entry_px": 1.7356,
+    "exit_px": 2.31,
+    "num_contracts": 608,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ230815P00370000",
+    "trade_date": "2023-08-15",
+    "entry_time": "2023-08-15 09:31:00-04:00",
+    "exit_time": "2023-08-15 10:00:00-04:00",
+    "entry_px": 1.827,
+    "exit_px": 2.41,
+    "num_contracts": 577,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230815P00447000",
+    "trade_date": "2023-08-15",
+    "entry_time": "2023-08-15 09:31:00-04:00",
+    "exit_time": "2023-08-15 09:45:00-04:00",
+    "entry_px": 1.5834,
+    "exit_px": 2.08,
+    "num_contracts": 634,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230822P00366000",
+    "trade_date": "2023-08-22",
+    "entry_time": "2023-08-22 09:31:00-04:00",
+    "exit_time": "2023-08-22 09:40:00-04:00",
+    "entry_px": 1.1774,
+    "exit_px": 1.92,
+    "num_contracts": 896,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230822P00439000",
+    "trade_date": "2023-08-22",
+    "entry_time": "2023-08-22 09:31:00-04:00",
+    "exit_time": "2023-08-22 09:50:00-04:00",
+    "entry_px": 0.4364,
+    "exit_px": 0.67,
+    "num_contracts": 2302,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ230828P00367000",
+    "trade_date": "2023-08-28",
+    "entry_time": "2023-08-28 09:31:00-04:00",
+    "exit_time": "2023-08-28 09:40:00-04:00",
+    "entry_px": 1.624,
+    "exit_px": 1.68,
+    "num_contracts": 650,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ230915P00376000",
+    "trade_date": "2023-09-15",
+    "entry_time": "2023-09-15 09:31:00-04:00",
+    "exit_time": "2023-09-15 09:45:00-04:00",
+    "entry_px": 1.1571,
+    "exit_px": 2.35,
+    "num_contracts": 912,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY230926P00430000",
+    "trade_date": "2023-09-26",
+    "entry_time": "2023-09-26 09:31:00-04:00",
+    "exit_time": "2023-09-26 10:10:00-04:00",
+    "entry_px": 1.7559,
+    "exit_px": 2.3,
+    "num_contracts": 572,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ231005P00360000",
+    "trade_date": "2023-10-05",
+    "entry_time": "2023-10-05 09:31:00-04:00",
+    "exit_time": "2023-10-05 09:45:00-04:00",
+    "entry_px": 1.5022,
+    "exit_px": 2.18,
+    "num_contracts": 702,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY231005P00425000",
+    "trade_date": "2023-10-05",
+    "entry_time": "2023-10-05 09:31:00-04:00",
+    "exit_time": "2023-10-05 10:00:00-04:00",
+    "entry_px": 1.4717,
+    "exit_px": 2.0,
+    "num_contracts": 682,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240111P00411000",
+    "trade_date": "2024-01-11",
+    "entry_time": "2024-01-11 09:31:00-05:00",
+    "exit_time": "2024-01-11 09:50:00-05:00",
+    "entry_px": 1.8879,
+    "exit_px": 2.82,
+    "num_contracts": 559,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY240111P00476000",
+    "trade_date": "2024-01-11",
+    "entry_time": "2024-01-11 09:31:00-05:00",
+    "exit_time": "2024-01-11 09:45:00-05:00",
+    "entry_px": 0.5583,
+    "exit_px": 0.87,
+    "num_contracts": 1799,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240122P00425000",
+    "trade_date": "2024-01-22",
+    "entry_time": "2024-01-22 09:31:00-05:00",
+    "exit_time": "2024-01-22 09:40:00-05:00",
+    "entry_px": 1.8067,
+    "exit_px": 2.12,
+    "num_contracts": 584,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240205P00430000",
+    "trade_date": "2024-02-05",
+    "entry_time": "2024-02-05 09:31:00-05:00",
+    "exit_time": "2024-02-05 10:00:00-05:00",
+    "entry_px": 1.7762,
+    "exit_px": 2.4,
+    "num_contracts": 594,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240215P00435000",
+    "trade_date": "2024-02-15",
+    "entry_time": "2024-02-15 09:31:00-05:00",
+    "exit_time": "2024-02-15 10:00:00-05:00",
+    "entry_px": 1.8879,
+    "exit_px": 2.95,
+    "num_contracts": 559,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240216P00434000",
+    "trade_date": "2024-02-16",
+    "entry_time": "2024-02-16 09:31:00-05:00",
+    "exit_time": "2024-02-16 09:50:00-05:00",
+    "entry_px": 1.2992,
+    "exit_px": 2.0,
+    "num_contracts": 812,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY240216P00500000",
+    "trade_date": "2024-02-16",
+    "entry_time": "2024-02-16 09:31:00-05:00",
+    "exit_time": "2024-02-16 09:50:00-05:00",
+    "entry_px": 0.7105,
+    "exit_px": 0.87,
+    "num_contracts": 1414,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY240312P00512000",
+    "trade_date": "2024-03-12",
+    "entry_time": "2024-03-12 09:31:00-04:00",
+    "exit_time": "2024-03-12 09:40:00-04:00",
+    "entry_px": 0.7308,
+    "exit_px": 1.69,
+    "num_contracts": 1375,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240313P00443000",
+    "trade_date": "2024-03-13",
+    "entry_time": "2024-03-13 09:31:00-04:00",
+    "exit_time": "2024-03-13 10:00:00-04:00",
+    "entry_px": 2.0198,
+    "exit_px": 3.2,
+    "num_contracts": 522,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240515P00448000",
+    "trade_date": "2024-05-15",
+    "entry_time": "2024-05-15 09:31:00-04:00",
+    "exit_time": "2024-05-15 09:50:00-04:00",
+    "entry_px": 1.218,
+    "exit_px": 1.65,
+    "num_contracts": 866,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240528P00458000",
+    "trade_date": "2024-05-28",
+    "entry_time": "2024-05-28 09:31:00-04:00",
+    "exit_time": "2024-05-28 09:45:00-04:00",
+    "entry_px": 0.5278,
+    "exit_px": 1.31,
+    "num_contracts": 2000,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY240528P00529000",
+    "trade_date": "2024-05-28",
+    "entry_time": "2024-05-28 09:31:00-04:00",
+    "exit_time": "2024-05-28 09:45:00-04:00",
+    "entry_px": 0.3552,
+    "exit_px": 0.62,
+    "num_contracts": 2828,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240603P00453000",
+    "trade_date": "2024-06-03",
+    "entry_time": "2024-06-03 09:31:00-04:00",
+    "exit_time": "2024-06-03 09:55:00-04:00",
+    "entry_px": 0.7105,
+    "exit_px": 0.98,
+    "num_contracts": 1485,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY240603P00527000",
+    "trade_date": "2024-06-03",
+    "entry_time": "2024-06-03 09:31:00-04:00",
+    "exit_time": "2024-06-03 09:55:00-04:00",
+    "entry_px": 0.4567,
+    "exit_px": 0.76,
+    "num_contracts": 2200,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY240605P00529000",
+    "trade_date": "2024-06-05",
+    "entry_time": "2024-06-05 09:31:00-04:00",
+    "exit_time": "2024-06-05 10:00:00-04:00",
+    "entry_px": 0.6902,
+    "exit_px": 0.89,
+    "num_contracts": 1455,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240606P00465000",
+    "trade_date": "2024-06-06",
+    "entry_time": "2024-06-06 09:31:00-04:00",
+    "exit_time": "2024-06-06 09:55:00-04:00",
+    "entry_px": 1.7559,
+    "exit_px": 2.23,
+    "num_contracts": 601,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ240611P00464000",
+    "trade_date": "2024-06-11",
+    "entry_time": "2024-06-11 09:31:00-04:00",
+    "exit_time": "2024-06-11 09:45:00-04:00",
+    "entry_px": 1.492,
+    "exit_px": 1.31,
+    "num_contracts": 707,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY240611P00532000",
+    "trade_date": "2024-06-11",
+    "entry_time": "2024-06-11 09:31:00-04:00",
+    "exit_time": "2024-06-11 09:45:00-04:00",
+    "entry_px": 0.4567,
+    "exit_px": 0.56,
+    "num_contracts": 2200,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY240717P00558000",
+    "trade_date": "2024-07-17",
+    "entry_time": "2024-07-17 09:31:00-04:00",
+    "exit_time": "2024-07-17 10:05:00-04:00",
+    "entry_px": 0.6902,
+    "exit_px": 0.86,
+    "num_contracts": 1455,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY240822P00565000",
+    "trade_date": "2024-08-22",
+    "entry_time": "2024-08-22 09:31:00-04:00",
+    "exit_time": "2024-08-22 10:10:00-04:00",
+    "entry_px": 2.6187,
+    "exit_px": 4.15,
+    "num_contracts": 383,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY240903P00562000",
+    "trade_date": "2024-09-03",
+    "entry_time": "2024-09-03 09:31:00-04:00",
+    "exit_time": "2024-09-03 09:50:00-04:00",
+    "entry_px": 2.1315,
+    "exit_px": 3.75,
+    "num_contracts": 471,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ240911P00460000",
+    "trade_date": "2024-09-11",
+    "entry_time": "2024-09-11 09:31:00-04:00",
+    "exit_time": "2024-09-11 10:00:00-04:00",
+    "entry_px": 2.3345,
+    "exit_px": 4.39,
+    "num_contracts": 452,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ241001P00488000",
+    "trade_date": "2024-10-01",
+    "entry_time": "2024-10-01 09:31:00-04:00",
+    "exit_time": "2024-10-01 09:40:00-04:00",
+    "entry_px": 1.9082,
+    "exit_px": 4.62,
+    "num_contracts": 553,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY241001P00570000",
+    "trade_date": "2024-10-01",
+    "entry_time": "2024-10-01 09:31:00-04:00",
+    "exit_time": "2024-10-01 09:45:00-04:00",
+    "entry_px": 0.6699,
+    "exit_px": 2.15,
+    "num_contracts": 1500,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY241017P00583000",
+    "trade_date": "2024-10-17",
+    "entry_time": "2024-10-17 09:31:00-04:00",
+    "exit_time": "2024-10-17 09:35:00-04:00",
+    "entry_px": 0.4364,
+    "exit_px": 0.83,
+    "num_contracts": 2302,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY241106P00587000",
+    "trade_date": "2024-11-06",
+    "entry_time": "2024-11-06 09:31:00-05:00",
+    "exit_time": "2024-11-06 09:55:00-05:00",
+    "entry_px": 1.6341,
+    "exit_px": 2.51,
+    "num_contracts": 614,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ241120P00504000",
+    "trade_date": "2024-11-20",
+    "entry_time": "2024-11-20 09:31:00-05:00",
+    "exit_time": "2024-11-20 10:00:00-05:00",
+    "entry_px": 3.0957,
+    "exit_px": 4.76,
+    "num_contracts": 340,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY241120P00592000",
+    "trade_date": "2024-11-20",
+    "entry_time": "2024-11-20 09:31:00-05:00",
+    "exit_time": "2024-11-20 09:55:00-05:00",
+    "entry_px": 2.8521,
+    "exit_px": 4.77,
+    "num_contracts": 352,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ241121P00507000",
+    "trade_date": "2024-11-21",
+    "entry_time": "2024-11-21 09:31:00-05:00",
+    "exit_time": "2024-11-21 09:35:00-05:00",
+    "entry_px": 2.03,
+    "exit_px": 4.02,
+    "num_contracts": 520,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY241121P00591000",
+    "trade_date": "2024-11-21",
+    "entry_time": "2024-11-21 09:31:00-05:00",
+    "exit_time": "2024-11-21 09:35:00-05:00",
+    "entry_px": 0.7105,
+    "exit_px": 1.92,
+    "num_contracts": 1414,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ241125P00511000",
+    "trade_date": "2024-11-25",
+    "entry_time": "2024-11-25 09:31:00-05:00",
+    "exit_time": "2024-11-25 10:00:00-05:00",
+    "entry_px": 2.7405,
+    "exit_px": 3.64,
+    "num_contracts": 385,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY241125P00599000",
+    "trade_date": "2024-11-25",
+    "entry_time": "2024-11-25 09:31:00-05:00",
+    "exit_time": "2024-11-25 10:10:00-05:00",
+    "entry_px": 1.0353,
+    "exit_px": 1.23,
+    "num_contracts": 970,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250110P00586000",
+    "trade_date": "2025-01-10",
+    "entry_time": "2025-01-10 09:31:00-05:00",
+    "exit_time": "2025-01-10 09:45:00-05:00",
+    "entry_px": 3.1566,
+    "exit_px": 2.67,
+    "num_contracts": 318,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250121P00524000",
+    "trade_date": "2025-01-21",
+    "entry_time": "2025-01-21 09:31:00-05:00",
+    "exit_time": "2025-01-21 09:40:00-05:00",
+    "entry_px": 1.8473,
+    "exit_px": 2.53,
+    "num_contracts": 571,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250128P00599000",
+    "trade_date": "2025-01-28",
+    "entry_time": "2025-01-28 09:31:00-05:00",
+    "exit_time": "2025-01-28 09:45:00-05:00",
+    "entry_px": 1.492,
+    "exit_px": 1.93,
+    "num_contracts": 673,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250205P00602000",
+    "trade_date": "2025-02-05",
+    "entry_time": "2025-02-05 09:31:00-05:00",
+    "exit_time": "2025-02-05 10:00:00-05:00",
+    "entry_px": 2.4766,
+    "exit_px": 2.27,
+    "num_contracts": 405,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250207P00532500",
+    "trade_date": "2025-02-07",
+    "entry_time": "2025-02-07 09:31:00-05:00",
+    "exit_time": "2025-02-07 10:00:00-05:00",
+    "entry_px": 2.5781,
+    "exit_px": 3.99,
+    "num_contracts": 409,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ250213P00533000",
+    "trade_date": "2025-02-13",
+    "entry_time": "2025-02-13 09:31:00-05:00",
+    "exit_time": "2025-02-13 09:35:00-05:00",
+    "entry_px": 3.1262,
+    "exit_px": 2.4,
+    "num_contracts": 337,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250220P00609000",
+    "trade_date": "2025-02-20",
+    "entry_time": "2025-02-20 09:31:00-05:00",
+    "exit_time": "2025-02-20 09:50:00-05:00",
+    "entry_px": 0.2943,
+    "exit_px": 0.57,
+    "num_contracts": 3413,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250303P00513000",
+    "trade_date": "2025-03-03",
+    "entry_time": "2025-03-03 09:31:00-05:00",
+    "exit_time": "2025-03-03 09:40:00-05:00",
+    "entry_px": 3.0957,
+    "exit_px": 4.53,
+    "num_contracts": 340,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250303P00596000",
+    "trade_date": "2025-03-03",
+    "entry_time": "2025-03-03 09:31:00-05:00",
+    "exit_time": "2025-03-03 09:45:00-05:00",
+    "entry_px": 1.7762,
+    "exit_px": 2.69,
+    "num_contracts": 565,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250326P00494000",
+    "trade_date": "2025-03-26",
+    "entry_time": "2025-03-26 09:31:00-04:00",
+    "exit_time": "2025-03-26 09:55:00-04:00",
+    "entry_px": 2.4157,
+    "exit_px": 3.98,
+    "num_contracts": 436,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250403P00549000",
+    "trade_date": "2025-04-03",
+    "entry_time": "2025-04-03 09:31:00-04:00",
+    "exit_time": "2025-04-03 10:00:00-04:00",
+    "entry_px": 4.7096,
+    "exit_px": 6.01,
+    "num_contracts": 213,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250514P00520000",
+    "trade_date": "2025-05-14",
+    "entry_time": "2025-05-14 09:31:00-04:00",
+    "exit_time": "2025-05-14 09:55:00-04:00",
+    "entry_px": 3.6438,
+    "exit_px": 4.44,
+    "num_contracts": 289,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ250602P00521000",
+    "trade_date": "2025-06-02",
+    "entry_time": "2025-06-02 09:31:00-04:00",
+    "exit_time": "2025-06-02 10:00:00-04:00",
+    "entry_px": 3.3089,
+    "exit_px": 5.15,
+    "num_contracts": 319,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250602P00591000",
+    "trade_date": "2025-06-02",
+    "entry_time": "2025-06-02 09:31:00-04:00",
+    "exit_time": "2025-06-02 09:50:00-04:00",
+    "entry_px": 3.2074,
+    "exit_px": 3.53,
+    "num_contracts": 313,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250613P00601000",
+    "trade_date": "2025-06-13",
+    "entry_time": "2025-06-13 09:31:00-04:00",
+    "exit_time": "2025-06-13 10:10:00-04:00",
+    "entry_px": 2.3649,
+    "exit_px": 3.7,
+    "num_contracts": 424,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250715P00625000",
+    "trade_date": "2025-07-15",
+    "entry_time": "2025-07-15 09:31:00-04:00",
+    "exit_time": "2025-07-15 10:00:00-04:00",
+    "entry_px": 0.3248,
+    "exit_px": 0.92,
+    "num_contracts": 3093,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250807P00638000",
+    "trade_date": "2025-08-07",
+    "entry_time": "2025-08-07 09:31:00-04:00",
+    "exit_time": "2025-08-07 10:05:00-04:00",
+    "entry_px": 2.3548,
+    "exit_px": 2.67,
+    "num_contracts": 426,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250821P00637000",
+    "trade_date": "2025-08-21",
+    "entry_time": "2025-08-21 09:31:00-04:00",
+    "exit_time": "2025-08-21 09:45:00-04:00",
+    "entry_px": 2.4867,
+    "exit_px": 2.69,
+    "num_contracts": 404,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250828P00577000",
+    "trade_date": "2025-08-28",
+    "entry_time": "2025-08-28 09:31:00-04:00",
+    "exit_time": "2025-08-28 09:50:00-04:00",
+    "entry_px": 2.5679,
+    "exit_px": 3.77,
+    "num_contracts": 411,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ250829P00575000",
+    "trade_date": "2025-08-29",
+    "entry_time": "2025-08-29 09:31:00-04:00",
+    "exit_time": "2025-08-29 09:45:00-04:00",
+    "entry_px": 1.7255,
+    "exit_px": 3.04,
+    "num_contracts": 611,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY250829P00646000",
+    "trade_date": "2025-08-29",
+    "entry_time": "2025-08-29 09:31:00-04:00",
+    "exit_time": "2025-08-29 09:50:00-04:00",
+    "entry_px": 0.5684,
+    "exit_px": 1.31,
+    "num_contracts": 1767,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250905P00650000",
+    "trade_date": "2025-09-05",
+    "entry_time": "2025-09-05 09:31:00-04:00",
+    "exit_time": "2025-09-05 10:00:00-04:00",
+    "entry_px": 0.6597,
+    "exit_px": 1.04,
+    "num_contracts": 1523,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY250916P00659000",
+    "trade_date": "2025-09-16",
+    "entry_time": "2025-09-16 09:31:00-04:00",
+    "exit_time": "2025-09-16 09:50:00-04:00",
+    "entry_px": 0.3146,
+    "exit_px": 0.47,
+    "num_contracts": 3193,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ250918P00595000",
+    "trade_date": "2025-09-18",
+    "entry_time": "2025-09-18 09:31:00-04:00",
+    "exit_time": "2025-09-18 09:40:00-04:00",
+    "entry_px": 1.9488,
+    "exit_px": 2.04,
+    "num_contracts": 541,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ250923P00600000",
+    "trade_date": "2025-09-23",
+    "entry_time": "2025-09-23 09:31:00-04:00",
+    "exit_time": "2025-09-23 09:55:00-04:00",
+    "entry_px": 0.5278,
+    "exit_px": 0.74,
+    "num_contracts": 2000,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ251001P00598000",
+    "trade_date": "2025-10-01",
+    "entry_time": "2025-10-01 09:31:00-04:00",
+    "exit_time": "2025-10-01 09:50:00-04:00",
+    "entry_px": 2.2634,
+    "exit_px": 2.1,
+    "num_contracts": 466,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY251001P00662000",
+    "trade_date": "2025-10-01",
+    "entry_time": "2025-10-01 09:31:00-04:00",
+    "exit_time": "2025-10-01 09:50:00-04:00",
+    "entry_px": 0.6902,
+    "exit_px": 0.81,
+    "num_contracts": 1455,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ251002P00604000",
+    "trade_date": "2025-10-02",
+    "entry_time": "2025-10-02 09:31:00-04:00",
+    "exit_time": "2025-10-02 09:40:00-04:00",
+    "entry_px": 0.5379,
+    "exit_px": 0.86,
+    "num_contracts": 1962,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY251002P00668000",
+    "trade_date": "2025-10-02",
+    "entry_time": "2025-10-02 09:31:00-04:00",
+    "exit_time": "2025-10-02 09:40:00-04:00",
+    "entry_px": 0.3654,
+    "exit_px": 0.61,
+    "num_contracts": 2750,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY251009P00671000",
+    "trade_date": "2025-10-09",
+    "entry_time": "2025-10-09 09:31:00-04:00",
+    "exit_time": "2025-10-09 09:50:00-04:00",
+    "entry_px": 0.2943,
+    "exit_px": 0.47,
+    "num_contracts": 3413,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ251014P00593000",
+    "trade_date": "2025-10-14",
+    "entry_time": "2025-10-14 09:31:00-04:00",
+    "exit_time": "2025-10-14 09:40:00-04:00",
+    "entry_px": 2.2228,
+    "exit_px": 3.26,
+    "num_contracts": 474,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ251112P00624000",
+    "trade_date": "2025-11-12",
+    "entry_time": "2025-11-12 09:31:00-05:00",
+    "exit_time": "2025-11-12 09:45:00-05:00",
+    "entry_px": 2.4259,
+    "exit_px": 3.0,
+    "num_contracts": 435,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:QQQ251125P00605000",
+    "trade_date": "2025-11-25",
+    "entry_time": "2025-11-25 09:31:00-05:00",
+    "exit_time": "2025-11-25 09:40:00-05:00",
+    "entry_px": 3.6337,
+    "exit_px": 3.93,
+    "num_contracts": 290,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY251125P00669000",
+    "trade_date": "2025-11-25",
+    "entry_time": "2025-11-25 09:31:00-05:00",
+    "exit_time": "2025-11-25 09:45:00-05:00",
+    "entry_px": 2.0198,
+    "exit_px": 3.36,
+    "num_contracts": 497,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ251211P00622000",
+    "trade_date": "2025-12-11",
+    "entry_time": "2025-12-11 09:31:00-05:00",
+    "exit_time": "2025-12-11 09:50:00-05:00",
+    "entry_px": 1.9488,
+    "exit_px": 3.92,
+    "num_contracts": 541,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY251211P00687000",
+    "trade_date": "2025-12-11",
+    "entry_time": "2025-12-11 09:31:00-05:00",
+    "exit_time": "2025-12-11 09:55:00-05:00",
+    "entry_px": 2.9943,
+    "exit_px": 4.41,
+    "num_contracts": 335,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ251212P00622000",
+    "trade_date": "2025-12-12",
+    "entry_time": "2025-12-12 09:31:00-05:00",
+    "exit_time": "2025-12-12 10:00:00-05:00",
+    "entry_px": 1.695,
+    "exit_px": 2.05,
+    "num_contracts": 622,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY251212P00687000",
+    "trade_date": "2025-12-12",
+    "entry_time": "2025-12-12 09:31:00-05:00",
+    "exit_time": "2025-12-12 10:00:00-05:00",
+    "entry_px": 0.8323,
+    "exit_px": 1.34,
+    "num_contracts": 1207,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:SPY260113P00694000",
+    "trade_date": "2026-01-13",
+    "entry_time": "2026-01-13 09:31:00-05:00",
+    "exit_time": "2026-01-13 09:50:00-05:00",
+    "entry_px": 0.6699,
+    "exit_px": 0.85,
+    "num_contracts": 1500,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ260203P00626000",
+    "trade_date": "2026-02-03",
+    "entry_time": "2026-02-03 09:31:00-05:00",
+    "exit_time": "2026-02-03 09:40:00-05:00",
+    "entry_px": 0.883,
+    "exit_px": 2.01,
+    "num_contracts": 1195,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY260203P00695000",
+    "trade_date": "2026-02-03",
+    "entry_time": "2026-02-03 09:31:00-05:00",
+    "exit_time": "2026-02-03 09:55:00-05:00",
+    "entry_px": 0.7815,
+    "exit_px": 1.4,
+    "num_contracts": 1285,
+    "ticker": "SPY"
+  },
+  {
+    "option_ticker": "O:QQQ260223P00608000",
+    "trade_date": "2026-02-23",
+    "entry_time": "2026-02-23 09:31:00-05:00",
+    "exit_time": "2026-02-23 09:40:00-05:00",
+    "entry_px": 3.0856,
+    "exit_px": 3.74,
+    "num_contracts": 342,
+    "ticker": "QQQ"
+  },
+  {
+    "option_ticker": "O:SPY260223P00691000",
+    "trade_date": "2026-02-23",
+    "entry_time": "2026-02-23 09:31:00-05:00",
+    "exit_time": "2026-02-23 09:40:00-05:00",
+    "entry_px": 2.9029,
+    "exit_px": 3.31,
+    "num_contracts": 346,
+    "ticker": "SPY"
+  }
+]
