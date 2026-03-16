@@ -368,22 +368,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 // START
 // ═══════════════════════════════════════════════════════
 loadState();
+
+// Start listening FIRST so Railway health check passes, THEN start polling
 app.listen(PORT, () => {
   console.log(`Dashboard server running on port ${PORT}`);
   console.log(`State date: ${STATE.date}, phase: ${getPhase()}`);
+});
 
-  // Initial fetch
-  poll();
+// Delay initial poll to let the server fully start
+setTimeout(() => {
+  console.log('Starting initial poll...');
+  poll().then(() => console.log('Initial poll complete'));
 
-  // Poll every 15 seconds during market hours, 60s otherwise
-  setInterval(() => {
-    const p = getPhase();
-    // Always poll (interval is fixed, but we skip heavy work when closed)
-    poll();
-  }, 15000);
+  // Poll every 15 seconds
+  setInterval(() => poll(), 15000);
 
   // Re-fetch signals every 5 minutes (in case of late data)
-  setInterval(() => {
-    signalsFetched = false;
-  }, 5 * 60 * 1000);
-});
+  setInterval(() => { signalsFetched = false; }, 5 * 60 * 1000);
+}, 2000);
