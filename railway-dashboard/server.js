@@ -364,6 +364,201 @@ app.get('/health', (req, res) => {
   res.json({ ok: true, date: getToday(), phase: getPhase(), clients: clients.size });
 });
 
+// ═══════════════════════════════════════════════════════
+// CALENDAR REFRESH — fetch new trades from Polygon
+// ═══════════════════════════════════════════════════════
+app.get('/api/calendar-refresh', async (req, res) => {
+  const lastDate = req.query.lastDate; // YYYY-MM-DD
+  if (!lastDate || !/^\d{4}-\d{2}-\d{2}$/.test(lastDate)) {
+    return res.status(400).json({ error: 'lastDate required (YYYY-MM-DD)' });
+  }
+
+  const yesterday = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  yesterday.setDate(yesterday.getDate() - 1);
+  const endDate = yesterday.toISOString().slice(0, 10);
+
+  if (lastDate >= endDate) {
+    return res.json({ newTrades: {}, message: 'Already up to date' });
+  }
+
+  console.log(`Calendar refresh: ${lastDate} → ${endDate}`);
+
+  try {
+    // Step 1: Fetch daily bars for QQQ and SPY to find signal days
+    const dailyBars = {};
+    for (const tk of ['QQQ', 'SPY']) {
+      const d = await polyFetch(`/v2/aggs/ticker/${tk}/range/1/day/${lastDate}/${endDate}?adjusted=true&sort=asc&limit=500`);
+      dailyBars[tk] = (d.results || []).map(b => ({
+        date: new Date(b.t).toISOString().slice(0, 10),
+        o: b.o, h: b.h, l: b.l, c: b.c,
+      }));
+    }
+
+    // Build prior-day lookup: for each date, compute close location from PRIOR day
+    const signalDays = {}; // date -> { QQQ: {signal, loc, ...}, SPY: {...} }
+    for (const tk of ['QQQ', 'SPY']) {
+      const bars = dailyBars[tk];
+      for (let i = 1; i < bars.length; i++) {
+        const prior = bars[i - 1];
+        const today = bars[i];
+        if (today.date <= lastDate) continue; // only new dates
+        const rng = prior.h - prior.l;
+        const loc = rng > 0 ? (prior.c - prior.l) / rng : 0.5;
+        const signal = loc > CFG.threshold;
+        const gapUp = today.o > prior.c;
+
+        if (!signalDays[today.date]) signalDays[today.date] = {};
+        signalDays[today.date][tk] = {
+          signal, loc, priorC: prior.c,
+          open: today.o, gapUp,
+          budget: Math.round(CFG.tickers[tk].budget * (gapUp ? CFG.gapUp : CFG.gapDn) / 1000) * 1000,
+        };
+      }
+    }
+
+    // Step 2: Filter to both-ticker dates
+    const bothDates = Object.keys(signalDays).filter(d =>
+      signalDays[d].QQQ?.signal && signalDays[d].SPY?.signal
+    ).sort();
+
+    console.log(`  Signal days found: ${Object.keys(signalDays).length}, both-ticker: ${bothDates.length}`);
+
+    // Step 3: For each both-ticker date, find options and simulate
+    const newTrades = {};
+
+    for (const date of bothDates) {
+      const dayTrades = [];
+
+      for (const tk of ['QQQ', 'SPY']) {
+        const info = signalDays[date][tk];
+        const tgt = CFG.tickers[tk].delta;
+
+        // Find the option contract via historical options chain
+        // Use /v3/reference/options/contracts to find puts near the delta target
+        const ul = info.open || info.priorC;
+        const strikeMin = Math.floor(ul * 0.92);
+        const strikeMax = Math.ceil(ul * 1.05);
+        const expDate = date;
+
+        // Fetch option contracts for this expiry
+        const chainResp = await polyFetch(
+          `/v3/reference/options/contracts?underlying_ticker=${tk}&contract_type=put&expiration_date=${expDate}&strike_price.gte=${strikeMin}&strike_price.lte=${strikeMax}&limit=250&order=asc&sort=strike_price`
+        );
+        const contracts = chainResp.results || [];
+
+        if (contracts.length === 0) {
+          console.log(`  No options found for ${tk} on ${date}`);
+          continue;
+        }
+
+        // We need to pick the right strike. Without live greeks for historical dates,
+        // estimate the ATM put and offset for target delta.
+        // For delta ~0.55-0.60, pick strike slightly above the underlying price
+        // A rough mapping: delta 0.50 ≈ ATM, delta 0.55 ≈ ATM+0.5%, delta 0.60 ≈ ATM+1%
+        const targetStrike = ul * (1 + (tgt - 0.50) * 0.1); // rough approximation
+        let bestContract = null, bestDiff = 999;
+        for (const c of contracts) {
+          const diff = Math.abs(c.strike_price - targetStrike);
+          if (diff < bestDiff) { bestDiff = diff; bestContract = c; }
+        }
+
+        if (!bestContract) continue;
+        const optTicker = bestContract.ticker; // e.g., O:QQQ260305P00500000
+        const strike = bestContract.strike_price;
+
+        // Fetch 1-minute bars for this option on this date
+        const barsResp = await polyFetch(
+          `/v2/aggs/ticker/${optTicker}/range/1/minute/${date}/${date}?adjusted=true&sort=asc&limit=500`
+        );
+        const optBars = (barsResp.results || []).map(b => {
+          const d = new Date(b.t);
+          const h = d.getUTCHours() - 5; // rough ET offset (may need DST handling)
+          // Use proper ET conversion
+          const etStr = new Date(b.t).toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false });
+          const timeParts = etStr.split(', ')[1] || etStr;
+          const hm = timeParts.split(':').slice(0, 2).join(':');
+          return [hm, b.o, b.h, b.l, b.c];
+        }).filter(b => b[0] >= '09:30' && b[0] <= '16:00');
+
+        if (optBars.length === 0) {
+          console.log(`  No 1-min bars for ${optTicker} on ${date}`);
+          continue;
+        }
+
+        // Find entry bar at 9:33
+        let entryIdx = null;
+        for (let i = 0; i < optBars.length; i++) {
+          if (optBars[i][0] >= '09:33') { entryIdx = i; break; }
+        }
+        if (entryIdx === null) {
+          console.log(`  No 9:33 bar for ${optTicker} on ${date}`);
+          continue;
+        }
+
+        const entryBar = optBars[entryIdx];
+        const entryPx = (entryBar[2] + entryBar[3]) / 2; // mid of high/low
+        const cts = Math.max(1, Math.floor(info.budget / (entryPx * 100)));
+        const commission = cts * CFG.comm;
+        const ptPrice = entryPx * CFG.pt; // 1.65
+
+        // Forward-walk: long put convention
+        let exitPx = null, exitType = null, exitTime = null;
+        for (let i = entryIdx; i < optBars.length; i++) {
+          const [hm, o, h, l, c] = optBars[i];
+          if (h >= ptPrice) {
+            exitPx = ptPrice; exitType = 'profit_target'; exitTime = hm; break;
+          }
+          if (hm >= '09:55') {
+            exitPx = c; exitType = 'time_exit_0955'; exitTime = hm; break;
+          }
+        }
+        if (exitPx === null) {
+          exitPx = optBars[optBars.length - 1][4];
+          exitType = 'no_exit';
+          exitTime = optBars[optBars.length - 1][0];
+        }
+
+        const pnl = Math.round(((exitPx - entryPx) * cts * 100 - commission) * 100) / 100;
+
+        dayTrades.push({
+          date, ticker: tk, direction: 'short', strike,
+          option_ticker: optTicker,
+          entry: Math.round(entryPx * 10000) / 10000,
+          contracts: cts,
+          v10_exit: Math.round(exitPx * 10000) / 10000,
+          v10_exit_type: exitType,
+          v10_pnl: pnl,
+          v10_exit_time: exitTime,
+          pt_price: Math.round(ptPrice * 10000) / 10000,
+          commission,
+          bars: optBars, // full 1-min bars for the chart
+        });
+
+        // Rate-limit: brief pause between API calls
+        await new Promise(r => setTimeout(r, 200));
+      }
+
+      if (dayTrades.length > 0) {
+        const dayPnl = dayTrades.reduce((s, t) => s + t.v10_pnl, 0);
+        newTrades[date] = {
+          total_v10: Math.round(dayPnl * 100) / 100,
+          trades: dayTrades,
+        };
+      }
+    }
+
+    console.log(`  Returning ${Object.keys(newTrades).length} new trade days`);
+    res.json({
+      newTrades,
+      lastProcessed: endDate,
+      message: `Found ${Object.keys(newTrades).length} new trade days`,
+    });
+  } catch (e) {
+    console.error('Calendar refresh error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Serve frontend
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));

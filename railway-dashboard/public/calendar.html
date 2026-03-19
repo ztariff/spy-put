@@ -65,12 +65,23 @@ body{background:#0a0a0f;color:#e0e0e0;font-family:-apple-system,BlinkMacSystemFo
 .badge.short{background:#4c1d1d;color:#f87171}
 .badge.long{background:#064e3b;color:#34d399}
 .badge.gran-1m{background:#0a2a0a;color:#4ade80;font-size:9px}
+.refresh-area{position:absolute;top:16px;right:24px;text-align:right}
+.refresh-btn{background:#1a1a2e;border:1px solid #2a2a40;color:#ccc;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .15s}
+.refresh-btn:hover{background:#252545;border-color:#444;color:#fff}
+.refresh-btn:disabled{opacity:.5;cursor:wait}
+.refresh-status{font-size:10px;color:#666;margin-top:4px;font-family:monospace}
 </style></head><body>
 
+<div style="position:relative">
+<div class="refresh-area">
+<div class="refresh-status" id="refresh-status"></div>
+<button class="refresh-btn" id="refresh-btn" onclick="refreshData()">↻ Refresh Data</button>
+</div>
 <div class="hdr">
 <h1>0DTE Options — V10 · +65% or 9:55 · Both-Ticker Filter</h1>
 <div class="sub">QQQ (d0.55) · SPY (d0.60) · Entry 9:33 · Full exit at +65% PT or 9:55 close · $1.10/ct commission · 100% on 1-min data</div>
-<div class="vtag">V10 · Both-Ticker Filter · $7.70M total · Sharpe 12.98 · 334 trades · 167 days</div>
+<div class="vtag" id="vtag">V10 · Both-Ticker Filter · $7.70M total · Sharpe 12.98 · 334 trades · 167 days</div>
+</div>
 </div>
 
 <div class="kpi">
@@ -475,5 +486,101 @@ function closeModal() { _destroyCharts(); document.getElementById('modalBg').cla
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 document.getElementById('modalBg').addEventListener('click', e => { if(e.target.id==='modalBg') closeModal(); });
 renderCal();
+
+// ── Refresh Data — fetch new trades from server ──
+function updateStatus(msg) {
+  document.getElementById('refresh-status').textContent = msg;
+}
+
+function updateKPIs() {
+  const dates = Object.keys(CAL).sort();
+  let totalPnl = 0, totalTrades = 0, wins = 0, winSum = 0, lossSum = 0, lossCount = 0;
+  const dailyPnls = [];
+  for (const d of dates) {
+    const info = CAL[d];
+    totalPnl += info.total_v10;
+    dailyPnls.push(info.total_v10);
+    for (const t of info.trades) {
+      totalTrades++;
+      if (t.v10_pnl > 0) { wins++; winSum += t.v10_pnl; }
+      else { lossCount++; lossSum += t.v10_pnl; }
+    }
+  }
+  const winRate = totalTrades > 0 ? (wins / totalTrades * 100).toFixed(1) : '0.0';
+  const avgWin = wins > 0 ? Math.round(winSum / wins) : 0;
+  const avgLoss = lossCount > 0 ? Math.round(lossSum / lossCount) : 0;
+  const avgDay = dates.length > 0 ? Math.round(totalPnl / dates.length) : 0;
+  let sharpe = 0;
+  if (dailyPnls.length > 1) {
+    const mean = totalPnl / dailyPnls.length;
+    const variance = dailyPnls.reduce((s, p) => s + (p - mean) ** 2, 0) / (dailyPnls.length - 1);
+    const std = Math.sqrt(variance);
+    if (std > 0) sharpe = (mean / std) * Math.sqrt(252);
+  }
+  // Update KPI cards
+  const kpis = document.querySelectorAll('.kpi .k');
+  if (kpis[0]) kpis[0].querySelector('.v').textContent = '$' + Math.round(totalPnl).toLocaleString();
+  if (kpis[1]) kpis[1].querySelector('.v').textContent = sharpe.toFixed(2);
+  if (kpis[2]) kpis[2].querySelector('.v').textContent = winRate + '%';
+  if (kpis[3]) kpis[3].querySelector('.v').textContent = '$' + avgWin.toLocaleString();
+  if (kpis[4]) kpis[4].querySelector('.v').textContent = '$' + avgLoss.toLocaleString();
+  if (kpis[5]) kpis[5].querySelector('.v').textContent = totalTrades;
+  if (kpis[6]) kpis[6].querySelector('.v').textContent = '$' + avgDay.toLocaleString();
+  if (kpis[7]) kpis[7].querySelector('.v').textContent = dates.length;
+  // Update vtag
+  const vtag = document.getElementById('vtag');
+  if (vtag) vtag.textContent = 'V10 · Both-Ticker Filter · $' + (totalPnl/1e6).toFixed(2) + 'M total · Sharpe ' + sharpe.toFixed(2) + ' · ' + totalTrades + ' trades · ' + dates.length + ' days';
+}
+
+async function refreshData() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = '↻ Loading...';
+
+  const dates = Object.keys(CAL).sort();
+  const lastDate = dates.length > 0 ? dates[dates.length - 1] : '2021-01-01';
+  updateStatus('Fetching trades after ' + lastDate + '...');
+
+  try {
+    const resp = await fetch('/api/calendar-refresh?lastDate=' + lastDate);
+    if (!resp.ok) throw new Error('Server error ' + resp.status);
+    const data = await resp.json();
+
+    const newDates = Object.keys(data.newTrades || {});
+    if (newDates.length === 0) {
+      updateStatus('Up to date — no new trades found');
+      btn.disabled = false;
+      btn.textContent = '↻ Refresh Data';
+      return;
+    }
+
+    // Merge new trades into CAL
+    let addedTrades = 0;
+    for (const [date, dayData] of Object.entries(data.newTrades)) {
+      CAL[date] = dayData;
+      addedTrades += dayData.trades.length;
+    }
+
+    // Re-render calendar and update KPIs
+    renderCal();
+    updateKPIs();
+
+    const now = new Date().toLocaleTimeString('en-US', { hour12: false, timeZone: 'America/New_York' });
+    updateStatus('Loaded ' + now + ' · +' + newDates.length + ' days, +' + addedTrades + ' trades');
+  } catch (e) {
+    updateStatus('Error: ' + e.message);
+    console.error('Refresh error:', e);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '↻ Refresh Data';
+}
+
+// Show initial load status
+(function() {
+  const dates = Object.keys(CAL).sort();
+  const last = dates.length > 0 ? dates[dates.length - 1] : 'none';
+  document.getElementById('refresh-status').textContent = 'Loaded through ' + last + ' · ' + Object.keys(CAL).length + ' days';
+})();
 </script>
 </body></html>
